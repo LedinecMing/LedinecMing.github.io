@@ -1,0 +1,61 @@
+  body {
+    background-image: url('../Images/tiles0.png');
+  }
+  #start {
+    color: red;
+    font-size: 100%;
+    background-image: inherit;
+  }
+  div.start {
+    height: 10em;
+    position: relative;
+  }
+
+  button:hover{
+    width: 30%;
+    height: 10%;
+    font-size: 100%;
+  }
+
+  button {
+    color: green;
+    background: linear-gradient(to top, #fefcea, #f1da36);
+    border-radius: 10px;
+    font-size: 200%;
+    width: 25%;
+    height: 15%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transition-property: width, height, font-size;
+    transition-duration: 2s;
+    transform: translate(-50%, -50%);
+  }
+  #field {
+    visibility: hidden;
+  }
+  body {
+    margin: 0;
+  }
+  .centered {
+
+    margin: 0;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    transition-property: width, height, font-size;
+    transition-duration: 2s;
+    transform: translate(-50%, 0%);
+    margin-bottom: 10%;
+  }
+  .label {
+    color: blue;
+    font-size: 50px; 
+  }
+  .input {
+    border-radius: 10px;
+    background-color: blue;
+  }
