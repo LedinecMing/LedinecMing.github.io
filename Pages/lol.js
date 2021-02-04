@@ -393,7 +393,7 @@
       if(world.players[myname].inventory[i][0]!=0)
       {
       ctx.drawImage(items[world.players[myname].inventory[i][0]].image, i*32+200, canvas.height-32);
-      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+200s, canvas.height-32);
+      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+200, canvas.height-32);
       }
     }
     for(var i=0; i<crafts.length;i++)
