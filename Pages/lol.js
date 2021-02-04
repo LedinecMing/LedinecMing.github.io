@@ -383,7 +383,7 @@
     }
     for (var i=0; i<array.length; i++)
     {
-      ctx.strokeRect(i*32, canvas.height-32, 32, 32);
+      ctx.strokeRect(i*32+200, canvas.height-32, 32, 32);
       ctx.font = "32px Arial";
       ctx.textAlign='center';
       if( i==player.selected )
