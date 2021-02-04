@@ -122,7 +122,6 @@
       {
         if(player.can_remove(this.needs[i][0], this.needs[i][1]))
         {
-          console.log(1)
           continue;
         }
         else
@@ -309,7 +308,7 @@
               player.add_item(type, drop);
               world.builds[tx][ty]=[0, 0, 0];   
             }
-            else {
+            else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) {
               world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
             }            
           }
