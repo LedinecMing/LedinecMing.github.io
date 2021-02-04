@@ -388,12 +388,12 @@
       ctx.textAlign='center';
       if( i==player.selected )
       {
-        ctx.fillRect(i*32+5, canvas.height-27, 22, 22);
+        ctx.fillRect(i*32+205, canvas.height-27, 22, 22);
       }
       if(world.players[myname].inventory[i][0]!=0)
       {
-      ctx.drawImage(items[world.players[myname].inventory[i][0]].image, i*32, canvas.height-32);
-      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16, canvas.height-32);
+      ctx.drawImage(items[world.players[myname].inventory[i][0]].image, i*32+200, canvas.height-32);
+      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+200s, canvas.height-32);
       }
     }
     for(var i=0; i<crafts.length;i++)
