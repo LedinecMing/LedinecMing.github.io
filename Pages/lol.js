@@ -258,9 +258,9 @@
         }            
       }
     }
-    if(e.clientX<33 && e.clientY>-1)
+    if(e.clientX<crafts.length*32 && e.clientY>-1)
     {
-      crafts[0].doCraft(world.players[myname]);
+      crafts[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
     }
   }
   function wheelUse(e) {
