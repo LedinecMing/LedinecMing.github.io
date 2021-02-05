@@ -223,7 +223,7 @@
   names=[];
   players={};
   let map=[];
-  let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [4, 1]), new Build(0, 10, 3,1 , 0, 128, [1, 1])];
+  let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [1, 4]), new Build(0, 10, 3,1 , 0, 128, [1, 1])];
   
   for (var i = 0; i < 4; i++) {
     anims[i].src='../Images/white'+i+'.png';
