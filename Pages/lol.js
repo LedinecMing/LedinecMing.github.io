@@ -209,14 +209,15 @@
   canvas.height = window.innerHeight-10;
   let anims =[new Image(), new Image(), new Image(), new Image()];
   let tiles =[new Tile(1, 4, [], 10, 0), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2)];
-  let items =[new Item(0, false, 1, 0, 0, ""), new Item(0, false, 1, 0, 1, 'Wood'), new Item(0, true, 3, 64, 2, 'Wooden axe')];
+  let items =[new Item(0, false, 1, 0, 0, ""), new Item(0, false, 1, 0, 1, 'Wood'), new Item(0, true, 3, 64, 2, 'Wooden axe'), 
+              new Item(1, true, 1, 64, 3, "Wooden pickaxe"), new Item(0, false, 1, 0, 4, "Stone")];
   let hats =[];
-  let crafts=[new Craft([[1, 10]], 0, [2, 1])];
+  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
   ctx.textAlign='center';
-  let array=[[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0]]
+  let array=[[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0], [0, 0]];
   np=new Player(0, 0, 0, 0, array, 16);
   myname='ledinec';
   names=[];
@@ -381,19 +382,21 @@
     {
       ctx.drawImage(items[player.inventory[player.selected][0]].image, canvas.width/2+16+(20*player.angle), canvas.height/2+64);
     }
+    let len=32*player.inventory.length;
+    len=canvas.width/2-len/2;
     for (var i=0; i<array.length; i++)
     {
-      ctx.strokeRect(i*32+200, canvas.height-32, 32, 32);
+      ctx.strokeRect(i*32+len, canvas.height-32, 32, 32);
       ctx.font = "32px Arial";
       ctx.textAlign='center';
       if( i==player.selected )
       {
-        ctx.fillRect(i*32+205, canvas.height-27, 22, 22);
+        ctx.fillRect(i*32+5+len, canvas.height-27, 22, 22);
       }
       if(world.players[myname].inventory[i][0]!=0)
       {
-      ctx.drawImage(items[world.players[myname].inventory[i][0]].image, i*32+200, canvas.height-32);
-      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+200, canvas.height-32);
+      ctx.drawImage(items[world.players[myname].inventory[i][0]].image, i*32+len, canvas.height-32);
+      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+len, canvas.height-32);
       }
     }
     for(var i=0; i<crafts.length;i++)
@@ -408,7 +411,7 @@
     ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
     window.myname=document.getElementById('name').value;
     world.names=[myname];
-    world.players[myname]=new Player(0, 0, 0, 0, [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]], 16, 1);
+    world.players[myname]=new Player(0, 0, 0, 0, [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]], 16, 1);
     let value=document.getElementById("size_pow").value;
     window.hat=document.getElementById('hat').value;
     document.getElementById('start').remove();
