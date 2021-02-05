@@ -97,7 +97,7 @@
   }
   class Item
   {
-    constructor(type, is_instrument, power, breaking, num, item_name)
+    constructor(type, is_instrument, power, breaking, num, item_name, can_place)
     {
       this.type=type;
       this.instrument=is_instrument;
@@ -105,8 +105,14 @@
       this.pow=power;
       this.name=item_name;
       this.image=new Image();
+      this.can_place=can_place[0];
+      if(can_place)
+      {
+        this.building=can_place[1];
+      }
       this.image.src='../Images/items'+num+'.png'
     }
+
   }
   class Craft
   {
@@ -209,10 +215,11 @@
   canvas.height = window.innerHeight-10;
   let anims =[new Image(), new Image(), new Image(), new Image()];
   let tiles =[new Tile(1, 4, [], 10, 0), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2)];
-  let items =[new Item(0, false, 1, 0, 0, ""), new Item(0, false, 1, 0, 1, 'Wood'), new Item(0, true, 3, 64, 2, 'Wooden axe'), 
-              new Item(1, true, 1, 64, 3, "Wooden pickaxe"), new Item(0, false, 1, 0, 4, "Stone")];
+  let items =[new Item(0, false, 1, 0, 0, "", [false]), new Item(0, false, 1, 0, 1, 'Wood', [false]), new Item(0, true, 3, 64, 2, 'Wooden axe', [false]), 
+              new Item(1, true, 1, 64, 3, "Wooden pickaxe", [false]), new Item(0, false, 1, 0, 4, "Stone", [false]),
+              new Item(0, false, 0, 0, 5, 'Table', [true, 4])];
   let hats =[];
-  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1])];
+  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 3]], 0, [5, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
@@ -223,7 +230,8 @@
   names=[];
   players={};
   let map=[];
-  let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [1, 4]), new Build(0, 10, 3,1 , 0, 128, [1, 1])];
+  let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [1, 4]), new Build(0, 10, 3,1 , 0, 128, [1, 1]),
+             new Build(0, 20, 4, 1, 0, 0, [1, 5])];
   
   for (var i = 0; i < 4; i++) {
     anims[i].src='../Images/white'+i+'.png';
@@ -300,18 +308,33 @@
           let tx=normalized[2];
           let player=world.players[myname];
           let ty=normalized[3];
-          if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<4)
+          if(!items[player.inventory[player.selected][0]].can_place)
           {
-            if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<4)
             {
-              let drop=builds[world.builds[tx][ty][0]].drops[0];
-              let type=builds[world.builds[tx][ty][0]].drops[1];
-              player.add_item(type, drop);
-              world.builds[tx][ty]=[0, 0, 0];   
+              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+              {
+                let drop=builds[world.builds[tx][ty][0]].drops[0];
+                let type=builds[world.builds[tx][ty][0]].drops[1];
+                player.add_item(type, drop);
+                world.builds[tx][ty]=[0, 0, 0];   
+              }
+              else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) {
+                world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
+              }            
             }
-            else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) {
-              world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
-            }            
+          }
+          else
+          {
+            let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+            let tx=normalized[2];
+            let player=world.players[myname];
+            let ty=normalized[3];
+            if(world.builds[tx][ty][0]==0)
+            {
+              world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, 20, 0];
+              player.remove_item(player.inventory[player.selected][0], 1); 
+            }
           }
         }
         else if(keyNum<58 && keyNum>47)
@@ -359,7 +382,7 @@
         let ty=ts[3];
         let x=ts[0];
         let y=ts[1];
-        if(world.builds[tx][ty][0]<4 && world.builds[tx][ty][0]>0)
+        if(world.builds[tx][ty][0]<5 && world.builds[tx][ty][0]>0)
         {
           let drawObject=builds[world.builds[tx][ty][0]];
           world.builds[tx][ty][2]=(world.builds[tx][ty][2]+1)&drawObject.images.length;
