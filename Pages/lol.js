@@ -212,7 +212,7 @@
   let items =[new Item(0, false, 1, 0, 0, ""), new Item(0, false, 1, 0, 1, 'Wood'), new Item(0, true, 3, 64, 2, 'Wooden axe'), 
               new Item(1, true, 1, 64, 3, "Wooden pickaxe"), new Item(0, false, 1, 0, 4, "Stone")];
   let hats =[];
-  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1])];
+  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [4, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
