@@ -80,7 +80,7 @@
   }
   class Build
   {
-    constructor(instrument ,build_break, num, anims, x, y, drops)
+    constructor(instrument ,build_break, num, anims, x, y, drops, have_audio)
     {
       this.instrument=instrument;
       this.break=build_break;
@@ -92,6 +92,12 @@
       for (var i = 0; i < anims; i++) {
         this.images[i]=new Image();
         this.images[i].src='../Images/builds'+num+''+i+'.png';
+      }
+      this.audio=[false];
+      if(have_audio===true)
+      {
+        console.log('../Music/build'+num+'.ogg')
+        this.audio=[true, new Audio('../Music/build'+num+'.ogg')];
       }
     }
   }
@@ -161,7 +167,7 @@
   }
   class Tile
   {
-    constructor(tile_speed, tile_instrument, tile_drops, tile_break, tile_num)
+    constructor(tile_speed, tile_instrument, tile_drops, tile_break, tile_num, have_audio)
     {
       this.speed=tile_speed;
       this.instrument=tile_instrument;
@@ -170,6 +176,11 @@
       this.num=tile_num;
       this.image=new Image();
       this.image.src='../Images/tiles'+this.num+'.png';
+      this.audio=[false];
+      if(have_audio===true)
+      {
+        this.audio=[true, new Audio('../Music/tile'+tile_num+'.ogg')]
+      }
     }
   }
   function distance(a, b)
@@ -232,7 +243,7 @@
   names=[];
   players={};
   let map=[];
-  let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [1, 4]), new Build(0, 10, 3,1 , 0, 128, [1, 1]),
+  let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [1, 4], true), new Build(0, 10, 3,1 , 0, 128, [1, 1], true),
              new Build(0, 20, 4, 1, 0, 0, [1, 5])];
   
   for (var i = 0; i < 4; i++) {
@@ -270,7 +281,6 @@
     }
     if(e.clientX<crafts.length*32 && e.clientY<33)
     {
-      console.log(e.clientY)
       crafts[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
     }
   }
@@ -313,10 +323,19 @@
           let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].can_place)
           {
-            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<4)
+            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
             {
-              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+              console.log(builds[world.builds[tx][ty][0]].audio[0])
+              if(builds[world.builds[tx][ty][0]].audio[0])
               {
+                builds[world.builds[tx][ty][0]].audio[1].play();
+              }
+              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+              {       
+                if(builds[world.builds[tx][ty][0]].audio[0])
+                {
+                  builds[world.builds[tx][ty][0]].audio[1].pause();
+                }
                 let drop=builds[world.builds[tx][ty][0]].drops[0];
                 let type=builds[world.builds[tx][ty][0]].drops[1];
                 player.add_item(type, drop);
@@ -342,7 +361,11 @@
         }
         else if(keyNum<58 && keyNum>47)
         {
-          let digit=keyNum%48;
+          let digit=keyNum%48-1;
+          if(digit<0)
+          {
+            digit=9;
+          }
           world.players[myname].selected=digit;
         }
     }
