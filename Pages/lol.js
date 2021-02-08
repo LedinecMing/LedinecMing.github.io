@@ -353,13 +353,21 @@
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let player=world.players[myname];
-    if(player.x/128<0 || player.x/128>world.map.length-1)
+    if(player.x<0)
     {
-      player.x=Math.round(modulo(player.x/128, world.map.length-1))*128;
+      player.x=world.map.length*128+player.x;
     }
-    if(player.x/128<0 || player.x/128>world.map.length-1)
+    if(player.y<0 )
     {
-      player.y=Math.round(modulo(player.y/128, world.map.length-1))*128;
+      player.y=world.map.length*128+player.y;
+    }
+    if(player.y>world.map.length*128)
+    {
+      player.y=player.y-world.map.length*128;
+    }
+    if(player.x>world.map.length*128)
+    {
+      player.x=player.x-world.map.length*128;
     }
     for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
     {
