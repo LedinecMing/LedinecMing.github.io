@@ -225,7 +225,7 @@
   canvas.width = window.innerWidth-10;
   canvas.height = window.innerHeight-10;
   let anims =[new Image(), new Image(), new Image(), new Image()];
-  let tiles =[new Tile(1, 4, [], 10, 0), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2)];
+  let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2)];
   let items =[new Item(0, false, 1, 0, 0, "", [false]), new Item(0, false, 1, 0, 1, 'Wood', [false]), new Item(0, true, 3, 64, 2, 'Wooden axe', [false]), 
               new Item(1, true, 1, 64, 3, "Wooden pickaxe", [false]), new Item(0, false, 1, 0, 4, "Stone", [false]),
               new Item(0, false, 0, 0, 5, 'Table', [true, 4]), new Item(0, true, 5, 128, 6, 'Stone axe', [false]),
@@ -293,27 +293,69 @@
         keyNum = window.event.keyCode;
         let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
         speed=world.players[myname].speed*tiles[world.map[normalized[2]][normalized[3]]].speed;
+        let player=world.players[myname];
         if(keyNum==87)
         {
           world.players[myname].y-=speed;
           world.players[myname].anim+=1;
+
+          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+          let tx=ts[2];
+          let ty=ts[3];
+          let x=ts[0];
+          let y=ts[1];
+          if(tiles[world.map[tx][ty]].audio[0])
+          {
+            tiles[world.map[tx][ty]].audio[1].play();
+          }
+
         }
         else if(keyNum==83)
         {
           world.players[myname].y+=speed;
-          world.players[myname].anim+=1;
+          world.players[myname].anim+=1;          
+          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+          let tx=ts[2];
+          let ty=ts[3];
+          let x=ts[0];
+          let y=ts[1];
+          if(tiles[world.map[tx][ty]].audio[0])
+          {
+            tiles[world.map[tx][ty]].audio[1].play();
+          }
+
         }
         else if(keyNum==65)
         {
           world.players[myname].x-=speed;
           world.players[myname].anim+=1;
-          world.players[myname].angle=0;
+          world.players[myname].angle=0;          
+          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+          let tx=ts[2];
+          let ty=ts[3];
+          let x=ts[0];
+          let y=ts[1];
+          if(tiles[world.map[tx][ty]].audio[0])
+          {
+            tiles[world.map[tx][ty]].audio[1].play();
+          }
+
         }
         else if(keyNum==68)
         {
           world.players[myname].x+=speed;
           world.players[myname].anim+=1;
-          world.players[myname].angle=2;
+          world.players[myname].angle=2;          
+          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+          let tx=ts[2];
+          let ty=ts[3];
+          let x=ts[0];
+          let y=ts[1];
+          if(tiles[world.map[tx][ty]].audio[0])
+          {
+            tiles[world.map[tx][ty]].audio[1].play();
+          }
+
         }
         else if(keyNum==69)
         {
