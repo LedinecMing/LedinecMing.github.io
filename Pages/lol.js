@@ -217,9 +217,11 @@
   let tiles =[new Tile(1, 4, [], 10, 0), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2)];
   let items =[new Item(0, false, 1, 0, 0, "", [false]), new Item(0, false, 1, 0, 1, 'Wood', [false]), new Item(0, true, 3, 64, 2, 'Wooden axe', [false]), 
               new Item(1, true, 1, 64, 3, "Wooden pickaxe", [false]), new Item(0, false, 1, 0, 4, "Stone", [false]),
-              new Item(0, false, 0, 0, 5, 'Table', [true, 4])];
+              new Item(0, false, 0, 0, 5, 'Table', [true, 4]), new Item(0, true, 5, 128, 6, 'Stone axe', [false]),
+              new Item(1, true, 3, 128, 7, 'Stone pickaxe',[false])];
   let hats =[];
-  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1])];
+  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
+              new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
