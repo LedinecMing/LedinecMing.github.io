@@ -219,7 +219,7 @@
               new Item(1, true, 1, 64, 3, "Wooden pickaxe", [false]), new Item(0, false, 1, 0, 4, "Stone", [false]),
               new Item(0, false, 0, 0, 5, 'Table', [true, 4])];
   let hats =[];
-  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 3]], 0, [5, 1])];
+  let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
@@ -246,7 +246,7 @@
   world = new World(map, players, names, []); 
   function mousedown(e)
   {
-    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
+    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY<128)
     {
       let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
       let tx=normalized[2];
@@ -266,8 +266,9 @@
         }            
       }
     }
-    if(e.clientX<crafts.length*32 && e.clientY>-1)
+    if(e.clientX<crafts.length*32 && e.clientY<33)
     {
+      console.log(e.clientY)
       crafts[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
     }
   }
