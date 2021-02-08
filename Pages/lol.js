@@ -145,7 +145,7 @@
       let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
       let tx=normalized[2];
       let ty=normalized[3];
-      if(this.is_can(player.inventory, world.map[tx][ty], player))
+      if(this.is_can(player.inventory, world.builds[tx][ty][0], player))
       {
         for(var i=0; i<this.needs.length;i++)
         {
