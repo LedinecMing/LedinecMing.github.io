@@ -288,7 +288,7 @@
     if(e.clientX>len && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33)
     {
       let num=(e.clientX-len)/32;
-      world.players[myname].selected=Math.round(num);
+      world.players[myname].selected=Math.floor(num);
     }
   }
   function wheelUse(e) {
