@@ -259,11 +259,11 @@
   world = new World(map, players, names, []); 
   function mousedown(e)
   {
+    let player=world.players[myname];
     if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY<128)
     {
       let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
       let tx=normalized[2];
-      let player=world.players[myname];
       let ty=normalized[3];
       if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<4)
       {
@@ -282,6 +282,13 @@
     if(e.clientX<crafts.length*32 && e.clientY<33)
     {
       crafts[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
+    }
+    let len=32*player.inventory.length;
+    len=canvas.width/2-len/2;
+    if(e.clientX>len-1 && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33)
+    {
+      let num=(e.clientX-len)/32;
+      world.players[myname].selected=Math.round(num-1);
     }
   }
   function wheelUse(e) {
