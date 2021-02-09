@@ -236,6 +236,7 @@
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
+  let locate'main'
   ctx.textAlign='center';
   let array=[[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0], [0, 0]];
   np=new Player(0, 0, 0, 0, array, 16);
@@ -260,37 +261,49 @@
   function mousedown(e)
   {
     let player=world.players[myname];
-    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY<128)
+    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY<128 && locate=='main')
     {
-      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-      let tx=normalized[2];
-      let ty=normalized[3];
-      if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<4)
-      {
-        if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
-        {
-          let drop=builds[world.builds[tx][ty][0]].drops[0];
-          let type=builds[world.builds[tx][ty][0]].drops[1];
-          player.add_item(type, drop);
-          world.builds[tx][ty]=[0, 0, 0];   
-        }
-        else {
-          world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
-        }            
-      }
+          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+          let tx=normalized[2];
+          let player=world.players[myname];
+          let ty=normalized[3];
+          if(!items[player.inventory[player.selected][0]].can_place)
+          {
+            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
+            {
+              if(builds[world.builds[tx][ty][0]].audio[0])
+              {
+                builds[world.builds[tx][ty][0]].audio[1].play();
+              }
+              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+              {       
+                if(builds[world.builds[tx][ty][0]].audio[0])
+                {
+                  builds[world.builds[tx][ty][0]].audio[1].pause();
+                }
+                let drop=builds[world.builds[tx][ty][0]].drops[0];
+                let type=builds[world.builds[tx][ty][0]].drops[1];
+                player.add_item(type, drop);
+                world.builds[tx][ty]=[0, 0, 0];   
+              }
+              else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) {
+                world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
+              }            
+            }
     }
-    if(e.clientX<crafts.length*32 && e.clientY<33)
+    if(e.clientX<crafts.length*32 && e.clientY<33 && locate=='main')
     {
       crafts[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
     }
     let len=32*player.inventory.length;
     len=canvas.width/2-len/2;
-    if(e.clientX>len && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33)
+    if(e.clientX>len && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33 && locate=='main')
     {
       let num=(e.clientX-len)/32;
       world.players[myname].selected=Math.floor(num);
     }
   }
+  
   function wheelUse(e) {
 
   }
@@ -374,13 +387,16 @@
           {
             if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
             {
-              console.log(builds[world.builds[tx][ty][0]].audio[0])
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
               }
               if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
               {       
+                if(builds[world.builds[tx][ty][0]].audio[0])
+                {
+                  builds[world.builds[tx][ty][0]].audio[1].pause();
+                }
                 let drop=builds[world.builds[tx][ty][0]].drops[0];
                 let type=builds[world.builds[tx][ty][0]].drops[1];
                 player.add_item(type, drop);
