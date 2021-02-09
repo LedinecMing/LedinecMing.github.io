@@ -381,10 +381,6 @@
               }
               if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
               {       
-                if(builds[world.builds[tx][ty][0]].audio[0])
-                {
-                  builds[world.builds[tx][ty][0]].audio[1].pause();
-                }
                 let drop=builds[world.builds[tx][ty][0]].drops[0];
                 let type=builds[world.builds[tx][ty][0]].drops[1];
                 player.add_item(type, drop);
