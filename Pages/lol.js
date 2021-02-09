@@ -285,7 +285,7 @@
     }
     let len=32*player.inventory.length;
     len=canvas.width/2-len/2;
-    if(e.clientX>len-1 && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33)
+    if(e.clientX>len && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33)
     {
       let num=(e.clientX-len)/32;
       world.players[myname].selected=Math.round(num-1);
