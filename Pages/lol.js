@@ -236,7 +236,7 @@
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
-  let locate='main';
+  locate='main';
   ctx.textAlign='center';
   let array=[[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0], [0, 0]];
   np=new Player(0, 0, 0, 0, array, 16);
@@ -247,12 +247,15 @@
   let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 20, 2, 1, 0, 0, [1, 4], true), new Build(0, 10, 3,1 , 0, 128, [1, 1], true),
              new Build(0, 20, 4, 1, 0, 0, [1, 5])];
   
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 4; i++) 
+  {
     anims[i].src='../Images/white'+i+'.png';
   }  
-  for (var i=0; i<6; i++){
+  for (var i=0; i<6; i++)
+  {
     hats[i]=[];
-    for (var j=0; j<2; j++){
+    for (var j=0; j<2; j++)
+    {
       hats[i][j]=new Image();
       hats[i][j].src='../Images/hat'+i+''+j+'.png';
     }
@@ -261,35 +264,34 @@
   function mousedown(e)
   {
     let player=world.players[myname];
-    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY<128 && locate=='main')
+    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128 && locate=='main')
     {
-          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-          let tx=normalized[2];
-          let player=world.players[myname];
-          let ty=normalized[3];
-          if(!items[player.inventory[player.selected][0]].can_place)
+
+      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+      let tx=normalized[2];
+      let player=world.players[myname];
+      let ty=normalized[3];
+      if(!items[player.inventory[player.selected][0]].can_place)
+      {
+        if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
+        {
+          if(builds[world.builds[tx][ty][0]].audio[0])
           {
-            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
-            {
-              if(builds[world.builds[tx][ty][0]].audio[0])
-              {
-                builds[world.builds[tx][ty][0]].audio[1].play();
-              }
-              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
-              {       
-                if(builds[world.builds[tx][ty][0]].audio[0])
-                {
-                  builds[world.builds[tx][ty][0]].audio[1].pause();
-                }
-                let drop=builds[world.builds[tx][ty][0]].drops[0];
-                let type=builds[world.builds[tx][ty][0]].drops[1];
-                player.add_item(type, drop);
-                world.builds[tx][ty]=[0, 0, 0];   
-              }
-              else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) {
-                world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
-              }            
-            }
+            builds[world.builds[tx][ty][0]].audio[1].play();
+          }
+          if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+          {
+            let drop=builds[world.builds[tx][ty][0]].drops[0];
+            let type=builds[world.builds[tx][ty][0]].drops[1];
+            player.add_item(type, drop);
+            world.builds[tx][ty]=[0, 0, 0];   
+          }
+          else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) 
+          {
+            world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
+          }            
+        }
+      } 
     }
     if(e.clientX<crafts.length*32 && e.clientY<33 && locate=='main')
     {
@@ -304,10 +306,12 @@
     }
   }
   
-  function wheelUse(e) {
+  function wheelUse(e) 
+  {
 
   }
-  function keyPress(e) {
+  function keyPress(e) 
+  {
     let keyNum;
     if (window.event) {
         keyNum = window.event.keyCode;
@@ -430,7 +434,7 @@
           world.players[myname].selected=digit;
         }
     }
-}
+  }
   function cycle()
   {
     if(window.innerHeight!==canvas.height || window.innerWidth!==canvas.width)
@@ -536,41 +540,43 @@
     window.world.map.length=2**value;
     world.map=[];
     world.buils=[];
-    for (var i = 0; i < 2**value; i++){
+    for (var i = 0; i < 2**value; i++)
+    {
       world.map[i]=[];
       world.builds[i]=[100, 0, 0];
-    for (var j = 0; j < 2**value;  j++){
-      world.builds[i][j]=[0, 0];
-      if(Math.random()*100<90)
+      for (var j = 0; j < 2**value;  j++)
       {
-        world.map[i][j]=0;
-        if(Math.random()*100>90)
+        world.builds[i][j]=[0, 0];
+        if(Math.random()*100<90)
         {
-          world.map[i][j]=2;
-          if(Math.random()*100>70)
+          world.map[i][j]=0;
+          if(Math.random()*100>90)
           {
-            world.builds[i][j]=[1, builds[1].break, 0];
+            world.map[i][j]=2;
+            if(Math.random()*100>70)
+            {
+              world.builds[i][j]=[1, builds[1].break, 0];
+            }
+          }
+          if(Math.random()*100>80)
+          {
+            world.builds[i][j]=[3, builds[3].break, 0];
+          }
+          else if(Math.random()*100>98)
+          {
+            world.builds[i][j]=[2, builds[2].break, 0];
           }
         }
-        if(Math.random()*100>80)
+        else
         {
-          world.builds[i][j]=[3, builds[3].break, 0];
+          world.map[i][j]=1;
+          world.builds[i][j]=[0, 0, 0];
         }
-        else if(Math.random()*100>98)
-        {
-          world.builds[i][j]=[2, builds[2].break, 0];
-        }
-      }
-      else
-      {
-        world.map[i][j]=1;
-        world.builds[i][j]=[0, 0, 0];
       }
     }
-  }
     document.getElementById('field').style.visibility='visible';
     document.getElementById('field').style.marginTop='0px';
     document.onkeydown = keyPress;
     document.onmousedown = mousedown;
-    setInterval(cycle, 1);
+    setInterval(cycle, 100);
   }
