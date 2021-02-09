@@ -236,7 +236,7 @@
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
-  let locate'main'
+  let locate='main';
   ctx.textAlign='center';
   let array=[[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0],[0, 0], [0, 0], [0, 0], [0, 0]];
   np=new Player(0, 0, 0, 0, array, 16);
