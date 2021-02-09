@@ -578,5 +578,5 @@
     document.getElementById('field').style.marginTop='0px';
     document.onkeydown = keyPress;
     document.onmousedown = mousedown;
-    setInterval(cycle, 100);
+    setInterval(cycle, 1);
   }
