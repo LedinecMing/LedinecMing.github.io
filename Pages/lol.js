@@ -80,13 +80,14 @@
   }
   class Build
   {
-    constructor(instrument ,build_break, num, anims, x, y, drops, have_audio, store)
+    constructor(instrument ,build_break, num, anims, x, y, drops, have_audio, store, min_pow=0)
     {
       this.instrument=instrument;
       this.break=build_break;
       this.images=[];
       this.x=x;
       this.anims=anims;
+      this.min_pow=min_pow;
       this.y=y;
       this.drops=drops;
       for (var i = 0; i < anims; i++) {
@@ -411,7 +412,7 @@
                 player.add_item(type, drop);
                 world.builds[tx][ty]=[0, 0, 0];   
               }
-              else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type) {
+              else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
                 world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
               }            
             }
@@ -424,7 +425,12 @@
             let ty=normalized[3];
             if(world.builds[tx][ty][0]==0)
             {
-              world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, builds[items[player.inventory[player.selected][0]].building].storage];
+              let storage=[];
+              for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage.length; i++)
+              {
+                storage[i]=[0,0];
+              }
+              world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
               player.remove_item(player.inventory[player.selected][0], 1); 
             }
           }
@@ -435,11 +441,12 @@
           let tx=normalized[2];
           let player=world.players[myname];
           let ty=normalized[3];
+          console.log(tx, ty, world.builds[tx][ty])
           if(world.builds[tx][ty][0]!==0)
           {
-            if(builds[world.builds[tx][ty][0]].storage[player.selected][0]!==0)
+            if(world.builds[tx][ty][3][player.selected][0]!==0)
             {
-              if(player.add_item(builds[world.builds[tx][ty][0]].storage[player.selected][0],builds[world.builds[tx][ty][0]].storage[player.selected][1], ))
+              if(player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1]))
               {
                 world.builds[tx][ty][3][player.selected]=[0, 0];
               } 
@@ -547,7 +554,7 @@
         let ty=ts[3];
         let x=ts[0];
         let y=ts[1];
-        if(world.builds[tx][ty][0]<7 && world.builds[tx][ty][0]>0)
+        if(world.builds[tx][ty][0]>0)
         {
           let drawObject=builds[world.builds[tx][ty][0]];
           world.builds[tx][ty][2]=(world.builds[tx][ty][2]+1)&drawObject.images.length;
@@ -603,7 +610,7 @@
     }
     if(locate=='chest' && builds[world.builds[tx][ty][0]].storage)
     {
-      for (var i=0; i<builds[world.builds[tx][ty][0]].storage.length; i++)
+      for (var i=0; i<world.builds[tx][ty][3].length; i++)
       {
         ctx.strokeRect(i*32+len, canvas.height/2, 32, 32);
         ctx.font = "32px Arial";
