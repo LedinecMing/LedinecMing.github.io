@@ -282,7 +282,7 @@
   // Крафты
   let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
               new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1]),
-              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1]], 9, [16, 1])];
+              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 4, [10, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
