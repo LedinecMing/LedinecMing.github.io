@@ -295,7 +295,7 @@
   // Постройки
   let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 30, 2, 1, 0, 0, [1, 4], true), new Build(0, 20, 3,1 , 0, 128, [1, 1], true),
              new Build(0, 20, 4, 1, 0, 0, [1, 5]), new Build(7, 30, 5, 1,  0, 128, []), new Build(0, 30, 6, 1, 0, 0, [], false, 9),
-             new Build()];
+             new Build(1, 40, 7, 1, 0, 0, [1, 13], false, 0, 1)];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -338,7 +338,7 @@
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
               }
-              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>1)
               {       
                 let drop=builds[world.builds[tx][ty][0]].drops[0];
                 let type=builds[world.builds[tx][ty][0]].drops[1];
