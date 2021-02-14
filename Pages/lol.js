@@ -275,12 +275,14 @@
               new Item(1, true, 2, 128, 7, 'Stone pickaxe',[false]), new Item(0, false, 1, 0, 8, 'Chest', [true, 6]),
               new Item(0, true, 4, 256, 9, 'Iron axe', [false]), new Item(1, true, 3, 256, 10, 'Iron pickaxe', [false]),
               new Item(0, true, 5, 512, 11, 'Golden axe', [false]), new Item(1, true, 4, 512, 12, 'Golden pickaxe', [false]),
-              new Item(0, false, 0, 0, 13, 'Coal', [false])]; 
+              new Item(0, false, 0, 0, 13, 'Coal', [false]), new Item(0, false, 0, 0, 14, 'Furnace', [true, 9]),
+              new Item(0, false, 0, 0, 15, 'Iron ore', [false]), new Item(0, false, 0, 0, 16, 'Iron ingot', [false])]; 
   // Шляпы
   let hats =[];
   // Крафты
   let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
-              new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1])];
+              new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1]),
+              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1]], 9, [16, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
@@ -295,7 +297,8 @@
   // Постройки
   let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 30, 2, 1, 0, 0, [1, 4], true), new Build(0, 20, 3,1 , 0, 128, [1, 1], true),
              new Build(0, 20, 4, 1, 0, 0, [1, 5]), new Build(7, 30, 5, 1,  0, 128, []), new Build(0, 30, 6, 1, 0, 0, [], false, 9),
-             new Build(1, 40, 7, 1, 0, 0, [1, 13], false, 0, 1)];
+             new Build(1, 40, 7, 1, 0, 0, [1, 15], min_pow=1), new Build(1, 40, 8, 1, 0, 0, [1, 13], min_pow=1),
+             new Build(1, 50, 9, 1, 0, 0, [1, 14])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -332,7 +335,7 @@
           let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].can_place)
           {
-            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
+            if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
@@ -492,7 +495,7 @@
           let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].can_place)
           {
-            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
+            if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
@@ -779,9 +782,17 @@
           {
             world.builds[i][j]=[3, builds[3].break, 0];
           }
-          else if(Math.random()*100>98)
+          else if(Math.random()*100>95)
           {
             world.builds[i][j]=[2, builds[2].break, 0];
+          }
+          else if(Math.random()*100>95)
+          {
+            world.builds[i][j]=[8, builds[8].break, 0];
+          }
+          else if(Math.random()*100>97)
+          {
+            world.builds[i][j]=[7, builds[7].break, 0];
           }
         }
         else
