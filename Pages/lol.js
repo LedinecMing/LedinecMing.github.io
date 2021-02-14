@@ -332,7 +332,7 @@
           let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].can_place)
           {
-            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5)
+            if(world.builds[tx][ty][0]>0 && world.builds[tx][ty][0]<5 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
