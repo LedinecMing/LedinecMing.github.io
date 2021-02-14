@@ -282,7 +282,7 @@
   // Крафты
   let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
               new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1]),
-              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 4, [10, 1]),
+              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 4, [10, 1]),
               new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 4, [9, 1])];
   let use = new Image();
   use.src='../Images/use.png';
@@ -297,7 +297,7 @@
   let map=[];
   // Постройки
   let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 30, 2, 1, 0, 0, [1, 4], true), new Build(0, 20, 3,1 , 0, 128, [1, 1], true),
-             new Build(0, 20, 4, 1, 0, 0, [1, 5]), new Build(7, 30, 5, 1,  0, 128, []), new Build(0, 30, 6, 1, 0, 0, [], false, 9),
+             new Build(0, 20, 4, 1, 0, 0, [1, 5]), new Build(7, 30, 5, 1,  0, 128, []), new Build(0, 30, 6, 1, 0, 0, [8, 1], false, 9),
              new Build(1, 40, 7, 1, 0, 0, [1, 15], min_pow=1), new Build(1, 40, 8, 1, 0, 0, [1, 13], min_pow=1),
              new Build(1, 50, 9, 1, 0, 0, [1, 14])];
   // Установка анимаций игрока
@@ -325,15 +325,14 @@
   {
     // Обработка нажатий мышью
     let player=world.players[myname];
+    let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
+    let tx=normalized[2];
+    let ty=normalized[3];
     // Обработка кнопки use
     if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
     {
       if(locate=='main')
         {
-          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-          let tx=normalized[2];
-          let player=world.players[myname];
-          let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].can_place)
           {
             if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
@@ -356,10 +355,6 @@
           }
           else
           {
-            let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-            let tx=normalized[2];
-            let player=world.players[myname];
-            let ty=normalized[3];
             if(world.builds[tx][ty][0]==0)
             {
               let storage=[];
@@ -398,9 +393,19 @@
           }
         }
     }
-    if(e.clientX<crafts.length*32 && e.clientY<33 && locate=='main')
+    let j=0;
+    let c=[];
+    for(var i=0; i<crafts.length;i++)
     {
-      crafts[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
+      if(crafts[i].is_can(player.inventory, world.builds[tx][ty][0], player))
+      {
+        c[j]=crafts[i];
+        j++;
+      }
+    }      
+    if(e.clientX<c.length*32 && e.clientY<33 && locate=='main')
+    {
+      c[Math.floor(e.clientX/32)].doCraft(world.players[myname]);
     }
     let len=32*player.inventory.length;
     len=canvas.width/2-len/2;
@@ -696,10 +701,15 @@
     }
     if(locate=='main')
     {
+      let j=0;
       for(var i=0; i<crafts.length;i++)
       {
-        ctx.strokeRect(i*32, 0, 32, 32);
-        ctx.drawImage(items[crafts[i].result[0]].image, i*32, 0);
+        if(crafts[i].is_can(player.inventory, world.builds[tx][ty][0], player))
+        {
+          ctx.strokeRect(j*32, 0, 32, 32);
+          ctx.drawImage(items[crafts[i].result[0]].image, j*32, 0);
+          j++;
+        }
       }
     }
     ctx.drawImage(use, canvas.width-128, canvas.height-128);
