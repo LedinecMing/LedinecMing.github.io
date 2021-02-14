@@ -498,7 +498,7 @@
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
               }
-              if(world.builds[tx][ty][1]<1 && world.builds[tx][ty][0]>1)
+              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>1)
               {       
                 let drop=builds[world.builds[tx][ty][0]].drops[0];
                 let type=builds[world.builds[tx][ty][0]].drops[1];
@@ -649,7 +649,6 @@
         if(world.builds[tx][ty][0]>0)
         {
           let drawObject=builds[world.builds[tx][ty][0]];
-          world.builds[tx][ty][2]=(world.builds[tx][ty][2]+1)&drawObject.images.length;
           ctx.drawImage(drawObject.images[world.builds[tx][ty][2]%drawObject.images.length], x*128+canvas.width/2-world.players[myname].x, y*128+canvas.height/2-world.players[myname].y-drawObject.y); 
         }
       }
@@ -718,6 +717,33 @@
         }
       }
     }
+  }
+  function animations()
+  {
+    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
+    let player=world.players[myname];         
+    let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+    let tx=ts[2];
+    let ty=ts[3];
+    let x=ts[0];
+    let y=ts[1];
+    for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
+    {
+      for (var j = Math.round(player.y/128-canvas.height/128-1); j <= Math.round(player.y/128+canvas.height/128+1); j++) 
+      {
+        let ts=normal(i, j);
+        let tx=ts[2];
+        let ty=ts[3];
+        let x=ts[0];
+        let y=ts[1];
+        if(world.builds[tx][ty][0]>0)
+        {
+          let drawObject=builds[world.builds[tx][ty][0]];
+          world.builds[tx][ty][2]=(world.builds[tx][ty][2]+1)&drawObject.images.length; 
+        }
+      }
+    }  
+ 
   }
   function start()
   {
@@ -789,4 +815,5 @@
     document.onkeydown = keyPress;
     document.onmousedown = mousedown;
     setInterval(cycle, 1);
+    setInterval(animations, 100)
   }
