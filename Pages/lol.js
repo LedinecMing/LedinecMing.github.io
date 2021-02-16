@@ -100,6 +100,7 @@
       for (var i = 0; i < anims; i++) {
         this.images[i]=new Image();
         this.images[i].src='../Images/builds'+num+''+i+'.png';
+        console.log(this.images[i].src)
       }
       // Если have_audio - true задаем this.audio[1] как Audio объект, который проигрывается при добыче объекта
       this.audio=[false];
@@ -300,7 +301,7 @@
   let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 30, 2, 1, 0, 0, [1, 4], true), new Build(0, 20, 3,1 , 0, 128, [1, 1], true),
              new Build(0, 20, 4, 1, 0, 0, [1, 5]), new Build(7, 30, 5, 1,  0, 128, []), new Build(0, 30, 6, 1, 0, 0, [8, 1], false, 9),
              new Build(1, 40, 7, 1, 0, 0, [1, 15], min_pow=1), new Build(1, 40, 8, 1, 0, 0, [1, 13], min_pow=1),
-             new Build(1, 50, 9, 1, 0, 0, [1, 14]), new Build(1, 10, 1, 0, 0, [1, 17])];
+             new Build(1, 50, 9, 1, 0, 0, [1, 14]), new Build(1, 100, 10, 1, 0, 0, [1, 17])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -763,7 +764,7 @@
   function start()
   {
     ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
-    window.myname=document.getElementById('name').value;
+    myname=document.getElementById('name').value;
     world.names=[myname];
     let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
     if(myname=="ledinec")
