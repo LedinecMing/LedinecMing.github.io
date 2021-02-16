@@ -773,7 +773,7 @@
       inventory[2]=[15, 99];
       inventory[3]=[13, 99];
     }
-    world.players[myname]=new Player(0, 0, 0, 0, , 16, 1);
+    world.players[myname]=new Player(0, 0, 0, 0, inventory, 16, 1);
     let value=document.getElementById("size_pow").value;
     window.hat=document.getElementById('hat').value;
     document.getElementById('start').remove();
