@@ -11,10 +11,11 @@
   <div id="content">
       <div id='start'>
         <div style="">
+         	<img id="img-hat" style="top:0%; left:50%; background-image:url('../Images/white0.png');">
           <button onclick="start();">Play</button>
           <input type="range" min='4' max='12' name="Size" id='size_pow' style="top:35%;" class="input centered">
           <label class="centered" style="top:32%;" class="label">SIZE</label>
-          <input type="range" mib='0' max='7' name="Hat" id='hat' class="centered" style="top:30%;">
+          <input type="range" mib='0' max='7' name="Hat" id='hat' class="centered" style="top:30%;" onchange="document.getElementById('img-hat').src='../Images/hat'+document.getElementById('hat').value+'0'+'.png'">
           <input type="text" name="Name" placeholder="Nickname" class="centered" id="name">
         </div>
       </div>
@@ -22,3 +23,6 @@
   </div>
 </html>
 <script type="text/javascript" src="lol.js"></script>
+<script type="text/javascript">
+				
+</script>
