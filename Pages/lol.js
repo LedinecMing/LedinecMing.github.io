@@ -276,14 +276,15 @@
               new Item(0, true, 4, 256, 9, 'Iron axe', [false]), new Item(1, true, 3, 256, 10, 'Iron pickaxe', [false]),
               new Item(0, true, 5, 512, 11, 'Golden axe', [false]), new Item(1, true, 4, 512, 12, 'Golden pickaxe', [false]),
               new Item(0, false, 0, 0, 13, 'Coal', [false]), new Item(0, false, 0, 0, 14, 'Furnace', [true, 9]),
-              new Item(0, false, 0, 0, 15, 'Iron ore', [false]), new Item(0, false, 0, 0, 16, 'Iron ingot', [false])]; 
+              new Item(0, false, 0, 0, 15, 'Iron ore', [false]), new Item(0, false, 0, 0, 16, 'Iron ingot', [false]),
+              new Item(1, false, 0, 0, 17, 'Anvil', [true, 10])]; 
   // Шляпы
   let hats =[];
   // Крафты
   let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
               new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1]),
-              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 4, [10, 1]),
-              new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 4, [9, 1])];
+              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
+              new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1])];
   let use = new Image();
   use.src='../Images/use.png';
   ctx.font='128px Arial';
@@ -299,7 +300,7 @@
   let builds=[0, new Build(7, 10, 1, 3, 0, 0, []), new Build(1, 30, 2, 1, 0, 0, [1, 4], true), new Build(0, 20, 3,1 , 0, 128, [1, 1], true),
              new Build(0, 20, 4, 1, 0, 0, [1, 5]), new Build(7, 30, 5, 1,  0, 128, []), new Build(0, 30, 6, 1, 0, 0, [8, 1], false, 9),
              new Build(1, 40, 7, 1, 0, 0, [1, 15], min_pow=1), new Build(1, 40, 8, 1, 0, 0, [1, 13], min_pow=1),
-             new Build(1, 50, 9, 1, 0, 0, [1, 14])];
+             new Build(1, 50, 9, 1, 0, 0, [1, 14]), new Build(1, 100, 1, 0, 0, [1, 17])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
