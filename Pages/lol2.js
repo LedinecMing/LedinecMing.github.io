@@ -596,6 +596,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
           let ty=ts[3];
           let x=ts[0];
           let y=ts[1];
+          console.log(world.builds[tx][ty])
           if(world.builds[tx][ty][3])
           {
             window.locate='chest';
