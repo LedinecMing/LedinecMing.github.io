@@ -61,11 +61,8 @@ class Build
       console.log(num)
       if(specifics[0]==build_specifics.storage)
       {
-      		this.storage=[];
-      		for(var i=0;i<specifics[1]+1;i++)
-      		{
-      				this.storage[i]=[0,0];
-      		}
+      	
+       	this.storage=specifics[1];
       }
     }
 }
