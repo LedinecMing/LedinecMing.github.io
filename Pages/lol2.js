@@ -273,7 +273,7 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
               new Item(11, 'Golden axe', [1, 5], 0), new Item(12, 'Golden pickaxe', [1, 4], 1),
               new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
               new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
-              new Item(17, 'Anvil', [1, 10], 0)]; 
+              new Item(17, 'Anvil', [2, 10], 0)]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
