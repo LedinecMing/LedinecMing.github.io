@@ -91,7 +91,7 @@ class Player
         {
           this.inventory[i][0]=item_num;
           this.inventory[i][1]+=nums;
-          shtula=true;
+          added=true;
           return 1;
         }
       }
@@ -388,6 +388,11 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
             }
           }
         }
+    }
+    if(e.clientX<128 && e.clientY>canvas.height-128)
+    {
+    	world.players[myname].y-=16;
+    	world.players[myname].anim+=1;
     }
     let j=0;
     let c=[];
