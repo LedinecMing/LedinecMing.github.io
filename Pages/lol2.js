@@ -363,12 +363,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
               world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
              player.remove_item(player.inventory[player.selected][0], 1); 
     }}}
-    if(e.clientX<128 && e.clientY>canvas.height-128)
-    {
-    	world.players[myname].y-=16;
-    	world.players[myname].anim+=1;
-    }
-    let j=0;
+    j=0;
     let c=[];
     for(var i=0; i<crafts.length;i++)
     {
@@ -570,14 +565,14 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
           let ty=ts[3];
           let x=ts[0];
           let y=ts[1];
-          //if(builds[world.builds[tx][ty][0]].storage)
-          //{
-            window.locate='chest';
-          //}
+          if(builds[world.builds[tx][ty][0]].storage)
+          {
+            locate='chest';
+          }
         }
         else if(keyNum==70 && locate=='chest')
         {
-          window.locate='main';
+          locate='main';
         }
     }
   }
@@ -693,7 +688,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
     ctx.drawImage(use, canvas.width-128, canvas.height-128);
     if(locate=='chest' && builds[world.builds[tx][ty][0]].storage)
     {
-      for (var i=0; i<builds[world.builds[tx][ty][0]]; i++)
+      for (var i=0; i<builds[world.builds[tx][ty][0]].storage; i++)
       {
         ctx.strokeRect(i*32+len, canvas.height/2, 32, 32);
         ctx.font = "32px Arial";
