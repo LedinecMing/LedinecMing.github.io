@@ -593,10 +593,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
           let ty=ts[3];
           let x=ts[0];
           let y=ts[1];
-          if(builds[world.builds[tx][ty][0]].storage)
-          {
+          //if(builds[world.builds[tx][ty][0]].storage)
+          //{
             window.locate='chest';
-          }
+          //}
         }
         else if(keyNum==70 && locate=='chest')
         {
