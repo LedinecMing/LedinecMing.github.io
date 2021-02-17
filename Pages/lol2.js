@@ -273,7 +273,8 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
               new Item(11, 'Golden axe', [1, 5], 0), new Item(12, 'Golden pickaxe', [1, 4], 1),
               new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
               new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
-              new Item(17, 'Anvil', [2, 10], 0)]; 
+              new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
+              new Item(18, 'Flowduck', [2, 1], 0)]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
@@ -283,9 +284,10 @@ let walls={11:true};
 let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
               new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1]),
               new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
-              new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1])];
+              new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1]),
+              new Craft([[1, 4], [16, 2]], 4, [18, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
-let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
+let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 9]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], false, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
              new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], false, 0, [0]),
