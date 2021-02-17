@@ -60,8 +60,7 @@ class Build
       this.storage=false;
       console.log(num)
       if(specifics[0]==build_specifics.storage)
-      {
-      	
+      { 	
        	this.storage=specifics[1];
       }
     }
@@ -337,7 +336,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
                 
                 for( var i=0;i<drop.length;i++)   
                 {
-                		player.add_item(drop[i][0], drop[i][1]);
+                		player.add_item(drop[i][1], drop[i][0]);
                 }        
                 world.builds[tx][ty]=[0, 0, 0];   
               }
@@ -511,7 +510,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
                 let drop=builds[world.builds[tx][ty][0]].drops;
                 for(var i=0;i<drop.length;i++)
                 {
-               	 player.add_item(drop[i][0], drop[i][1]);
+               	 player.add_item(drop[i][1], drop[i][0]);
               	   world.builds[tx][ty]=[0, 0, 0];  
               	  } 
               }
