@@ -58,10 +58,10 @@ class Build
         this.audio=[true, new Audio('../Music/build'+num+'.ogg')];
       }
       this.storage=false;
-      console.log(num)
       if(specifics[0]==build_specifics.storage)
       { 	
        	this.storage=specifics[1];
+       	console.log(this.storage)
       }
     }
 }
@@ -693,7 +693,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
     ctx.drawImage(use, canvas.width-128, canvas.height-128);
     if(locate=='chest' && builds[world.builds[tx][ty][0]].storage)
     {
-      for (var i=0; i<world.builds[tx][ty][3].length; i++)
+      for (var i=0; i<builds[world.builds[tx][ty][0]]; i++)
       {
         ctx.strokeRect(i*32+len, canvas.height/2, 32, 32);
         ctx.font = "32px Arial";
