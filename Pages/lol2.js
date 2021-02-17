@@ -511,10 +511,12 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
               }
               if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>1)
               {       
-                let drop=builds[world.builds[tx][ty][0]].drops[0];
-                let type=builds[world.builds[tx][ty][0]].drops[1];
-                player.add_item(type, drop);
-                world.builds[tx][ty]=[0, 0, 0];   
+                let drop=builds[world.builds[tx][ty][0]].drops;
+                for(var i=0;i<drop.length;i++)
+                {
+               	 player.add_item(drop[i][0], drop[i][1]);
+              	   world.builds[tx][ty]=[0, 0, 0];  
+              	  } 
               }
               else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
                 world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
