@@ -290,8 +290,7 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
 let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 9]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], false, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
-             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], false, 0, [0]),
-            new Build(0, 100, 11, 1, 0, 0, [[1, 6]], false, 1, [0])];
+             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], false, 0, [0])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -335,7 +334,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
               }
-              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>1)
+              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
               {       
                 let drop=builds[world.builds[tx][ty][0]].drops;
                 for(var i=0;i<drop.length;i++)
@@ -480,7 +479,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
               }
-              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>1)
+              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
               {       
                 let drop=builds[world.builds[tx][ty][0]].drops;
                 for(var i=0;i<drop.length;i++)
