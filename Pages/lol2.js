@@ -529,7 +529,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
             if(world.builds[tx][ty][0]==0)
             {
               let storage=[];
-              for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage.length; i++)
+              for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
               {
                 storage[i]=[0,0];
               }
