@@ -326,7 +326,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
     {
       if(locate=='main')
         {
-          if(!items[player.inventory[player.selected][0]].can_place)
+          if(!items[player.inventory[player.selected][0]].building)
           {
             if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
@@ -500,11 +500,11 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
           let tx=normalized[2];
           let player=world.players[myname];
           let ty=normalized[3];
-          if(!items[player.inventory[player.selected][0]].can_place)
+          if(!items[player.inventory[player.selected][0]].building)
           {
             if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
-              console.log(builds[world.builds[tx][ty][0]].min_pow,items[player.inventory[player.selected][0]].pow)
+              
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
