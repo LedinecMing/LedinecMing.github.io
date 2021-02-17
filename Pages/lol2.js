@@ -379,7 +379,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
     }
     let len=32*player.inventory.length;
     len=canvas.width/2-len/2;
-    if(e.clientX>len && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-33 && locate=='main')
+    if(e.clientX>len && e.clientX<canvas.width-len+1 && e.clientY>canvas.height-32)
     {
       let num=(e.clientX-len)/32;
       world.players[myname].selected=Math.floor(num);
