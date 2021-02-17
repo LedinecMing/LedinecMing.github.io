@@ -286,7 +286,7 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
               new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
-             new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[8, 1]], false, 0, [1, 9]),
+             new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 9]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], false, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
              new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], false, 0, [0]),
             new Build(0, 100, 11, 1, 0, 0, [[1, 6]], false, 1, [0])];
@@ -320,12 +320,15 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
     // Обработка кнопки use
     if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
     {
-      if(locate=='main')
-        {
+      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+          let tx=normalized[2];
+          let player=world.players[myname];
+          let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].building)
           {
             if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
+              
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
@@ -333,12 +336,11 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
               if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>1)
               {       
                 let drop=builds[world.builds[tx][ty][0]].drops;
-                
-                for( var i=0;i<drop.length;i++)   
+                for(var i=0;i<drop.length;i++)
                 {
-                		player.add_item(drop[i][1], drop[i][0]);
-                }        
-                world.builds[tx][ty]=[0, 0, 0];   
+               	 player.add_item(drop[i][1], drop[i][0]);
+              	   world.builds[tx][ty]=[0, 0, 0];  
+              	  } 
               }
               else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
                 world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
@@ -347,44 +349,20 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[]], false, 0, [0]), new Build(1, 3
           }
           else
           {
+            let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+            let tx=normalized[2];
+            let player=world.players[myname];
+            let ty=normalized[3];
             if(world.builds[tx][ty][0]==0)
             {
               let storage=[];
-              for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage.length; i++)
+              for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
               {
                 storage[i]=[0,0];
               }
               world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
-              player.remove_item(player.inventory[player.selected][0], 1); 
-            }
-          }
-        }
-        else if(locate=='chest')
-        {
-          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-          let tx=normalized[2];
-          let player=world.players[myname];
-          let ty=normalized[3];
-          if(world.builds[tx][ty][0]!==0)
-          {
-            if(world.builds[tx][ty][3][player.selected][0]!==0)
-            {
-              if(player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1]))
-              {
-                world.builds[tx][ty][3][player.selected]=[0, 0];
-              } 
-            }
-            else
-            {
-              if(player.inventory[player.selected][0]!==0)
-              {
-                world.builds[tx][ty][3][player.selected]=[player.inventory[player.selected][0], player.inventory[player.selected][1]];
-                player.remove_item(player.inventory[player.selected][0], player.inventory[player.selected][1]);
-              }
-            }
-          }
-        }
-    }
+             player.remove_item(player.inventory[player.selected][0], 1); 
+    }}}
     if(e.clientX<128 && e.clientY>canvas.height-128)
     {
     	world.players[myname].y-=16;
