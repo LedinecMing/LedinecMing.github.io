@@ -274,7 +274,7 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
               new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
               new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
               new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
-              new Item(19, 'Flowduck', [2, 1], 0)]; 
+              new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1]), 0]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
@@ -288,9 +288,9 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
               new Craft([[1, 4], [16, 2]], 4, [18, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
-             new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 9]),
+             new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
-             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0])];
+             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(0, 20, 11, 1, 0, 0, [[1, 20]], false, 0, [0])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -758,60 +758,41 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       world.builds[i]=[100, 0, 0];
       for (var j = 0; j < 2**value;  j++)
       {
-        world.builds[i][j]=[0, 0];
-        if(Math.random()*100<90)
-        {
-          world.map[i][j]=0;
-          if(Math.random()*100>90)
-          {
-            world.map[i][j]=2;
-            if(Math.random()*100>70)
-            {
-              world.builds[i][j]=[1, builds[1].break, 0];
-            }
-          }
-          if(Math.random()*100>80)
-          {
-            world.builds[i][j]=[3, builds[3].break, 0];
-          }
-          else if(Math.random()*100>95)
-          {
-            world.builds[i][j]=[2, builds[2].break, 0];
-          }
-          else if(Math.random()*100>95)
-          {
-            world.builds[i][j]=[8, builds[8].break, 0];
-          }
-          else if(Math.random()*100>97)
-          {
-            world.builds[i][j]=[7, builds[7].break, 0];
-          }
-        }
-        else
-        {
-          world.map[i][j]=1;
-          world.builds[i][j]=[0, 0, 0];
-        }
+        world.builds[i][j]=[0,0];
+        world.map[i][j]=0;
       }
     }
-    // let water=[];
-    // let size=2**value;
-    // for (var i = 0; i < size/16; i++) {
-    //   water[water.length]=[random(size), random(size), random(80)+10];
-    // }
-    // let thing, pos;
-    // for (var i = 0; i < water.length; i++) {
-    //   thing=water[i];
-    //   pos=[thing[0], thing[1]];
-    //   for (var i = 0; i < thing[2]; i++) {
-    //     for (var j = 0; j < thing[2]; j++) {
-    //       if(Math.sqrt(i**2+j**2)<100)
-    //       {
-    //         world.map[pos[0]+i][pos[1]+j]=1;
-    //       }
-    //     }    
-    //   }
-    // }
+    let water=[];
+    let size=2**value;
+    for (var i = 0; i < size/16; i++) {
+      water[water.length]=[random(size), random(size), random(80)+10];
+    }
+    let thing, pos;
+    for (var i = 0; i < water.length; i++) {
+      thing=water[i];
+      pos=[thing[0], thing[1]];
+      for (var i = 0; i < thing[2]; i++) {
+        for (var j = 0; j < thing[2]; j++) {
+          if(Math.sqrt(i**2+j**2)<100)
+          {
+            world.map[Math.abs(pos[0]+i)][Math.abs(pos[1]+j)]=1;
+          }
+        }    
+      }
+    }
+    for(var i=0;i<size;i++)
+    {
+    	for(var j=0;j<size;j++)
+    	{
+    		if(world.map[i][j]==0)
+    		{
+    			if(Math.random()*100>60)
+    			{
+    				world.builds[i][j]=[3, builds[3].break, 0];
+    			}
+    		}
+    	}
+    }
     // console.log(water)
     document.getElementById('field').style.visibility='visible';
     document.getElementById('field').style.marginTop='0px';
