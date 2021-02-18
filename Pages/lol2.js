@@ -773,10 +773,8 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       pos=[thing[0], thing[1]];
       for (var i = 0; i < thing[2]; i++) {
         for (var j = 0; j < thing[2]; j++) {
-          if(Math.sqrt(i**2+j**2)<100)
-          {
             world.map[Math.abs(pos[0]+i)][Math.abs(pos[1]+j)]=1;
-          }
+          
         }    
       }
     }
