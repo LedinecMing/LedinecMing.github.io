@@ -766,19 +766,23 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     }
     let water=[[0 ,0, 100]];
     let size=2**value;
-    for (var i = 0; i < size/4; i++) {
-      water[water.length]=[random(size), random(size), random(80)+10];
+    for (var i = 1; i < size/4; i++) {
+      water[i]=[random(size), random(size), random(50)+10];
     }
     let thing, pos;
-    for (var i = 0; i < water.length; i++) {
+    for (var i = 0; i < water.length-1; i++) {
       thing=water[i];
+      if(thing===undefined)
+      {
+      	continue;
+      }
       pos=[thing[0], thing[1]];
-      console.log(thing)
-      for (var i = 0; i < thing[2]; i++) {
-        for (var j = 0; j < thing[2]; j++) {
-          if((i-thing/2)**2+(j-thing/2)**2<thing[2]**2)
+      for (var i = -thing[2]/2; i < thing[2]/2; i++) {
+        for (var j = -thing[2]/2; j < thing[2]/2; j++) {
+          if((i)**2+(j)**2<thing[2]/2**2)
           {
-            world.map[Math.abs(pos[0]+i)%size][Math.abs(pos[1]+j)%size]=1;
+            //console.log(Math.round(Math.abs(pos[0]+i)), Math.round(Math.abs(pos[1]+j))%size, j, i, pos)
+            world.map[Math.round(Math.abs(pos[0]+i)%size)][Math.round(Math.abs(pos[1]+j)%size)]=1;
           }
         }    
       }
