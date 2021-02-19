@@ -49,6 +49,7 @@ class Build
       for (var i = 0; i < anims; i++) {
         this.images[i]=new Image();
         this.images[i].src='../Images/builds'+num+''+i+'.png';
+        console.log(this.images[i].src)
       }
       // Если have_audio - true задаем this.audio[1] как Audio объект, который проигрывается при добыче объекта
       this.audio=[false];
@@ -233,24 +234,7 @@ function normal(x, y)
   // Нормализация координат
   tx=x;
   ty=y;
-  if(x<0)
-  {
-    tx=world.map.length+x;
-  }        
-  if(y<0)
-  {
-    ty=world.map.length+y;
-  }
-  if(x>world.map.length-1)
-  {
-    tx=x%world.map.length;
-  }
-  if(y>world.map.length-1)
-  {
-    ty=y%world.map.length;
-  }
-  return [x, y, tx, ty];
-}
+  return [x, y, Math.floor(Math.abs(world.map.length+x)%world.map.length), Math.floor(Math.abs(world.map.length+y)%world.map.length)];}
 let locate="main";
 let use = new Image();
 use.src="../Images/use.png"
@@ -766,12 +750,14 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         world.map[i][j]=0;
       }
     }
-    let water=[];
     let size=2**value;
-    for (var i = 1; i < size/2; i++) {
-      water[i]=[random(size), random(size), random(70)+10];
+    function gen(tile, min, max, rarity)
+    {
+    let water=[];
+    for (var i = 1; i < size/rarity; i++) {
+      water[i]=[random(size), random(size), random(max-min)+min];
     }
-    let thing, pos;
+    let thing, pos, setx, sety;
     for (var i = 0; i < water.length-1; i++) {
       thing=water[i];
       if(thing===undefined)
@@ -783,12 +769,16 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         for (var j = -thing[2]/2; j < thing[2]/2; j++) {
           if((i)**2+(j)**2<(thing[2]/2)**2)
           {
-            //console.log(Math.round(Math.abs(size+pos[0]+i)), Math.round(Math.abs(size+pos[1]+j))%size, j, i, pos)
-            world.map[Math.round(Math.abs(size+pos[0]+i)%size)][Math.round(Math.abs(size+pos[1]+j)%size)]=1;
+            setx=Math.floor(Math.abs(size+pos[0]+i)%size);
+            sety=Math.floor(Math.abs(size+pos[1]+i)%size);
+            world.map[setx][sety]=tile;
           }
         }    
       }
     }
+    }
+    gen(0, 10, 90, 1);
+    gen(3, 40, 70, 8)
     for(var i=0;i<size;i++)
     {
     	for(var j=0;j<size;j++)
@@ -807,7 +797,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     					world.builds[i][j]=[1, builds[1].break, 0];
     				}
     			}
-    			else if(Math.random()*100>90)
+    			else if(Math.random()*100>95)
     			{
     				 if(Math.random()*100>50)
     				 {
@@ -821,6 +811,21 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     				 {
     				 	world.builds[i][j]=[8, builds[8].break, 0];
     				 }
+    			}
+    		}
+    		else if(world.map[i][j]==3)
+    		{
+    			if(Math.random()*100>50)
+    		  {
+    			  world.builds[i][j]=[2, builds[2].break, 0];
+    			}
+    			else if(Math.random()*100>60)
+    			{
+    				world.builds[i][j]=[7, builds[7].break, 0];
+    			}
+    			else
+    			{
+    				world.builds[i][j]=[8, builds[8].break, 0];
     			}
     		}
     	}
