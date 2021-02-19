@@ -778,11 +778,18 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     }
     }
     gen(1, 10, 90, 1);
-    gen(3, 40, 70, 2)
+    gen(3, 40, 70, 2);
+    let w=0;
     for(var i=0;i<size;i++)
     {
     	for(var j=0;j<size;j++)
     	{
+    	  if(world.map[i][j]==1)
+    	  {
+    	  	w++;
+    	  	world.players[myname].x=i*128;
+    	  	world.players[myname].y=j*128;
+    	  }
     		if(world.map[i][j]==0)
     		{
     			if(Math.random()*100>60)
@@ -830,6 +837,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     		}
     	}
     }document.getElementById('field').style.visibility='visible';
+    console.log(w)
     document.getElementById('field').style.marginTop='0px';
     document.onkeydown = keyPress;
     document.onmousedown = mousedown;
