@@ -245,7 +245,7 @@ canvas.height = window.innerHeight-10;
 // Анимации игрока
 let anims =[new Image(), new Image(), new Image(), new Image()];
 // Плитки
-let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2)];
+let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3)];
 // Предметы
 // num, item_name, specific, type
 let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
