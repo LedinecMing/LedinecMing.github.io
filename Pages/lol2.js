@@ -764,9 +764,9 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         world.map[i][j]=0;
       }
     }
-    let water=[];
+    let water=[[0 ,0, 100]];
     let size=2**value;
-    for (var i = 0; i < size/8; i++) {
+    for (var i = 0; i < size/2; i++) {
       water[water.length]=[random(size), random(size), random(80)+10];
     }
     let thing, pos;
@@ -778,7 +778,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         for (var j = 0; j < thing[2]; j++) {
           if((i-thing/2)**2+(j-thing/2)**2<thing[2]**2)
           {
-            world.map[Math.round(Math.abs(pos[0]+i-thing[2]/2)%size)][Math.round(Math.abs(pos[1]+j-thing[2]/2)%size)]=1;
+            world.map[Math.abs(pos[0]+i)%size][Math.abs(pos[1]+j)%size]=1;
           }
         }    
       }
