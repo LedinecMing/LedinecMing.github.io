@@ -777,8 +777,8 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       }
     }
     }
-    gen(0, 10, 90, 1);
-    gen(3, 40, 70, 8)
+    gen(1, 10, 90, 1);
+    gen(3, 40, 70, 2)
     for(var i=0;i<size;i++)
     {
     	for(var j=0;j<size;j++)
