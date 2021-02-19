@@ -766,7 +766,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     }
     let water=[[0 ,0, 100]];
     let size=2**value;
-    for (var i = 0; i < size/2; i++) {
+    for (var i = 0; i < size/4; i++) {
       water[water.length]=[random(size), random(size), random(80)+10];
     }
     let thing, pos;
