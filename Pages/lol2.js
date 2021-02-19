@@ -739,14 +739,16 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     myname=document.getElementById('name').value;
     world.names=[myname];
     let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
+    let speed=16;
     if(myname=="ledinec")
     {
       inventory[0]=[1, 99];
       inventory[1]=[4, 99];
       inventory[2]=[15, 99];
       inventory[3]=[13, 99];
+      speed=64;
     }
-    world.players[myname]=new Player(0, 0, 0, 0, inventory, 16, 1);
+    world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 1);
     let value=document.getElementById("size_pow").value;
     window.hat=document.getElementById('hat').value;
     document.getElementById('start').remove();
@@ -774,7 +776,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       console.log(thing)
       for (var i = 0; i < thing[2]; i++) {
         for (var j = 0; j < thing[2]; j++) {
-          if(i**2+j**2<(Math.random()*thing[2])**2)
+          if(i**2+j**2<thing[2]**2)
           {
             world.map[Math.round(Math.abs(pos[0]+i-thing[2]/2)%size)][Math.round(Math.abs(pos[1]+j-thing[2]/2)%size)]=1;
           }
@@ -805,7 +807,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     				 {
     				 	 world.builds[i][j]=[2, builds[2].break, 0];
     				 }
-    				 else if(Math.random()*100>50)
+    				 else if(Math.random()*100>60)
     				 {
     				 	 world.builds[i][j]=[7, builds[7].break, 0];
     				 }
