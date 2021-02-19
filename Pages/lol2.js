@@ -764,9 +764,9 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         world.map[i][j]=0;
       }
     }
-    let water=[[0 ,0, 100]];
+    let water=[[0 ,0, 30]];
     let size=2**value;
-    for (var i = 1; i < size/4; i++) {
+    for (var i = 1; i < size/64; i++) {
       water[i]=[random(size), random(size), random(50)+10];
     }
     let thing, pos;
@@ -779,10 +779,11 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       pos=[thing[0], thing[1]];
       for (var i = -thing[2]/2; i < thing[2]/2; i++) {
         for (var j = -thing[2]/2; j < thing[2]/2; j++) {
-          if((i)**2+(j)**2<thing[2]/2**2)
+        console.log((thing[2]/2)**2,i**2+j**2, i,j)
+          if((i)**2+(j)**2<(thing[2]/2)**2)
           {
-            //console.log(Math.round(Math.abs(pos[0]+i)), Math.round(Math.abs(pos[1]+j))%size, j, i, pos)
-            world.map[Math.round(Math.abs(pos[0]+i)%size)][Math.round(Math.abs(pos[1]+j)%size)]=1;
+            //console.log(Math.round(Math.abs(size+pos[0]+i)), Math.round(Math.abs(size+pos[1]+j))%size, j, i, pos)
+            world.map[Math.round(Math.abs(size+pos[0]+i)%size)][Math.round(Math.abs(size+pos[1]+j)%size)]=1;
           }
         }    
       }
