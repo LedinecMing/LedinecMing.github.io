@@ -805,7 +805,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     				 {
     				 	 world.builds[i][j]=[2, builds[2].break, 0];
     				 }
-    				 else if(Math.random()*100>80)
+    				 else if(Math.random()*100>50)
     				 {
     				 	 world.builds[i][j]=[7, builds[7].break, 0];
     				 }
