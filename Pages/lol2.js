@@ -706,7 +706,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       }
     }
     ctx.font="16px Arial";
-    ctx.fillText(tx+'/'+ty, canvas.width-64, 50)
+    ctx.fillText(tx+'/'+ty, canvas.width-32, 50)
   }
   function animations()
   {
