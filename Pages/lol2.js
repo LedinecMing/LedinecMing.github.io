@@ -770,7 +770,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           if((i)**2+(j)**2<(thing[2]/2)**2)
           {
             setx=Math.floor(Math.abs(size+pos[0]+i)%size);
-            sety=Math.floor(Math.abs(size+pos[1]+i)%size);
+            sety=Math.floor(Math.abs(size+pos[1]+j)%size);
             world.map[setx][sety]=tile;
           }
         }    
