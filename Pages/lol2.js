@@ -705,6 +705,8 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
       }
     }
+    ctx.font="16px Arial";
+    ctx.fillText(player.x/128+'/'+player.y/128, canvas.width-64, 50)
   }
   function animations()
   {
@@ -731,7 +733,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
       }
     }  
- 
+    
   }
   function start()
   {
