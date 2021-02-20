@@ -566,10 +566,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           }
           else if(builds[world.builds[tx][ty][0]].grown)
           {
-          	for(var i=0;i<builds[world.builds[tx][ty][0]].growDrop.length)
+          	for(var i=0;i<builds[world.builds[tx][ty][0]].growDrop.length;i++)
           	{
           		world.players[myname].add_item(builds[world.builds[tx][ty][0]].growDrop[i][1],builds[world.builds[tx][ty][0]].growDrop[i][0]);
-          		world.builds[tx][ty]=[builds[world.builds[tx][ty][0]].last,0,0]
+          		world.builds[tx][ty]=[builds[world.builds[tx][ty][0]].last,0,0];
           	}
           }
         }
