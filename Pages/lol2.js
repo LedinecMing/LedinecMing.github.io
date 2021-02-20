@@ -1,5 +1,5 @@
 let item_specifics={nothing:0, instrument:1, build:2};
-let build_specifics={storage:1};
+let build_specifics={storage:1, kust:2};
 class Item
 {
   constructor(num, item_name, specific, type)
@@ -63,6 +63,13 @@ class Build
       { 	
        	this.storage=specifics[1];
        	console.log(this.storage)
+      }
+      else if(specifics[0]==build_specifics.kust)
+      {
+      	this.growtime=specifics[2];
+      	this.grow=specifics[1];
+      	this.grown=specifics[3];
+      	this.last=specifics[4];
       }
     }
 }
@@ -250,7 +257,7 @@ let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1), new Til
 // num, item_name, specific, type
 let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
               new Item(2, 'Wooden axe', [1, 2], 0), 
-              new Item(3, "Wooden pickaxe", [1, 1], 1), new Item(4, "Stone", [0]),
+              new Item(3, "Wooden pickaxe", [1, 1], 1), new Item(4, "Stone", [0], 0),
               new Item(5,  'Table', [2, 4], 0), new Item(6, 'Stone axe', [1, 3], 0),
               new Item(7,'Stone pickaxe',[1, 2], 1), new Item(8, 'Chest', [2, 6], 0),
               new Item(9, 'Iron axe', [1, 4], 0), new Item(10, 'Iron pickaxe', [1, 3], 1),
@@ -258,7 +265,8 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
               new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
               new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
               new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
-              new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1]), 0]; 
+              new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1], 0), 
+              new Item(21, 'Berry bush', [2, 12], 0)]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
@@ -274,7 +282,8 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
 let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
-             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(0, 20, 11, 1, 0, 0, [[1, 20]], false, 0, [0])];
+             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [3, 12, 0, true, 11]),
+             new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [3, 12, 300*10, false, 12])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -710,10 +719,22 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         let ty=ts[3];
         let x=ts[0];
         let y=ts[1];
-        if(world.builds[tx][ty][0]>0)
+        let build=world.builds[tx][ty];
+        if(build[0]>0)
         {
-          let drawObject=builds[world.builds[tx][ty][0]];
-          world.builds[tx][ty][2]=(world.builds[tx][ty][2]+1)&drawObject.images.length; 
+          let drawObject=builds[build[0]];
+          if(!'grow' in drawObject)
+          {
+          		world.builds[tx][ty][2]=(build[2]+1)%drawObject.images.length; 
+          }
+          else if(!builds[build[0]].grown)
+          {
+        	  	world.builds[tx][ty][2]+=1;
+          		if(world.builds[tx][ty][2]<builds[build[0]])
+          		{
+          			world.builds[tx][ty]=[builds[build[0]].grow, 0, 0];
+          		}
+          }
         }
       }
     }  
