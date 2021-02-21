@@ -71,6 +71,7 @@ class Build
       	this.grown=specifics[3];
       	this.last=specifics[4];
       	this.growDrop=specifics[5];
+      	console.log(this.growtime);
       }
     }
 }
@@ -284,7 +285,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
              new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [3, 12, 0, true, 11, [[3, 20]]]),
-             new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [3, 12, 300, false, 12])];
+             new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 300, false, 12])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -732,16 +733,16 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         if(build[0]>0)
         {
           let drawObject=builds[build[0]];
-          if(!'grow' in drawObject)
+          if(!drawObject.growtime)
           {
-          		world.builds[tx][ty][2]=(build[2]+1)%drawObject.images.length; 
+         			world.builds[tx][ty][2]=(build[2]+1)%drawObject.images.length; 
           }
           else if(!builds[build[0]].grown)
           {
         	  	world.builds[tx][ty][2]+=1;
-          		if(world.builds[tx][ty][2]<builds[build[0]])
+          		if(world.builds[tx][ty][2]>builds[build[0]].growtime)
           		{
-          			world.builds[tx][ty]=[builds[build[0]].grow, 0, 0];
+          			world.builds[tx][ty]=[builds[build[0]].grow, builds[builds[build[0]].grow].break+1, 0];
           		}
           }
         }
@@ -873,5 +874,5 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     document.onkeydown = keyPress;
     document.onmousedown = mousedown;
     setInterval(cycle, 1);
-    setInterval(animations, 100)
+    setInterval(animations, 100);
   }
