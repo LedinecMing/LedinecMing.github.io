@@ -1,4 +1,4 @@
-let item_specifics={nothing:0, instrument:1, build:2};
+let item_specifics={nothing:0, instrument:1, build:2, food:3};
 let build_specifics={storage:1, kust:2};
 class Item
 {
@@ -24,6 +24,10 @@ class Item
     if(specific[0]==item_specifics.build)
     {
     		this.building=specific[1];
+    }
+    if(specific[0]==item_specifics.food)
+    {
+        this.food=specific[1];
     }
   }
 }
@@ -62,7 +66,6 @@ class Build
       if(specifics[0]==build_specifics.storage)
       { 	
        	this.storage=specifics[1];
-       	console.log(this.storage)
       }
       else if(specifics[0]==build_specifics.kust)
       {
@@ -71,7 +74,6 @@ class Build
       	this.grown=specifics[3];
       	this.last=specifics[4];
       	this.growDrop=specifics[5];
-      	console.log(this.growtime);
       }
     }
 }
@@ -98,7 +100,7 @@ class Player
           this.inventory[i][0]=item_num;
           this.inventory[i][1]+=nums;
           added=true;
-          return 1;
+          return true;
         }
       }
       
@@ -269,7 +271,7 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
             new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1], 0), 
             new Item(21, 'Berry bush', [2, 12], 0), new Item(22, 'Stone shovel', [1, 1], 4),
-            new Item(23, 'Iron shovel', [1, 2], 4)]; 
+            new Item(23, 'Iron shovel', [1, 2], 4), new Item(24, 'Kubok', [2, 13], 0)]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
@@ -288,7 +290,8 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
              new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), 
-             new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 3000, false, 12])];
+             new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 1200, false, 12]),
+             new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -303,6 +306,12 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       hats[i][j]=new Image();
       hats[i][j].src='../Images/hat'+i+''+j+'.png';
     }
+  }
+  let hunger=[];
+  for(var i=0; i<5; i++)
+  {
+    hunger[i]=new Image();
+    hunger[i].src='../Images/hunger'+i+'.png';
   }
   function random(n)
   {
@@ -464,9 +473,18 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
         else if(keyNum==69 && locate=='main')
         {
+          let player=world.players[myname];
+          if(items[player.inventory[player.selected][0]].food)
+          {
+            if(player.hunger+items[player.inventory[player.selected][0]].food<100)
+            {
+              world.players[myname].hunger+=items[player.inventory[player.selected][0]].food;
+              world.players[myname].remove_item(player.inventory[player.selected][0], 1);
+              return true;
+            }
+          }
           let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
           let tx=normalized[2];
-          let player=world.players[myname];
           let ty=normalized[3];
           if(!items[player.inventory[player.selected][0]].building)
           {
@@ -583,6 +601,16 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
     }
   }
+  function getHash(str)
+  {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        var character = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+character;
+        hash = hash & hash; // Convert to 32bit integer
+    }  
+    return hash;
+  }
   function cycle()
   {
     if(window.innerHeight!==canvas.height || window.innerWidth!==canvas.width)
@@ -639,11 +667,19 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         {
           let drawObject=builds[world.builds[tx][ty][0]];
           ctx.drawImage(drawObject.images[world.builds[tx][ty][2]%drawObject.images.length], x*128+canvas.width/2-world.players[myname].x, y*128+canvas.height/2-world.players[myname].y-drawObject.y); 
+          if(world.builds[tx][ty][0]==13)
+          {
+            ctx.textAlign='center';
+            ctx.font = "16px monospace";
+            ctx.fillStyle='rgb(255, 255, 0);';
+            // cool_people[code]
+            ctx.fillText(cool_people[code], x*128+canvas.width/2-world.players[myname].x+64, y*128+canvas.height/2-world.players[myname].y);
+          }
         }
       }
     }  
     player=world.players[myname];
-    ctx.font='32px Arial';
+    ctx.font='16px Arial';
     ctx.textAlign='center';
     ctx.fillText(myname ,canvas.width/2+64 ,canvas.height/2-10);
     ctx.drawImage(anims[player.anim%2+player.angle], canvas.width/2, canvas.height/2);
@@ -698,7 +734,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       for (var i=0; i<builds[world.builds[tx][ty][0]].storage; i++)
       {
         ctx.strokeRect(i*32+len, canvas.height/2, 32, 32);
-        ctx.font = "32px Arial";
+        ctx.font = "8px Arial";
         ctx.textAlign='center';
         if( i==player.selected )
         {
@@ -711,6 +747,9 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
       }
     }
+    ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
+    ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
+    ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
     ctx.font="16px Arial";
     ctx.fillText(tx+'/'+ty, canvas.width-32, 50)
   }
@@ -751,42 +790,56 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
       }
     }  
-    
   }
-  function start()
+  function fhunger() 
   {
-    document.getElementById('content').style.margin='0px';
+    world.players[myname].hunger-=1;
+    if(world.players[myname].hunger<0)
+    {
+      start(1);
+    }
+  }
+  function start(arg)
+  {
+    if(!arg)
+    {
+      code=getHash(document.getElementById('code').value);
+      document.getElementById('field').style.visibility='visible';
+      document.getElementById('field').style.marginTop='0px';
+      document.getElementById('content').style.margin='0px';
+      myname=document.getElementById('name').value;
+      value=document.getElementById("size_pow").value;
+      window.hat=document.getElementById('hat').value;
+      document.getElementById('start').remove();
+      size=2**value;
+    }
+    cool_people = {874305450:'Kovirum', 1427080407:'Edit', 479681963:'Drfiy'};
     ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
-    myname=document.getElementById('name').value;
     world.names=[myname];
     let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
     let speed=16;
-    if(myname=="ledinec")
+    if(myname=="ledinec")   
     {
-      inventory[0]=[1, 99];
-      inventory[1]=[4, 99];
-      inventory[2]=[15, 99];
-      inventory[4]=[21,10];
-      inventory[3]=[13, 99];
       speed=64;
     }
-    world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 1);
-    let value=document.getElementById("size_pow").value;
-    window.hat=document.getElementById('hat').value;
-    document.getElementById('start').remove();
+    if(code in cool_people)
+    {
+      inventory[0]=[24, 1];
+    }
+    world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 99);
     world.map=[];
     world.builds=[];
-    for (var i = 0; i < 2**value; i++)
+    for (var i = 0; i < size; i++)
     {
       world.map[i]=[];
       world.builds[i]=[100, 0, 0];
-      for (var j = 0; j < 2**value;  j++)
+      for (var j = 0; j < size;  j++)
       {
         world.builds[i][j]=[0,0];
         world.map[i][j]=0;
       }
     }
-    let size=2**value;
+    
     function gen(tile, min, max, rarity)
     {
       let water=[];
@@ -812,11 +865,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           }    
         }
       }
-      console.log(water, tile)
     }
-    gen(1, 10, 90, 1);
-    gen(3, 40, 70, 2);
-    gen(2, 40, 100, 4);
+    gen(1, 10, 90, 1, size);
+    gen(3, 40, 70, 2, size);
+    gen(2, 40, 100, 4, size);
     let w=0;
     for(var i=0;i<size;i++)
     {
@@ -900,11 +952,12 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         }
     	}
     }
-    document.getElementById('field').style.visibility='visible';
     console.log(w)
-    document.getElementById('field').style.marginTop='0px';
     document.onkeydown = keyPress;
     document.onmousedown = mousedown;
     setInterval(cycle, 1);
     setInterval(animations, 100);
+    setInterval(fhunger, 3000);
+    canvas.height=window.innerHeight-10;
+    canvas.width=window.innerWidth-10;
   }
