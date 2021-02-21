@@ -258,17 +258,18 @@ let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1), new Til
 // Предметы
 // num, item_name, specific, type
 let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
-              new Item(2, 'Wooden axe', [1, 2], 0), 
-              new Item(3, "Wooden pickaxe", [1, 1], 1), new Item(4, "Stone", [0], 0),
-              new Item(5,  'Table', [2, 4], 0), new Item(6, 'Stone axe', [1, 3], 0),
-              new Item(7,'Stone pickaxe',[1, 2], 1), new Item(8, 'Chest', [2, 6], 0),
-              new Item(9, 'Iron axe', [1, 4], 0), new Item(10, 'Iron pickaxe', [1, 3], 1),
-              new Item(11, 'Golden axe', [1, 5], 0), new Item(12, 'Golden pickaxe', [1, 4], 1),
-              new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
-              new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
-              new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
-              new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1], 0), 
-              new Item(21, 'Berry bush', [2, 12], 0)]; 
+            new Item(2, 'Wooden axe', [1, 2], 0), 
+            new Item(3, "Wooden pickaxe", [1, 1], 1), new Item(4, "Stone", [0], 0),
+            new Item(5,  'Table', [2, 4], 0), new Item(6, 'Stone axe', [1, 3], 0),
+            new Item(7,'Stone pickaxe',[1, 2], 1), new Item(8, 'Chest', [2, 6], 0),
+            new Item(9, 'Iron axe', [1, 4], 0), new Item(10, 'Iron pickaxe', [1, 3], 1),
+            new Item(11, 'Golden axe', [1, 5], 0), new Item(12, 'Golden pickaxe', [1, 4], 1),
+            new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
+            new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
+            new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
+            new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1], 0), 
+            new Item(21, 'Berry bush', [2, 12], 0), new Item(22, 'Stone shovel', [1, 1], 4),
+            new Item(23, 'Iron shovel', [1, 2], 4)]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
@@ -276,16 +277,18 @@ let hats =[];
 let walls={11:true};
 // Крафты
 let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
-              new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), new Craft([[1, 10]], 0, [8 ,1]),
-              new Craft([[4, 10]], 4, [14, 1]), new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
+              new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), 
+              new Craft([[1, 10]], 0, [8 ,1]), new Craft([[4, 10]], 4, [14, 1]), 
+              new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
               new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1]),
-              new Craft([[1, 4], [16, 2]], 4, [18, 1])];
+              new Craft([[1, 4], [16, 2]], 4, [18, 1]), new Craft([[1, 10], [4, 5]], 4, [22, 1]), 
+              new Craft([[22, 1], [1, 15], [4, 10], [16, 5]], 10, [23, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
-             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 11, [[3, 20]]]),
-             new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 3000, false, 12])];
+             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), 
+             new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 3000, false, 12])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -469,11 +472,6 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           {
             if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
-              
-              if(builds[world.builds[tx][ty][0]].audio[0])
-              {
-                builds[world.builds[tx][ty][0]].audio[1].play();
-              }
               if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
               {       
                 let drop=builds[world.builds[tx][ty][0]].drops;
@@ -485,6 +483,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
               }
               else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
                 world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
+                if(builds[world.builds[tx][ty][0]].audio[0])
+                {
+                  builds[world.builds[tx][ty][0]].audio[1].play();
+                }
               }            
             }
           }
@@ -561,16 +563,17 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           let ty=ts[3];
           let x=ts[0];
           let y=ts[1];
-          if(builds[world.builds[tx][ty][0]].storage)
+          let build=builds[world.builds[tx][ty][0]];
+          if(build.storage)
           {
             locate='chest';
           }
-          else if(builds[world.builds[tx][ty][0]].grown)
+          else if(build.grown)
           {
-          	for(var i=0;i<builds[world.builds[tx][ty][0]].growDrop.length;i++)
+          	for(var i=0;i<build.growDrop.length;i++)
           	{
-          		world.players[myname].add_item(builds[world.builds[tx][ty][0]].growDrop[i][1],builds[world.builds[tx][ty][0]].growDrop[i][0]);
-          		world.builds[tx][ty]=[builds[world.builds[tx][ty][0]].last,0,0];
+          		world.players[myname].add_item(build.growDrop[i][1],build.growDrop[i][0]);
+          		world.builds[tx][ty]=[build.last, builds[build.last].break,0];
           	}
           }
         }
@@ -752,6 +755,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
   }
   function start()
   {
+    document.getElementById('content').style.margin='0px';
     ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
     myname=document.getElementById('name').value;
     world.names=[myname];
@@ -785,32 +789,34 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     let size=2**value;
     function gen(tile, min, max, rarity)
     {
-    let water=[];
-    for (var i = 1; i < size/rarity; i++) {
-      water[i]=[random(size), random(size), random(max-min)+min];
-    }
-    let thing, pos, setx, sety;
-    for (var i = 0; i < water.length-1; i++) {
-      thing=water[i];
-      if(thing===undefined)
-      {
-      	continue;
+      let water=[];
+      for (var i = 1; i < size/rarity; i++) {
+        water[i]=[random(size), random(size), random(max-min)+min];
       }
-      pos=[thing[0], thing[1]];
-      for (var i = -thing[2]/2; i < thing[2]/2; i++) {
-        for (var j = -thing[2]/2; j < thing[2]/2; j++) {
-          if((i)**2+(j)**2<(thing[2]/2)**2)
-          {
-            setx=Math.floor(Math.abs(size+pos[0]+i)%size);
-            sety=Math.floor(Math.abs(size+pos[1]+j)%size);
-            world.map[setx][sety]=tile;
-          }
-        }    
+      let thing, pos, setx, sety;
+      for (var i = 0; i < water.length-1; i++) {
+        thing=water[i];
+        if(thing===undefined)
+        {
+        	continue;
+        }
+        pos=[thing[0], thing[1]];
+        for (var i = -thing[2]/2; i < thing[2]/2; i++) {
+          for (var j = -thing[2]/2; j < thing[2]/2; j++) {
+            if((i)**2+(j)**2<(thing[2]/2)**2)
+            {
+              setx=Math.floor(Math.abs(size+pos[0]+i)%size);
+              sety=Math.floor(Math.abs(size+pos[1]+j)%size);
+              world.map[setx][sety]=tile;
+            }
+          }    
+        }
       }
-    }
+      console.log(water, tile)
     }
     gen(1, 10, 90, 1);
     gen(3, 40, 70, 2);
+    gen(2, 40, 100, 4);
     let w=0;
     for(var i=0;i<size;i++)
     {
@@ -823,7 +829,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     	  	world.players[myname].y=j*128;
     	  }
     		if(world.map[i][j]==0)
-    		{
+        {
     			if(Math.random()*100>60)
     			{
     				world.builds[i][j]=[3, builds[3].break, 0];
@@ -851,8 +857,15 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     				 	world.builds[i][j]=[8, builds[8].break, 0];
     				 }
     			}
+          if(Math.random()*100==1)
+          {
+            if(Math.random()*100>60)
+            {
+              world.builds[i][j]=[11, builds[11].break, 0];
+            }
+          }
     		}
-    		else if(world.map[i][j]==3)
+    		if(world.map[i][j]==3)
     		{
     			if(Math.random()*100>50)
     		  {
@@ -867,8 +880,27 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     				world.builds[i][j]=[8, builds[8].break, 0];
     			}
     		}
+        else if(world.map[i][j]==2)
+        {
+          if(Math.random()*100>90)
+          {
+            world.builds[i][j]=[3, builds[3].break, 0];
+          }
+          if(Math.random()*100>90)
+          {
+            world.builds[i][j]=[1, builds[1].break, 0];
+          }
+          else if(Math.random()*100>90)
+          {
+            if(Math.random()*100>50)
+            {
+              world.builds[i][j]=[11, builds[11].break, 0];
+            }
+          }
+        }
     	}
-    }document.getElementById('field').style.visibility='visible';
+    }
+    document.getElementById('field').style.visibility='visible';
     console.log(w)
     document.getElementById('field').style.marginTop='0px';
     document.onkeydown = keyPress;
