@@ -284,8 +284,8 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
 let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
-             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [3, 12, 0, true, 11, [[3, 20]]]),
-             new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 300, false, 12])];
+             new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 11, [[3, 20]]]),
+             new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 3000, false, 12])];
   // Установка анимаций игрока
   for (var i = 0; i < 4; i++) 
   {
@@ -742,7 +742,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
         	  	world.builds[tx][ty][2]+=1;
           		if(world.builds[tx][ty][2]>builds[build[0]].growtime)
           		{
-          			world.builds[tx][ty]=[builds[build[0]].grow, builds[builds[build[0]].grow].break+1, 0];
+          			world.builds[tx][ty]=[builds[build[0]].grow, builds[builds[build[0]].grow].break, 0];
           		}
           }
         }
