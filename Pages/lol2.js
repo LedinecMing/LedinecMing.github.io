@@ -271,7 +271,9 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
             new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1], 0), 
             new Item(21, 'Berry bush', [2, 12], 0), new Item(22, 'Stone shovel', [1, 1], 4),
-            new Item(23, 'Iron shovel', [1, 2], 4), new Item(24, 'Kubok', [2, 13], 0)]; 
+            new Item(23, 'Iron shovel', [1, 2], 4), new Item(24, 'Kubok', [2, 13], 0),
+            new Item(25, 'Mushroom', [3, 2], 0), new Item(26, 'Fried Mushroom', [3, 5], 0),
+            new Item(27, 'Campfire', [2, 16], 0)]; 
 let world=new World([], [], [], []);  
 // Шляпы
 let hats =[];
@@ -284,49 +286,54 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
               new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
               new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1]),
               new Craft([[1, 4], [16, 2]], 4, [18, 1]), new Craft([[1, 10], [4, 5]], 4, [22, 1]), 
-              new Craft([[22, 1], [1, 15], [4, 10], [16, 5]], 10, [23, 1])];
+              new Craft([[22, 1], [1, 15], [4, 10], [16, 5]], 10, [23, 1]), new Craft([[1, 4]], 9, [13, 1]),
+              new Craft([[25, 4], [13, 1]], 9, [26, 4]), new Craft([[1, 10]], 0, [27, 1]),
+              new Craft([[1, 4]], 16, [13, 1]), new Craft([[1, 2], [25, 1]], 16, [26, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
-let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
+let builds=[0, 
+             new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
              new Build(0, 20, 4, 1, 0, 0, [[1, 5]], false, 0, [0]), new Build(7, 30, 5, 1,  0, 128, [[]], false, 0, [0]), new Build(0, 30, 6, 1, 0, 0, [[1, 8]], false, 0, [1, 10]),
              new Build(1, 40, 7, 1, 0, 0, [[1, 15]], true, 1, [0]), new Build(1, 40, 8, 1, 0, 0, [[1, 13]], false, 1, [0]),
              new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), 
-             new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 1200, false, 12]),
-             new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0])];
-  // Установка анимаций игрока
-  for (var i = 0; i < 4; i++) 
+             new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 600, false, 12]),
+             new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0]), new Build(0, 20, 14, 1, 0, 0, [[1, 25]], false, 0, [0]),
+             new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16])];
+// Установка анимаций игрока
+for (var i = 0; i < 4; i++) 
+{
+  anims[i].src='../Images/white'+i+'.png';
+}  
+// Установка шляп
+for (var i=0; i<8; i++)
+{
+  hats[i]=[];
+  for (var j=0; j<2; j++)
   {
-    anims[i].src='../Images/white'+i+'.png';
-  }  
-  // Установка шляп
-  for (var i=0; i<8; i++)
-  {
-    hats[i]=[];
-    for (var j=0; j<2; j++)
-    {
-      hats[i][j]=new Image();
-      hats[i][j].src='../Images/hat'+i+''+j+'.png';
-    }
+    hats[i][j]=new Image();
+    hats[i][j].src='../Images/hat'+i+''+j+'.png';
   }
-  let hunger=[];
-  for(var i=0; i<5; i++)
-  {
-    hunger[i]=new Image();
-    hunger[i].src='../Images/hunger'+i+'.png';
-  }
-  function random(n)
-  {
-    // Функция рандома от 0 до n
-    return Math.round(Math.random()*n)
-  }
-  function mousedown(e)
-  {
-    // Обработка нажатий мышью
-    let player=world.players[myname];
-    let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
-    let tx=normalized[2];
-    let ty=normalized[3];
-    // Обработка кнопки use
-    if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
+}
+let hunger=[];
+for(var i=0; i<5; i++)
+{
+  hunger[i]=new Image();
+  hunger[i].src='../Images/hunger'+i+'.png';
+}
+function random(n)
+{
+  // Функция рандома от 0 до n
+  return Math.round(Math.random()*n)
+}
+function mousedown(e)
+{
+  // Обработка нажатий мышью
+  let player=world.players[myname];
+  let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
+  let tx=normalized[2];
+  let ty=normalized[3];
+  // Обработка кнопки use
+
+  if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
     {
       let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
           let tx=normalized[2];
@@ -672,7 +679,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
             ctx.textAlign='center';
             ctx.font = "16px monospace";
             ctx.fillStyle='rgb(255, 255, 0);';
-            // cool_people[code]
+            const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай'};
             ctx.fillText(cool_people[code], x*128+canvas.width/2-world.players[myname].x+64, y*128+canvas.height/2-world.players[myname].y);
           }
         }
@@ -751,6 +758,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
     ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
     ctx.font="16px Arial";
+    ctx.fillStyle='black';
     ctx.fillText(tx+'/'+ty, canvas.width-32, 50)
   }
   function animations()
@@ -813,16 +821,12 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       document.getElementById('start').remove();
       size=2**value;
     }
-    cool_people = {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy'};
+    
     ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
     world.names=[myname];
     let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
     let speed=16;
-    if(myname=="ledinec")   
-    {
-      speed=64;
-    }
-    if(code in cool_people)
+    if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай'})
     {
       inventory[0]=[24, 1];
     }
@@ -894,6 +898,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     					world.builds[i][j]=[1, builds[1].break, 0];
     				}
     			}
+          else if(Math.random()*100>93)
+          {
+            world.builds[i][j]=[14, builds[14].break, 0];
+          }
     			else if(Math.random()*100>95)
     			{
     				 if(Math.random()*100>50)
@@ -944,10 +952,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           }
           else if(Math.random()*100>90)
           {
-
-
+            if(Math.random()*100>50)
+            {
               world.builds[i][j]=[11, builds[11].break, 0];
-            
+            }
           }
         }
     	}
