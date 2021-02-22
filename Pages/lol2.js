@@ -944,10 +944,10 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
           }
           else if(Math.random()*100>90)
           {
-            if(Math.random()*100>50)
-            {
+
+
               world.builds[i][j]=[11, builds[11].break, 0];
-            }
+            
           }
         }
     	}
