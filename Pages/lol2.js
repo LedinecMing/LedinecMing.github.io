@@ -957,7 +957,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
     document.onmousedown = mousedown;
     setInterval(cycle, 1);
     setInterval(animations, 100);
-    setInterval(fhunger, 3000);
+    setInterval(fhunger, 5000);
     canvas.height=window.innerHeight-10;
     canvas.width=window.innerWidth-10;
   }
