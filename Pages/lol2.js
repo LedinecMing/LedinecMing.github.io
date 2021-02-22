@@ -813,7 +813,7 @@ let builds=[0, new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build
       document.getElementById('start').remove();
       size=2**value;
     }
-    cool_people = {874305450:'Kovirum', 1427080407:'Edit', 479681963:'Drfiy'};
+    cool_people = {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy'};
     ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
     world.names=[myname];
     let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
