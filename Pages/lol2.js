@@ -539,7 +539,7 @@ function mousedown(e)
           let tx=normalized[2];
           let player=world.players[myname];
           let ty=normalized[3];
-          if(world.builds[tx][ty][0]!==0)
+          if(world.builds[tx][ty][0]!==0 && world.builds[tx][ty].length)
           {
             if(world.builds[tx][ty][3][player.selected][0]!==0)
             {
