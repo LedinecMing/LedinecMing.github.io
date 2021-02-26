@@ -78,44 +78,54 @@ class Build
       }
     }
 }
-class Player
+class Mob
+{
+  constructor(speed, hp, num, drop, x, y)
   {
-    constructor(ange, aim, nx, ny, new_inventory, new_speed, new_hunger)
+    this.speed=speed;
+    this.hp=hp;
+    this.num=num;
+    this.drop=drop;
+    this.x=x;
+    this.y=y;
+  }
+}
+class Player
+{
+  constructor(ange, aim, nx, ny, new_inventory, new_speed, new_hunger)
+  {
+    this.angle=ange;
+    this.anim=aim;
+    this.selected=0;
+    this.x=nx
+    this.y=ny;
+    this.speed=new_speed;
+    this.hunger=new_hunger;
+    this.inventory=new_inventory;
+  }
+  add_item(item_num, nums)
+  {
+    let added=false;
+    for( var i=0; i<this.inventory.length;i++)
     {
-      this.angle=ange;
-      this.anim=aim;
-      this.selected=0;
-      this.x=nx
-      this.y=ny;
-      this.speed=new_speed;
-      this.hunger=new_hunger;
-      this.inventory=new_inventory;
-    }
-    add_item(item_num, nums)
-    {
-      let added=false;
-      for( var i=0; i<this.inventory.length;i++)
+      if(this.inventory[i][1]<100-nums && this.inventory[i][0]==item_num )
       {
-        if(this.inventory[i][1]<100-nums && this.inventory[i][0]==item_num )
-        {
-          this.inventory[i][0]=item_num;
-          this.inventory[i][1]+=nums;
-          added=true;
-          return true;
-        }
+        this.inventory[i][0]=item_num;
+        this.inventory[i][1]+=nums;
+        added=true;
+        return true;
       }
-      
-      for( var i=0; i<this.inventory.length;i++)
-        {
-          if(this.inventory[i][0]==0)
-          {
-            this.inventory[i][0]=item_num;
-            this.inventory[i][1]+=nums;
-            return true;
-          }
-        }
-      
-      return false;
+    }  
+    for( var i=0; i<this.inventory.length;i++)
+    {
+      if(this.inventory[i][0]==0)
+      {
+        this.inventory[i][0]=item_num;
+        this.inventory[i][1]+=nums;
+        return true;
+      }
+    }
+    return false;
   }
   remove_item(item_num, nums)
   {
@@ -149,12 +159,13 @@ class Player
 }
 class World
 {
-	constructor(new_map, new_players, new_players_names, new_builds)
+	constructor(new_map, new_players, new_players_names, new_builds, new_mobs)
 	{
     this.map=new_map;
     this.players=new_players;
     this.names=new_players_names;
     this.builds=new_builds;
+    this.mobs=new_mobs;
   }
 }
 class Craft
@@ -275,7 +286,7 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(23, 'Iron shovel', [1, 2], 4), new Item(24, 'Kubok', [2, 13], 0),
             new Item(25, 'Mushroom', [3, 2], 0), new Item(26, 'Fried Mushroom', [3, 5], 0),
             new Item(27, 'Campfire', [2, 16], 0)]; 
-let world=new World([], [], [], []);  
+let world=new World([], [], [], [], []);  
 // Шляпы
 let hats =[];
 // Список номеров Builds объектов которые являются стенамм
@@ -1001,7 +1012,7 @@ function keyCycle()
     setInterval(cycle, 1);
     setInterval(animations, 100);
     setInterval(fhunger, 5000);
-    setInterval(keyCycle, 90)
+    setInterval(keyCycle, 100)
     canvas.height=window.innerHeight-10;
     canvas.width=window.innerWidth-10;
   }
