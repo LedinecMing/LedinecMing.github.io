@@ -1,5 +1,6 @@
 let item_specifics={nothing:0, instrument:1, build:2, food:3};
 let build_specifics={storage:1, kust:2};
+let keys={87:false, 83:false, 65:false, 68:false, 69:false, 70:false};
 class Item
 {
   constructor(num, item_name, specific, type)
@@ -408,206 +409,239 @@ function mousedown(e)
   function keyPress(e) 
   {
     let keyNum;
-    if (window.event) {
-        keyNum = window.event.keyCode;
-        let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-        let tx=normalized[2];
-        let player=world.players[myname];
-        let ty=normalized[3];
-        speed=world.players[myname].speed*tiles[world.map[normalized[2]][normalized[3]]].speed;
-
-        if(keyNum==87)
+    if (window.event) 
+    {
+      keyNum = window.event.keyCode;
+      if(keyNum in keys)
+      {
+        keys[keyNum]=true;
+        return;
+      }
+      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+      let tx=normalized[2];
+      let player=world.players[myname];
+      let ty=normalized[3];
+      if(keyNum<58 && keyNum>47 && locate=='main')
+      {
+        let digit=keyNum%48-1;
+        if(digit<0)
         {
-          world.players[myname].y-=speed;
-          world.players[myname].anim+=1;
-          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
-          let tx=ts[2];
-          let ty=ts[3];
-          let x=ts[0];
-          let y=ts[1];
-          if(tiles[world.map[tx][ty]].audio[0])
-          {
-            tiles[world.map[tx][ty]].audio[1].play();
-          }
-
+          digit=9;
         }
-        else if(keyNum==83)
+        world.players[myname].selected=digit;
+      }
+      else if(keyNum<58 && keyNum>47 && locate=='chest')
+      {
+        let digit=keyNum%48-1;
+        if(world.builds[tx][ty][3])
         {
-          world.players[myname].y+=speed;
-          world.players[myname].anim+=1;          
-          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
-          let tx=ts[2];
-          let ty=ts[3];
-          let x=ts[0];
-          let y=ts[1];
-          if(tiles[world.map[tx][ty]].audio[0])
-          {
-            tiles[world.map[tx][ty]].audio[1].play();
-          }
-
-        }
-        else if(keyNum==65)
-        {
-          world.players[myname].x-=speed;
-          world.players[myname].anim+=1;
-          world.players[myname].angle=0;          
-          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
-          let tx=ts[2];
-          let ty=ts[3];
-          let x=ts[0];
-          let y=ts[1];
-          if(tiles[world.map[tx][ty]].audio[0])
-          {
-            tiles[world.map[tx][ty]].audio[1].play();
-          }
-
-        }
-        else if(keyNum==68)
-        {
-
-          world.players[myname].x+=speed;
-          world.players[myname].anim+=1;
-          world.players[myname].angle=2;          
-          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
-          let tx=ts[2];
-          let ty=ts[3];
-          let x=ts[0];
-          let y=ts[1];
-          if(tiles[world.map[tx][ty]].audio[0])
-          {
-            tiles[world.map[tx][ty]].audio[1].play();
-          }
-        }
-        else if(keyNum==69 && locate=='main')
-        {
-          let player=world.players[myname];
-          if(items[player.inventory[player.selected][0]].food)
-          {
-            if(player.hunger+items[player.inventory[player.selected][0]].food<100)
-            {
-              world.players[myname].hunger+=items[player.inventory[player.selected][0]].food;
-              world.players[myname].remove_item(player.inventory[player.selected][0], 1);
-              return true;
-            }
-          }
-          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-          let tx=normalized[2];
-          let ty=normalized[3];
-          if(!items[player.inventory[player.selected][0]].building)
-          {
-            if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
-            {
-              if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
-              {       
-                let drop=builds[world.builds[tx][ty][0]].drops;
-                for(var i=0;i<drop.length;i++)
-                {
-               	 player.add_item(drop[i][1], drop[i][0]);
-              	   world.builds[tx][ty]=[0, 0, 0];  
-              	  } 
-              }
-              else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
-                world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
-                if(builds[world.builds[tx][ty][0]].audio[0])
-                {
-                  builds[world.builds[tx][ty][0]].audio[1].play();
-                }
-              }            
-            }
-          }
-          else
-          {
-            let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-            let tx=normalized[2];
-            let player=world.players[myname];
-            let ty=normalized[3];
-            if(world.builds[tx][ty][0]==0)
-            {
-              let storage=[];
-              for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
-              {
-                storage[i]=[0,0];
-              }
-              world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
-              player.remove_item(player.inventory[player.selected][0], 1); 
-            }
-          }
-        }
-        else if(keyNum==69 && locate=='chest')
-        {
-          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-          let tx=normalized[2];
-          let player=world.players[myname];
-          let ty=normalized[3];
-          if(world.builds[tx][ty][0]!==0 && world.builds[tx][ty][3]!=undefined)
-          {
-            if(world.builds[tx][ty][3][player.selected][0]!==0)
-            {
-              if(player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1]))
-              {
-                world.builds[tx][ty][3][player.selected]=[0, 0];
-              } 
-            }
-            else
-            {
-              if(player.inventory[player.selected][0]!==0)
-              {
-                world.builds[tx][ty][3][player.selected]=[player.inventory[player.selected][0], player.inventory[player.selected][1]];
-                player.remove_item(player.inventory[player.selected][0], player.inventory[player.selected][1]);
-              }
-            }
-          }
-        }
-        else if(keyNum<58 && keyNum>47 && locate=='main')
-        {
-          let digit=keyNum%48-1;
           if(digit<0)
           {
-            digit=9;
+            digit=world.builds[tx][ty][3].length-1;
           }
           world.players[myname].selected=digit;
         }
-        else if(keyNum<58 && keyNum>47 && locate=='chest')
+      }
+    }
+  }  
+  function execKey(keyNum)
+  {
+    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+    let tx=normalized[2];
+    let player=world.players[myname];
+    let ty=normalized[3];
+    speed=world.players[myname].speed*tiles[world.map[normalized[2]][normalized[3]]].speed;
+    if(keyNum==87)
+    {
+      world.players[myname].y-=speed;
+      world.players[myname].anim+=1;
+      let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+      let tx=ts[2];
+      let ty=ts[3];
+      let x=ts[0];
+      let y=ts[1];
+      if(tiles[world.map[tx][ty]].audio[0])
+      {
+        tiles[world.map[tx][ty]].audio[1].play();
+      }
+    }
+    else if(keyNum==83)
+    {
+      world.players[myname].y+=speed;
+      world.players[myname].anim+=1;          
+      let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+      let tx=ts[2];
+      let ty=ts[3];
+      let x=ts[0];
+      let y=ts[1];
+      if(tiles[world.map[tx][ty]].audio[0])
+      {
+        tiles[world.map[tx][ty]].audio[1].play();
+      }
+    }
+    else if(keyNum==65)
+    {
+      world.players[myname].x-=speed;
+      world.players[myname].anim+=1;
+      world.players[myname].angle=0;          
+      let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+      let tx=ts[2];
+      let ty=ts[3];
+      let x=ts[0];
+      let y=ts[1];
+      if(tiles[world.map[tx][ty]].audio[0])
+      {
+        tiles[world.map[tx][ty]].audio[1].play();
+      }
+    }
+    else if(keyNum==68)
+    {
+
+      world.players[myname].x+=speed;
+      world.players[myname].anim+=1;
+      world.players[myname].angle=2;          
+      let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+      let tx=ts[2];
+      let ty=ts[3];
+      let x=ts[0];
+      let y=ts[1];
+      if(tiles[world.map[tx][ty]].audio[0])
+      {
+        tiles[world.map[tx][ty]].audio[1].play();
+      }
+    }
+    else if(keyNum==69 && locate=='main')
+    {
+      let player=world.players[myname];
+      if(items[player.inventory[player.selected][0]].food)
+      {
+        if(player.hunger+items[player.inventory[player.selected][0]].food<100)
         {
-          let digit=keyNum%48-1;
-          if(world.builds[tx][ty][3])
-          {
-            if(digit<0)
+          world.players[myname].hunger+=items[player.inventory[player.selected][0]].food;
+          world.players[myname].remove_item(player.inventory[player.selected][0], 1);
+          return true;
+        }
+      }
+      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+      let tx=normalized[2];
+      let ty=normalized[3];
+      if(!items[player.inventory[player.selected][0]].building)
+      {
+        if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
+        {
+          if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
+          {       
+            let drop=builds[world.builds[tx][ty][0]].drops;
+            for(var i=0;i<drop.length;i++)
             {
-              digit=world.builds[tx][ty][3].length-1;
-            }
-            world.players[myname].selected=digit;
+             player.add_item(drop[i][1], drop[i][0]);
+               world.builds[tx][ty]=[0, 0, 0];  
+              } 
           }
-        }
-        else if(keyNum==70 && locate=='main')
-        { 
-          let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
-          let player=world.players[myname];         
-          let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
-          let tx=ts[2];
-          let ty=ts[3];
-          let x=ts[0];
-          let y=ts[1];
-          let build=builds[world.builds[tx][ty][0]];
-          if(build.storage)
+          else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
+          world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
+          if(builds[world.builds[tx][ty][0]].audio[0])
           {
-            locate='chest';
+            builds[world.builds[tx][ty][0]].audio[1].play();
           }
-          else if(build.grown)
-          {
-          	for(var i=0;i<build.growDrop.length;i++)
-          	{
-          		world.players[myname].add_item(build.growDrop[i][1],build.growDrop[i][0]);
-          		world.builds[tx][ty]=[build.last, builds[build.last].break,0];
-          	}
-          }
-        }
-        else if(keyNum==70 && locate=='chest')
+        }            
+      }
+    }
+    else
+    {
+      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+      let tx=normalized[2];
+      let player=world.players[myname];
+      let ty=normalized[3];
+      if(world.builds[tx][ty][0]==0)
+      {
+        let storage=[];
+        for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
         {
-          locate='main';
+          storage[i]=[0,0];
         }
+        world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
+        player.remove_item(player.inventory[player.selected][0], 1); 
+      }
     }
   }
+  else if(keyNum==69 && locate=='chest')
+  {
+    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+    let tx=normalized[2];
+    let player=world.players[myname];
+    let ty=normalized[3];
+    if(world.builds[tx][ty][0]!==0 && world.builds[tx][ty][3].length)
+    {
+      if(world.builds[tx][ty][3][player.selected][0]!==0)
+      {
+        if(player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1]))
+        {
+          world.builds[tx][ty][3][player.selected]=[0, 0];
+        } 
+      }
+      else
+      {
+        if(player.inventory[player.selected][0]!==0)
+        {
+          world.builds[tx][ty][3][player.selected]=[player.inventory[player.selected][0], player.inventory[player.selected][1]];
+          player.remove_item(player.inventory[player.selected][0], player.inventory[player.selected][1]);
+        }
+      }
+    }
+  }
+  
+  else if(keyNum==70 && locate=='main')
+  { 
+    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
+    let player=world.players[myname];         
+    let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+    let tx=ts[2];
+    let ty=ts[3];
+    let x=ts[0];
+    let y=ts[1];
+    let build=builds[world.builds[tx][ty][0]];
+    if(build.storage)
+    {
+      locate='chest';
+    }
+    else if(build.grown)
+    {
+      for(var i=0;i<build.growDrop.length;i++)
+      {
+        world.players[myname].add_item(build.growDrop[i][1],build.growDrop[i][0]);
+        world.builds[tx][ty]=[build.last, builds[build.last].break,0];
+      }
+    }
+  }
+  else if(keyNum==70 && locate=='chest')
+  {
+    locate='main';
+  }
+}
+function keyUnpress(e)
+{
+  let keyNum;
+  if (window.event) 
+  {
+    keyNum = window.event.keyCode;
+    if(keyNum in keys)
+    {
+      keys[keyNum]=false;
+      return;
+    }
+  }
+}
+function keyCycle()
+{
+  let keylist=[87, 83, 65, 68, 69, 70];
+  for (var i = 0; i < keylist.length; i++) {
+    if(keys[keylist[i]])
+    {
+      execKey(keylist[i]);
+    }
+  }
+}
   function getHash(str)
   {
     var hash = 0;
@@ -962,10 +996,12 @@ function mousedown(e)
     }
     console.log(w)
     document.onkeydown = keyPress;
+    document.onkeyup = keyUnpress;
     document.onmousedown = mousedown;
     setInterval(cycle, 1);
     setInterval(animations, 100);
     setInterval(fhunger, 5000);
+    setInterval(keyCycle, 90)
     canvas.height=window.innerHeight-10;
     canvas.width=window.innerWidth-10;
   }
