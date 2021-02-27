@@ -155,10 +155,11 @@ class Build
 }
 class Mob
 {
-  constructor(speed, hp, anims, num, drop, x, y)
+  constructor(speed, hp, maxhp, anims, num, drop, x, y)
   {
     this.speed=speed;
     this.hp=hp;
+    this.maxhp=maxhp;
     this.num=num;
     this.drop=drop;
     this.x=x;
@@ -177,7 +178,7 @@ class Mob
   {
     if(this.go<1)
     {
-      if (Math.random()*100>90) 
+      if(Math.random()*100>95) 
       {
         this.angle = random(360);
         this.go=random(30);
@@ -206,6 +207,7 @@ class Mob
       }
       this.x+=p.pos[0]*coof;  //+pos[0];
       this.y+=p.pos[1]*coof; //+pos[1];
+      this.anim++;
       //this.x=Math.abs(world.map.length*128+this.x)%world.map.length*128;
       //this.y=Math.abs(world.map.length*128+this.y)%world.map.length*128;
     }
@@ -853,6 +855,20 @@ function keyCycle()
         }
       }
     }  
+    for (var i = 0; i < world.mobs.length; i++) 
+    {
+      if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+128 )
+      {
+        if(world.mobs[i].y-world.players[myname].y+canvas.height/2>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+128 )
+        {
+          ctx.drawImage(world.mobs[i].anims[Math.floor(world.mobs[i].anim%world.mobs[i].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
+          ctx.fillStyle='rgb('+Math.round(255-world.mobs[i].maxhp/world.mobs[i].hp*255)+', '+Math.round(world.mobs[i].maxhp/world.mobs[i].hp*255)+', 0)';
+          ctx.fillRect(world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2-10, 128, 10)
+        }  
+      }
+    }
+
+    ctx.fillStyle='black';  
     player=world.players[myname];
     ctx.font='16px Arial';
     ctx.textAlign='center';
@@ -922,13 +938,6 @@ function keyCycle()
         }
       }
     }
-    for (var i = 0; i < world.mobs.length; i++) 
-    {
-      if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-1 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+1 )
-      {
-        ctx.drawImage(world.mobs[i].anims[Math.floor(world.mobs[i].anim%world.mobs[i].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
-      }
-    }  
     ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
     ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
     ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
@@ -975,12 +984,11 @@ function keyCycle()
     }
     for (var i = 0; i < world.mobs.length; i++) 
     {
-      if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-1 && world.mobs[i].y-world.players[myname].y+canvas.height/2>-1)
+      if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+129 )
       {
-        if(world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+1 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+1)
+        if(world.mobs[i].y-world.players[myname].y+canvas.height/2>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+129 )
         {
-          world.mobs[i].cycle();
-          world.mobs[i].anim+=1;         
+          world.mobs[i].cycle();        
         }
       }
     }  
@@ -1156,7 +1164,7 @@ function keyCycle()
       y=normalized[3];
       if(world.map[x][y]!==1)
       {
-        world.mobs[world.mobs.length]=new Mob(8, 10, 6, 0, [], random(size)*128, random(size)*128);
+        world.mobs[world.mobs.length]=new Mob(8, 10, 10, 6, 0, [], random(size)*128, random(size)*128);
       }
     }
     document.onkeydown = keyPress;
