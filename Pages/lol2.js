@@ -177,8 +177,11 @@ class Mob
   {
     if(this.go<1)
     {
-      this.angle = random(360);
-      this.go=random(30);
+      if (Math.random()*100>90) 
+      {
+        this.angle = random(360);
+        this.go=random(30);
+      }
     }
     else 
     {
@@ -194,8 +197,15 @@ class Mob
       {
         this.rotate=this.anims.length/2;
       }
-      this.x+=p.pos[0];  //+pos[0];
-      this.y+=p.pos[1]; //+pos[1];
+      let normalized=normal(Math.floor(this.x/128), Math.floor(this.y/128));
+      let coof=tiles[world.map[normalized[2]][normalized[3]]].speed;
+      let normal2=normal(Math.floor((this.x+p.pos[0]*coof)/128), Math.floor((this.y+p.pos[1]*coof))/128);
+      if(world.map[normal2[2][normal2[3]]]===0)
+      {
+        return;
+      }
+      this.x+=p.pos[0]*coof;  //+pos[0];
+      this.y+=p.pos[1]*coof; //+pos[1];
       //this.x=Math.abs(world.map.length*128+this.x)%world.map.length*128;
       //this.y=Math.abs(world.map.length*128+this.y)%world.map.length*128;
     }
@@ -914,12 +924,9 @@ function keyCycle()
     }
     for (var i = 0; i < world.mobs.length; i++) 
     {
-      if(world.mobs[i].x-world.players[myname].x+canvas.width/2+128>-canvas.width && world.mobs[i].y-world.players[myname].y+canvas.height/2-128>-canvas.height)
+      if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-1 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+1 )
       {
-        if(world.mobs[i].x-world.players[myname].x+canvas.width/2+128<canvas.width+1 && world.mobs[i].y-world.players[myname].y+canvas.height/2-128<canvas.height+1)
-        {
-          ctx.drawImage(world.mobs[i].anims[Math.floor(world.mobs[i].anim%world.mobs[i].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
-        }
+        ctx.drawImage(world.mobs[i].anims[Math.floor(world.mobs[i].anim%world.mobs[i].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
       }
     }  
     ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
@@ -1065,6 +1072,7 @@ function keyCycle()
     	  }
     		if(world.map[i][j]==0)
         {
+          
     			if(Math.random()*100>60)
     			{
     				world.builds[i][j]=[3, builds[3].break, 0];
@@ -1139,10 +1147,18 @@ function keyCycle()
         }
     	}
     }
-    for (var i = 0; i < world.map.length*4; i++) {
-      world.mobs[i]=new Mob(8, 10, 6, 0, [], random(world.map.length*128), random(world.map.length*128));
+    for (var i = 0; i < size*5; i++) {
+      let x, y;
+      x=random(size);
+      y=random(size);
+      normalized=normal(x, y);
+      x=normalized[2];
+      y=normalized[3];
+      if(world.map[x][y]!==1)
+      {
+        world.mobs[world.mobs.length]=new Mob(8, 10, 6, 0, [], random(size)*128, random(size)*128);
+      }
     }
-    console.log(w)
     document.onkeydown = keyPress;
     document.onkeyup = keyUnpress;
     document.onmousedown = mousedown;
