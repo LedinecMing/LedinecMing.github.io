@@ -1155,7 +1155,7 @@ function keyCycle()
         }
     	}
     }
-    for (var i = 0; i < size*5; i++) {
+    for (var i = 0; i < size*2; i++) {
       let x, y;
       x=random(size);
       y=random(size);
