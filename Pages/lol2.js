@@ -1,6 +1,81 @@
 let item_specifics={nothing:0, instrument:1, build:2, food:3};
 let build_specifics={storage:1, kust:2};
 let keys={87:false, 83:false, 65:false, 68:false, 69:false, 70:false};
+class Point
+{
+  constructor(x, y, pos=false)
+  {
+    if(pos==false)
+    {
+      this.pos=[x, y];
+    }
+    else
+    {
+      this.pos=pos;
+    }
+  }
+  rotate(angle)
+  {
+    angle=angle*3.14/180;
+    let newX = Math.cos(angle)*this.pos[0]-Math.sin(angle)*this.pos[1];
+    let newY = Math.sin(angle)*this.pos[0]+Math.cos(angle)*this.pos[1];
+    this.pos=[newX, newY];
+  }
+  size(x, y)
+  {
+    this.pos=[this.pos[0]*x, this.pos[1]*y];
+  }
+  draw(x, y)
+  {
+    window.ctx.fillRect(this.pos[0]+x, this.pos[1]+y, 1, 1);
+  }
+}
+class Vector
+{
+  constructor(p1, p2)
+  {
+    this.points=[p1, p2];
+  }
+  rotate(angle)
+  {
+    for (var i = 0; i < this.points.length; i++) {
+      this.points[i].rotate(angle);
+    }
+  }
+  size(x, y)
+  {
+    for (var i = 0; i < this.points.length; i++) {
+      this.points[i].size(x, y); 
+    }
+  }
+  draw(x, y)
+  {
+    ctx.beginPath();  
+    ctx.moveTo(this.points[0].pos[0]+x, this.points[0].pos[1]+y); 
+    ctx.lineTo(this.points[1].pos[0]+x, this.points[1].pos[1]+y);
+    ctx.stroke();
+  }
+}
+class Rect
+{
+  constructor(p1, w, h)
+  {
+    this.start=p1;
+    this.vectors=[new Vector(new Point(0, 0), new Point(w, 0)), new Vector(new Point(w, 0), new Point(w, h)), new Vector(new Point(w, h), new Point(0, h)), new Vector(new Point(0, h), new Point(0, 0))];
+  }
+  draw(x, y)
+  {
+    for (var i = 0; i < this.vectors.length; i++) {
+      this.vectors[i].draw(x+this.start.pos[0], y+this.start.pos[1]);
+    }
+  }
+  rotate(angle)
+  {
+    for (var i = 0; i < this.vectors.length; i++) {
+      this.vectors[i].rotate(angle);
+    }   
+  }
+} 
 class Item
 {
   constructor(num, item_name, specific, type)
@@ -80,7 +155,7 @@ class Build
 }
 class Mob
 {
-  constructor(speed, hp, num, drop, x, y)
+  constructor(speed, hp, anims, num, drop, x, y)
   {
     this.speed=speed;
     this.hp=hp;
@@ -88,6 +163,42 @@ class Mob
     this.drop=drop;
     this.x=x;
     this.y=y;
+    this.rotate=0;
+    this.go=0;
+    this.anim=0;
+    this.anims=[];
+    for (var i = 0; i < anims; i++) 
+    {
+      this.anims[i]=new Image();
+      this.anims[i].src='../Images/mob'+num+''+i+'.png';
+    }
+  }
+  cycle()
+  {
+    if(this.go<1)
+    {
+      this.angle = random(360);
+      this.go=random(30);
+    }
+    else 
+    {
+      this.go-=1;
+      let pos=[this.x, this.y];
+      let p = new Point(this.speed, this.speed);
+      p.rotate(this.angle);
+      if(p.pos[0]>0)
+      {
+        this.rotate=0;
+      }
+      else
+      {
+        this.rotate=this.anims.length/2;
+      }
+      this.x+=p.pos[0];  //+pos[0];
+      this.y+=p.pos[1]; //+pos[1];
+      //this.x=Math.abs(world.map.length*128+this.x)%world.map.length*128;
+      //this.y=Math.abs(world.map.length*128+this.y)%world.map.length*128;
+    }
   }
 }
 class Player
@@ -286,7 +397,8 @@ let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(23, 'Iron shovel', [1, 2], 4), new Item(24, 'Kubok', [2, 13], 0),
             new Item(25, 'Mushroom', [3, 2], 0), new Item(26, 'Fried Mushroom', [3, 5], 0),
             new Item(27, 'Campfire', [2, 16], 0)]; 
-let world=new World([], [], [], [], []);  
+//speed, hp, anims, num, drop, x, y
+let world=new World([], [], [], [], [new Mob(8, 10, 6, 0, [], 1689, 1689)]);  
 // Шляпы
 let hats =[];
 // Список номеров Builds объектов которые являются стенамм
@@ -355,7 +467,6 @@ function mousedown(e)
           {
             if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
             {
-              
               if(builds[world.builds[tx][ty][0]].audio[0])
               {
                 builds[world.builds[tx][ty][0]].audio[1].play();
@@ -366,8 +477,8 @@ function mousedown(e)
                 for(var i=0;i<drop.length;i++)
                 {
                	 player.add_item(drop[i][1], drop[i][0]);
-              	   world.builds[tx][ty]=[0, 0, 0];  
-              	  } 
+                 world.builds[tx][ty]=[0, 0, 0];  
+                } 
               }
               else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
                 world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
@@ -388,8 +499,10 @@ function mousedown(e)
                 storage[i]=[0,0];
               }
               world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
-             player.remove_item(player.inventory[player.selected][0], 1); 
-    }}}
+              player.remove_item(player.inventory[player.selected][0], 1); 
+            }
+          }
+    }
     j=0;
     let c=[];
     for(var i=0; i<crafts.length;i++)
@@ -799,6 +912,16 @@ function keyCycle()
         }
       }
     }
+    for (var i = 0; i < world.mobs.length; i++) 
+    {
+      if(world.mobs[i].x-world.players[myname].x+canvas.width/2+128>-canvas.width && world.mobs[i].y-world.players[myname].y+canvas.height/2-128>-canvas.height)
+      {
+        if(world.mobs[i].x-world.players[myname].x+canvas.width/2+128<canvas.width+1 && world.mobs[i].y-world.players[myname].y+canvas.height/2-128<canvas.height+1)
+        {
+          ctx.drawImage(world.mobs[i].anims[Math.floor(world.mobs[i].anim%world.mobs[i].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
+        }
+      }
+    }  
     ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
     ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
     ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
@@ -840,6 +963,17 @@ function keyCycle()
           			world.builds[tx][ty]=[builds[build[0]].grow, builds[builds[build[0]].grow].break, 0];
           		}
           }
+        }
+      }
+    }
+    for (var i = 0; i < world.mobs.length; i++) 
+    {
+      if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-1 && world.mobs[i].y-world.players[myname].y+canvas.height/2>-1)
+      {
+        if(world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+1 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+1)
+        {
+          world.mobs[i].cycle();
+          world.mobs[i].anim+=1;         
         }
       }
     }  
@@ -1005,6 +1139,9 @@ function keyCycle()
         }
     	}
     }
+    for (var i = 0; i < world.map.length*4; i++) {
+      world.mobs[i]=new Mob(8, 10, 6, 0, [], random(world.map.length*128), random(world.map.length*128));
+    }
     console.log(w)
     document.onkeydown = keyPress;
     document.onkeyup = keyUnpress;
@@ -1012,7 +1149,7 @@ function keyCycle()
     setInterval(cycle, 1);
     setInterval(animations, 100);
     setInterval(fhunger, 5000);
-    setInterval(keyCycle, 100)
+    setInterval(keyCycle, 100);
     canvas.height=window.innerHeight-10;
     canvas.width=window.innerWidth-10;
   }
