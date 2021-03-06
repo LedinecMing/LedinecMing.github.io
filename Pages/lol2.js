@@ -431,7 +431,7 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
               new Craft([[22, 1], [1, 15], [4, 10], [16, 5]], 10, [23, 1]), new Craft([[1, 4]], 9, [13, 1]),
               new Craft([[25, 4], [13, 1]], 9, [26, 4]), new Craft([[1, 10]], 0, [27, 1]),
               new Craft([[1, 4]], 16, [13, 1]), new Craft([[1, 2], [25, 1]], 16, [26, 1]),
-              new Craft([[30, 1], [1, 2]], 4, [31, 1]), new Craft([[1, 10], [4, 5]], 4, [28, 1]),
+              new Craft([[30, 1], [1, 2]], 16, [31, 1]), new Craft([[1, 10], [4, 5]], 4, [28, 1]),
               new Craft([[1, 15], [4, 10], [28, 1], [16, 5]], 10, [29, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, 
