@@ -398,23 +398,23 @@ let anims =[new Image(), new Image(), new Image(), new Image()];
 let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3)];
 // Предметы
 // num, item_name, specific, type
-let items =[new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
-            new Item(2, 'Wooden axe', [1, 2], 0), 
-            new Item(3, "Wooden pickaxe", [1, 1], 1), new Item(4, "Stone", [0], 0),
-            new Item(5,  'Table', [2, 4], 0), new Item(6, 'Stone axe', [1, 3], 0),
-            new Item(7,'Stone pickaxe',[1, 2], 1), new Item(8, 'Chest', [2, 6], 0),
-            new Item(9, 'Iron axe', [1, 4], 0), new Item(10, 'Iron pickaxe', [1, 3], 1),
-            new Item(11, 'Golden axe', [1, 5], 0), new Item(12, 'Golden pickaxe', [1, 4], 1),
-            new Item(13, 'Coal', [0], 0), new Item(14, 'Furnace', [2, 9], 0),
-            new Item(15, 'Iron ore', [0], 0), new Item(16, 'Iron ingot', [0], 0),
-            new Item(17, 'Anvil', [2, 10], 0), new Item(18, 'Shears', [1, 1], 7), 
-            new Item(19, 'Flowduck', [2, 1], 0), new Item(20, 'Red berry', [3, 1], 0), 
-            new Item(21, 'Berry bush', [2, 12], 0), new Item(22, 'Stone shovel', [1, 1], 4),
-            new Item(23, 'Iron shovel', [1, 2], 4), new Item(24, 'Kubok', [2, 13], 0),
-            new Item(25, 'Mushroom', [3, 2], 0), new Item(26, 'Fried Mushroom', [3, 5], 0),
-            new Item(27, 'Campfire', [2, 16], 0), new Item(28, 'Stone sword', [4, 1], 0),
-            new Item(29, 'Iron sword', [4, 2], 0), new Item(30, 'Raw meat', [3, 3], 0),
-            new Item(31, 'Coocked meat', [3, 20], 0)]; 
+let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
+            new Item(2,  'Wooden axe', [1, 2], 0), new Item(3, "Wooden pickaxe", [1, 1], 1), 
+            new Item(4,  "Stone", [0], 0), new Item(5, 'Table', [2, 4], 0),
+            new Item(6,  'Stone axe', [1, 3], 0), new Item(7, 'Stone pickaxe',[1, 2], 1), 
+            new Item(8,  'Chest', [2, 6], 0), new Item(9, 'Iron axe', [1, 4], 0), 
+            new Item(10, 'Iron pickaxe', [1, 3], 1), new Item(11,'Golden axe', [1, 5], 0), 
+            new Item(12, 'Golden pickaxe', [1, 4], 1), new Item(13,'Coal', [0], 0), 
+            new Item(14, 'Furnace', [2, 9], 0), new Item(15,'Iron ore', [0], 0), 
+            new Item(16, 'Iron ingot', [0], 0), new Item(17,'Anvil', [2, 10], 0), 
+            new Item(18, 'Shears', [1, 1], 7), new Item(19,'Flowduck', [2, 1], 0), 
+            new Item(20, 'Red berry', [3, 1], 0), new Item(21,'Berry bush', [2, 12], 0), 
+            new Item(22, 'Stone shovel', [1, 1], 4), new Item(23,'Iron shovel', [1, 2], 4), 
+            new Item(24, 'Kubok', [2, 13], 0), new Item(25,'Mushroom', [3, 2], 0), 
+            new Item(26, 'Fried Mushroom', [3, 5], 0), new Item(27,'Campfire', [2, 16], 0), 
+            new Item(28, 'Stone sword', [4, 1], 0), new Item(29,'Iron sword', [4, 2], 0), 
+            new Item(30, 'Raw meat', [3, 3], 0), new Item(31,'Coocked meat', [3, 20], 0),
+            new Item(32, 'Bread', [3, 10], 0)]; 
 //speed, hp, anims, num, drop, x, y
 let world=new World([], [], [], [], []);  
 // Шляпы
@@ -423,16 +423,16 @@ let hats =[];
 let walls={11:true};
 // Крафты
 let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
-              new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), 
-              new Craft([[1, 10]], 0, [8 ,1]), new Craft([[4, 10]], 4, [14, 1]), 
-              new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
-              new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1]),
-              new Craft([[1, 4], [16, 2]], 4, [18, 1]), new Craft([[1, 10], [4, 5]], 4, [22, 1]), 
-              new Craft([[22, 1], [1, 15], [4, 10], [16, 5]], 10, [23, 1]), new Craft([[1, 4]], 9, [13, 1]),
-              new Craft([[25, 4], [13, 1]], 9, [26, 4]), new Craft([[1, 10]], 0, [27, 1]),
-              new Craft([[1, 4]], 16, [13, 1]), new Craft([[1, 2], [25, 1]], 16, [26, 1]),
-              new Craft([[30, 1], [1, 2]], 16, [31, 1]), new Craft([[1, 10], [4, 5]], 4, [28, 1]),
-              new Craft([[1, 15], [4, 10], [28, 1], [16, 5]], 10, [29, 1])];
+            new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), 
+            new Craft([[1, 10]], 0, [8 ,1]), new Craft([[4, 10]], 4, [14, 1]), 
+            new Craft([[15, 1], [13, 1]], 9, [16, 1]), new Craft([[7, 1], [1, 20], [4, 10], [16, 5]], 10, [10, 1]),
+            new Craft([[6, 1], [1, 20], [4, 10], [16, 5]], 10, [9, 1]), new Craft([[16, 10]], 4, [17, 1]),
+            new Craft([[1, 4], [16, 2]], 4, [18, 1]), new Craft([[1, 10], [4, 5]], 4, [22, 1]), 
+            new Craft([[22, 1], [1, 15], [4, 10], [16, 5]], 10, [23, 1]), new Craft([[1, 4]], 9, [13, 1]),
+            new Craft([[25, 4], [13, 1]], 9, [26, 4]), new Craft([[1, 10]], 0, [27, 1]),
+            new Craft([[1, 4]], 16, [13, 1]), new Craft([[1, 2], [25, 1]], 16, [26, 1]),
+            new Craft([[30, 1], [1, 2]], 4, [31, 1]), new Craft([[1, 10], [4, 5]], 4, [28, 1]),
+            new Craft([[1, 15], [4, 10], [28, 1], [16, 5]], 10, [29, 1]), new Craft([[33, 3]], 9, [32, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, 
              new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
@@ -441,7 +441,8 @@ let builds=[0,
              new Build(1, 50, 9, 1, 0, 0, [[1, 14]], false, 0, [0]), new Build(1, 100, 10, 1, 0, 0, [[1, 17]], true, 0, [0]), 
              new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 600, false, 12]),
              new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0]), new Build(0, 20, 14, 1, 0, 0, [[1, 25]], false, 0, [0]),
-             new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16])];
+             new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16]),
+             new Build(5, 10, 17, 1, 0, 0, [[1, 33]], false, 0, [0])];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
@@ -872,7 +873,7 @@ function cycle()
           ctx.textAlign='center';
           ctx.font = "16px monospace";
           ctx.fillStyle='rgb(255, 255, 0);';
-          const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай'};
+          const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'};
           ctx.fillText(cool_people[code], x*128+canvas.width/2-world.players[myname].x+64, y*128+canvas.height/2-world.players[myname].y);
         }
       }
@@ -938,7 +939,6 @@ function cycle()
       {
         ctx.strokeRect(j*32, 0, 32, 32);
         ctx.drawImage(items[crafts[i].result[0]].image, j*32, 0);
-        console.log()
         j++;
       }
     }
@@ -1044,7 +1044,7 @@ function start(arg)
   world.names=[myname];
   let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
   let speed=16;
-  if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай'})
+  if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'})
   {
     inventory[0]=[24, 1];
   }
