@@ -873,7 +873,7 @@ function cycle()
           ctx.textAlign='center';
           ctx.font = "16px monospace";
           ctx.fillStyle='rgb(255, 255, 0);';
-          const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'};
+          const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Faradey Stream'};
           ctx.fillText(cool_people[code], x*128+canvas.width/2-world.players[myname].x+64, y*128+canvas.height/2-world.players[myname].y);
         }
       }
