@@ -448,7 +448,7 @@ for (var i = 0; i < 4; i++)
   anims[i].src='../Images/white'+i+'.png';
 }  
 // Установка шляп
-for (var i=0; i<8; i++)
+for (var i=0; i<11; i++)
 {
   hats[i]=[];
   for (var j=0; j<2; j++)
