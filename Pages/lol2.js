@@ -386,8 +386,12 @@ function normal(x, y)
   ty=y;
   return [x, y, Math.floor(Math.abs(world.map.length+x)%world.map.length), Math.floor(Math.abs(world.map.length+y)%world.map.length)];}
 let locate="main";
+// Текстуры кнопок
 let use = new Image();
 use.src="../Images/use.png"
+let pause= new Image();
+pause.src='../Images/pause.png';
+// Холст и его настройки
 canvas = document.getElementById("field");
 ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
@@ -419,8 +423,8 @@ let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
 let world=new World([], [], [], [], []);  
 // Шляпы
 let hats =[];
-// Список номеров Builds объектов которые являются стенамм
-let walls={11:true};
+// Список номеров Tile объектов на которых нельзя строить
+let walls={1:true};
 // Крафты
 let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), new Craft([[1, 15]], 0, [5, 1]), 
             new Craft([[2, 1],[1, 10],[4,5]], 4, [6,1]), new Craft([[3,1],[1,10],[4,5]], 4, [7,1]), 
@@ -477,7 +481,6 @@ function mousedown(e)
   let tx=normalized[2];
   let ty=normalized[3];
   // Обработка кнопки use
-
   if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
   {
     let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
@@ -524,6 +527,19 @@ function mousedown(e)
       }
     }
   }
+  if(e.clientX>canvas.width-129 && e.clientY<128)
+  {
+    if(locate=='pause')
+    {
+      locate='main';
+      paused=false;
+    }
+    else
+    {
+      locate='pause'
+      paused=true;
+    }
+  }
   j=0;
   let c=[];
   for(var i=0; i<crafts.length;i++)
@@ -565,6 +581,22 @@ function keyPress(e)
     let tx=normalized[2];
     let player=world.players[myname];
     let ty=normalized[3];
+    if(keyNum==27)
+    {
+      paused=!paused;
+      if(locate=='main')
+      {
+        locate='pause'
+      }
+      else
+      {
+        locate='main'
+      }
+    }
+    if(paused)
+    {
+      return;
+    }
     if(keyNum<58 && keyNum>47 && locate=='main')
     {
       let digit=keyNum%48-1;
@@ -590,6 +622,10 @@ function keyPress(e)
 }  
 function execKey(keyNum)
 {
+  if (paused) 
+  {
+    return;
+  }
   let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
   let tx=normalized[2];
   let player=world.players[myname];
@@ -599,7 +635,7 @@ function execKey(keyNum)
   {
     if(!builds[world.builds[tx][ty][0]].storage)
     {
-      locate='main'
+      locate='main';
     }
   }
   if(keyNum==87)
@@ -731,7 +767,7 @@ function execKey(keyNum)
       let tx=normalized[2];
       let player=world.players[myname];
       let ty=normalized[3];
-      if(world.builds[tx][ty][0]==0)
+      if(world.builds[tx][ty][0]==0 && !(world.map[tx][ty] in walls))
       {
         let storage=[];
         for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
@@ -872,13 +908,13 @@ function cycle()
         {
           ctx.textAlign='center';
           ctx.font = "16px monospace";
-          ctx.fillStyle='rgb(255, 255, 0);';
+          ctx.fillStyle='yellow';
           const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Faradey Stream'};
           ctx.fillText(cool_people[code], x*128+canvas.width/2-world.players[myname].x+64, y*128+canvas.height/2-world.players[myname].y);
         }
       }
     }
-  }  
+  } 
   for (var i = 0; i < world.mobs.length; i++) 
   {
     if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+128 )
@@ -942,8 +978,7 @@ function cycle()
         j++;
       }
     }
-  }
-  ctx.drawImage(use, canvas.width-128, canvas.height-128);
+  }  
   if(locate=='chest' && builds[world.builds[tx][ty][0]].storage)
   {
     for (var i=0; i<builds[world.builds[tx][ty][0]].storage; i++)
@@ -962,15 +997,26 @@ function cycle()
       }
     }
   }
+  ctx.drawImage(use, canvas.width-128, canvas.height-128);
   ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
   ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
   ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
-  ctx.font="16px Arial";
+  ctx.drawImage(pause, canvas.width-128, 0);
+  ctx.font="32px Arial";
   ctx.fillStyle='black';
-  ctx.fillText(tx+'/'+ty, canvas.width-32, 50)
+  ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16)
+  if(paused)
+  {
+    ctx.fillStyle='rgb(128, 118, 121)';
+    ctx.fillRect(32, 32, canvas.width-48, canvas.height-48);
+  }
 }
 function animations()
 {
+  if(paused)
+  {
+    return;
+  }
   let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
   let player=world.players[myname];         
   let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
@@ -978,9 +1024,9 @@ function animations()
   let ty=ts[3];
   let x=ts[0];
   let y=ts[1];
-  for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
+  for (var i = Math.round(player.x/128-canvas.width/128*render-1); i <= Math.round(player.x/128+canvas.width/128*render-1); i++)
   {
-    for (var j = Math.round(player.y/128-canvas.height/128-1); j <= Math.round(player.y/128+canvas.height/128+1); j++) 
+    for (var j = Math.round(player.y/128-canvas.height/128*render-1); j <= Math.round(player.y/128+canvas.height/128*render+1); j++) 
     {
       let ts=normal(i, j);
       let tx=ts[2];
@@ -1008,9 +1054,9 @@ function animations()
   }
   for (var i = 0; i < world.mobs.length; i++) 
   {
-    if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+129 )
+    if(world.mobs[i].x-world.players[myname].x+canvas.width/2*render>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width*render+129 )
     {
-      if(world.mobs[i].y-world.players[myname].y+canvas.height/2>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+129 )
+      if(world.mobs[i].y-world.players[myname].y+canvas.height/2*render>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height*render+129 )
       {
         world.mobs[i].cycle();        
       }
@@ -1019,6 +1065,10 @@ function animations()
 }
 function fhunger() 
 {
+  if(paused)
+  {
+    return;
+  }
   world.players[myname].hunger-=1;
   if(world.players[myname].hunger<0)
   {
@@ -1027,6 +1077,7 @@ function fhunger()
 }
 function start(arg)
 {
+  render=1;
   if(!arg)
   {
     code=getHash(document.getElementById('code').value);
@@ -1039,7 +1090,7 @@ function start(arg)
     document.getElementById('start').remove();
     size=2**value;
   }
-  
+  paused=false;
   ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
   world.names=[myname];
   let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
