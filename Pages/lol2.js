@@ -187,7 +187,7 @@ class Mob
       {
         if(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
         {
-          this.audio.volume=(canvas.width-(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width;
+          this.audio.volume=(canvas.width-(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width*0.5;
           this.audio.play();
           this.audio.volume=1;
         }
@@ -437,7 +437,8 @@ let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(26, 'Fried Mushroom', [3, 5], 0), new Item(27,'Campfire', [2, 16], 0), 
             new Item(28, 'Stone sword', [4, 1], 0), new Item(29,'Iron sword', [4, 2], 0), 
             new Item(30, 'Raw meat', [3, 3], 0), new Item(31,'Coocked meat', [3, 20], 0),
-            new Item(32, 'Bread', [3, 10], 0)]; 
+            new Item(32, 'Bread', [3, 10], 0), new Item(33, 'Wheat', [0], 0),
+            new Item(34, 'Seed', [2, 17], 0)]; 
 //speed, hp, anims, num, drop, x, y
 let world=new World([], [], [], [], []);  
 // Шляпы
@@ -455,7 +456,8 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
             new Craft([[25, 4], [13, 1]], 9, [26, 4]), new Craft([[1, 10]], 0, [27, 1]),
             new Craft([[1, 4]], 16, [13, 1]), new Craft([[1, 2], [25, 1]], 16, [26, 1]),
             new Craft([[30, 1], [1, 2]], 16, [31, 1]), new Craft([[1, 10], [4, 5]], 4, [28, 1]),
-            new Craft([[1, 15], [4, 10], [28, 1], [16, 5]], 10, [29, 1]), new Craft([[33, 3]], 9, [32, 1])];
+            new Craft([[1, 15], [4, 10], [28, 1], [16, 5]], 10, [29, 1]), new Craft([[33, 3]], 9, [32, 1]),
+            new Craft([[33, 1]], 0, [34, 1]), new Craft([[33, 3]], 10, [32, 1]), new Craft([[33, 3], [1, 2]], 16, [32, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, 
              new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
@@ -465,7 +467,8 @@ let builds=[0,
              new Build(4, 20, 11, 1, 0, 0, [[1, 21], [2, 20]], false, 0, [2, 12, 0, true, 12, [[3, 20]]]), new Build(4, 20, 12, 1, 0, 0, [[1, 21]], false, 0, [2, 11, 600, false, 12]),
              new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0]), new Build(0, 20, 14, 1, 0, 0, [[1, 25]], false, 0, [0]),
              new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16]),
-             new Build(5, 10, 17, 1, 0, 0, [[1, 33]], false, 0, [0])];
+             new Build(0, 10, 17, 1, 0, 0, [[1, 34]], false, 0, [2, 18, 1200, false, 17]), new Build(0, 10, 18, 1, 0, 0, [[1, 34]], false, 0, [2, 19, 1200, false, 18]),
+             new Build(0, 10, 19, 1, 0, 0, [[1, 32], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
@@ -1195,7 +1198,10 @@ function start(arg)
   	  }
   		if(world.map[i][j]==0)
       {
-        
+        if(Math.random()*100>90)
+        {
+          world.builds[i][j]=[17, 10, 0];
+        }
   			if(Math.random()*100>60)
   			{
   				world.builds[i][j]=[3, builds[3].break, 0];
