@@ -172,6 +172,7 @@ class Mob
     this.go=0;
     this.anim=0;
     this.anims=[];
+    this.audio=new Audio('../Music/mob'+num+'0.ogg');
     for (var i = 0; i < anims; i++) 
     {
       this.anims[i]=new Image();
@@ -180,6 +181,18 @@ class Mob
   }
   cycle()
   {
+    if(Math.random()*100>90)
+    {
+      if(Math.random()*100>90)
+      {
+        if(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+        {
+          this.audio.volume=(canvas.width-(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width;
+          this.audio.play();
+          this.audio.volume=1;
+        }
+      }
+    }
     if(this.go<1)
     {
       if(Math.random()*100>95) 
@@ -205,15 +218,21 @@ class Mob
       let normalized=normal(Math.floor(this.x/128), Math.floor(this.y/128));
       let coof=tiles[world.map[normalized[2]][normalized[3]]].speed;
       let normal2=normal(Math.floor((this.x+p.pos[0]*coof)/128), Math.floor((this.y+p.pos[1]*coof))/128);
-      if(world.map[normal2[2][normal2[3]]]===0)
-      {
-        return;
-      }
       this.x+=p.pos[0]*coof;  //+pos[0];
       this.y+=p.pos[1]*coof; //+pos[1];
       this.anim++;
       this.x=(world.map.length*128+this.x)%(world.map.length*128);
       this.y=(world.map.length*128+this.y)%(world.map.length*128);
+      let tile=world.map[Math.floor(this.x/128)][Math.floor(this.y/128)];
+      if(tiles[tile].audio[0])
+      {
+        if(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+        {
+          tiles[tile].audio[1].volume=(canvas.width-(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width;
+          tiles[tile].audio[1].play();
+          tiles[tile].audio[1].volume=1;
+        }
+      }
     }
   }
 }
@@ -540,6 +559,21 @@ function mousedown(e)
       paused=true;
     }
   }
+  if(paused)
+  {
+    if(e.clientX<("Коофициентдальностипрогрузки:"+render).length*32-320+32 && e.clientX>("Коофициентдальностипрогрузки:"+render).length*32-32*10 && e.clientY>64-32 && e.clientY<64-16)
+    {
+      render++;
+    }
+    else if(e.clientX<("Коофициентдальностипрогрузки:"+render).length*32-320+32 && e.clientX>("Коофициентдальностипрогрузки:"+render).length*32-32*10 && e.clientY>64 && e.clientY<64+16)
+    {
+        if(render-1<1)
+        {
+          return;
+        }
+        render--;
+    }
+  }
   j=0;
   let c=[];
   for(var i=0; i<crafts.length;i++)
@@ -864,7 +898,7 @@ function getHash(str)
 }
 function cycle()
 {
-  if(window.innerHeight!==canvas.height || window.innerWidth!==canvas.width)
+  if(window.innerHeight-10!==canvas.height || window.innerWidth-10!==canvas.width)
   {
     canvas.height=window.innerHeight-10;
     canvas.width=window.innerWidth-10;
@@ -1007,8 +1041,14 @@ function cycle()
   ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16)
   if(paused)
   {
+    ctx.textAlign='left';
+    ctx.font='32px monospace';
     ctx.fillStyle='rgb(128, 118, 121)';
     ctx.fillRect(32, 32, canvas.width-48, canvas.height-48);
+    ctx.fillStyle='black';
+    ctx.fillText("Коофициент дальности прогрузки: "+render, 64, 64);
+    ctx.fillText('+', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64-16);
+    ctx.fillText('-', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64+16);
   }
 }
 function animations()
@@ -1249,6 +1289,6 @@ function start(arg)
   setInterval(animations, 100);
   setInterval(fhunger, 5000);
   setInterval(keyCycle, 100);
-  canvas.height=window.innerHeight-10;
-  canvas.width=window.innerWidth-10;
+  canvas.height=window.innerHeight;
+  canvas.width=window.innerWidth;
 }
