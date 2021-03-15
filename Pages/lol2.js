@@ -1,6 +1,137 @@
 let item_specifics={nothing:0, instrument:1, build:2, food:3, weapon:4};
 let build_specifics={storage:1, kust:2};
 let keys={87:false, 83:false, 65:false, 68:false, 69:false, 70:false};
+// cgiffard/DiamondSquare give him a star!
+(function(glob) {
+  
+  function DiamondSquare(data,width,height,roughness) {
+    if (width * height !== data.length)
+      throw Error("Data length mismatch.");
+    
+    this.dataStore  = data && data.length >= 4 ? data : [0,0,0,0];
+    this.height   = height > 1 ? height : 2;
+    this.width    = width > 1 ? width : 2;
+    this.roughness  = roughness;
+    this.iteration  = 1;
+  }
+  
+  DiamondSquare.prototype.iterate = function() {
+    var tmpDiamondingArray = [], finalArray = [], x, y,
+      tmpXDoubledGrid = [], tmpDoubledGrid = [];
+    
+    // Double and interpolate the grid.
+    
+    // Double the width of each row
+    for (var row = 0; row < this.height; row ++) {
+      tmpXDoubledGrid.push(this.interpolateRow(row));
+    }
+    
+    // Now add additional rows by interpolating vertically
+    for (y = 0; y < tmpXDoubledGrid.length -1; y++) {
+      tmpDoubledGrid.push(tmpXDoubledGrid[y]);
+      tmpDoubledGrid.push(
+        this.interpolateRowsVertically(
+            tmpXDoubledGrid[y],
+            tmpXDoubledGrid[y+1]));
+    }
+    
+    // And add the last row back in...
+    tmpDoubledGrid.push(tmpXDoubledGrid[tmpXDoubledGrid.length-1]);
+    
+    // Now comes the diamond part of the equation.
+    // Calculate for roughness!
+    for (y = 0; y < tmpDoubledGrid.length; y++) {
+      if (y % 2) {
+        var prevRow = tmpDoubledGrid[y-1],
+          nextRow = tmpDoubledGrid[y-1],
+          square = [];
+        tmpDiamondingArray = tmpDoubledGrid[y];
+        for (x = 0; x < tmpDiamondingArray.length; x++) {
+          if (x % 2) {
+            square = [
+              prevRow[x],
+              tmpDiamondingArray[x-1],
+              tmpDiamondingArray[x+1],
+              nextRow[x] ];
+            
+            var sqMax = Math.max.apply(Math,square),
+              sqMin = Math.min.apply(Math,square),
+              sqDif = sqMax - sqMin,
+              interpolatedMedian = sqMin + sqDif/2;
+            
+            var rough = ((sqDif / this.iteration) * this.roughness) * (Math.random()-0.5),
+              newHeight = interpolatedMedian + rough;
+            
+            tmpDiamondingArray[x] = newHeight;
+          }
+        }
+        
+        finalArray = finalArray.concat(tmpDiamondingArray);
+      } else {
+        finalArray = finalArray.concat(tmpDoubledGrid[y]);
+      }
+    }
+    
+    // Save our new width, height, and iteration
+    this.width = (this.width*2) -1;
+    this.height = (this.height*2) -1;
+    this.iteration ++;
+    
+    this.dataStore = finalArray;
+  };
+  
+  DiamondSquare.prototype.getSquare = function(x,y) {
+    var cursor = (y * this.width) + x,
+      firstRow = this.dataStore.slice(cursor,cursor+2),
+      secondRow = this.dataStore.slice(cursor+this.width,cursor+this.width+2);
+    
+    return firstRow.concat(secondRow);
+  };
+  
+  DiamondSquare.prototype.interpolateRow = function(y) {
+    var cursor = 0, row = [], val1 = 0, val2 = 0;
+    
+    // Interpolate real row...
+    for (x = 0; x < this.width - 1; x ++) {
+      cursor = (y * this.width) + x;
+      val1 = this.dataStore[cursor];
+      val2 = this.dataStore[cursor+1];
+      vali = this.interpolate(val1,val2);
+      
+      row.push(val1,vali);
+      
+      if (x === this.width-2) row.push(val2);
+    }
+    
+    return row;
+  };
+  
+  DiamondSquare.prototype.interpolateRowsVertically = function(r1,r2) {
+    var mixRow = [];
+    for (var rowPointer = 0; rowPointer < r1.length; rowPointer ++) {
+      mixRow.push(this.interpolate(r1[rowPointer],r2[rowPointer]));
+    }
+    
+    return mixRow;
+  };
+  
+  DiamondSquare.prototype.interpolate = function(val1,val2) {
+    var max = Math.max(val1,val2), min = Math.min(val1,val2),
+      result = max !== min ? ((max-min)/2) + min : min;
+    return !isNaN(result) ? result : min;
+  };
+  
+  DiamondSquare.prototype.max = function() {
+    return Math.max.apply(Math,this.dataStore);
+  };
+  
+  DiamondSquare.prototype.min = function() {
+    return Math.min.apply(Math,this.dataStore);
+  };
+  
+  glob.DiamondSquare = DiamondSquare;
+  
+})(this);
 class Point
 {
   constructor(x, y, pos=false)
@@ -468,7 +599,7 @@ let builds=[0,
              new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0]), new Build(0, 20, 14, 1, 0, 0, [[1, 25]], false, 0, [0]),
              new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16]),
              new Build(0, 10, 17, 1, 0, 0, [[1, 34]], false, 0, [2, 18, 1200, false, 17]), new Build(0, 10, 18, 1, 0, 0, [[1, 34]], false, 0, [2, 19, 1200, false, 18]),
-             new Build(0, 10, 19, 1, 0, 0, [[1, 34], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
+             new Build(0, 10, 19, 1, 0, 0, [[1, 32], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
@@ -1034,14 +1165,6 @@ function cycle()
       }
     }
   }
-  ctx.drawImage(use, canvas.width-128, canvas.height-128);
-  ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
-  ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
-  ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
-  ctx.drawImage(pause, canvas.width-128, 0);
-  ctx.font="32px Arial";
-  ctx.fillStyle='black';
-  ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16)
   if(paused)
   {
     ctx.textAlign='left';
@@ -1049,11 +1172,22 @@ function cycle()
     ctx.fillStyle='rgb(128, 118, 121)';
     ctx.fillRect(32, 32, canvas.width-48, canvas.height-48);
     ctx.fillStyle='black';
-    ctx.fillText("Коофициент дальности прогрузки: "+render, 64, 64);
+    ctx.fillText("Коэфициент дальности прогрузки: "+render, 64, 64);
     ctx.fillText('+', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64-16);
     ctx.fillText('-', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64+16);
   }
-}
+  else
+  {
+  ctx.drawImage(use, canvas.width-128, canvas.height-128);
+  ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
+  ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
+  ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
+  ctx.font="32px Arial";
+  ctx.fillStyle='black';
+  ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16);
+  }
+  ctx.drawImage(pause, canvas.width-128, 0);
+} 
 function animations()
 {
   if(paused)
@@ -1131,7 +1265,6 @@ function start(arg)
     value=document.getElementById("size_pow").value;
     window.hat=document.getElementById('hat').value;
     document.getElementById('start').remove();
-    size=2**value;
   }
   paused=false;
   ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
@@ -1145,57 +1278,94 @@ function start(arg)
   world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 99);
   world.map=[];
   world.builds=[];
-  for (var i = 0; i < size; i++)
+  var myInitMap = [0,7,-3,6,
+  1,7,2,5,
+  0,1,3,-1,
+  8,5,3,0];
+  for (var i = 0; i < 16; i++) 
+  {
+    myInitMap[i]=Math.round(Math.random()*10)-4;
+  }
+  // Create a new DiamondSquare algorithm from the initial map, with a random
+  // roughness factor
+  var ds = new DiamondSquare(myInitMap, 4,4 , 10);
+  
+  
+  // Iterate until you're satisfied. The map doubles in size with each
+  // iteration.
+  for (var i = 0; i < value; i++) {
+    ds.iterate();
+    ds.interpolate();
+  }
+  
+  // Then the data you want is in:
+  size=Math.sqrt(ds.dataStore.length);
+  for(var i=0; i<size;i++)
   {
     world.map[i]=[];
+    for (var j = 0; j < size; j++) 
+    {
+      if(ds.dataStore[i*size+j]<1)
+      {
+        world.map[i][j]=1;
+      }
+      if(ds.dataStore[i*size+j]>0 && ds.dataStore[i*size+j]<6  && ds.dataStore[i*size+j]!=3)
+      {
+        world.map[i][j]=0;
+      }
+      else if( ds.dataStore[i*size+j]==3)
+      {
+        world.map[i][j]=2;
+      }
+      if(ds.dataStore[i*size+j]>5)
+      {
+        world.map[i][j]=3;
+      }
+    }
+  }
+
+  for (var i = 0; i < size; i++)
+  {
     world.builds[i]=[100, 0, 0];
     for (var j = 0; j < size;  j++)
     {
       world.builds[i][j]=[0,0];
-      world.map[i][j]=0;
     }
   }
-  
-  function gen(tile, min, max, rarity)
-  {
-    let water=[];
-    for (var i = 1; i < size/rarity; i++) {
-      water[i]=[random(size), random(size), random(max-min)+min];
-    }
-    let thing, pos, setx, sety;
-    for (var i = 0; i < water.length-1; i++) {
-      thing=water[i];
-      if(thing===undefined)
-      {
-      	continue;
-      }
-      pos=[thing[0], thing[1]];
-      for (var i = -thing[2]/2; i < thing[2]/2; i++) {
-        for (var j = -thing[2]/2; j < thing[2]/2; j++) {
-          if((i)**2+(j)**2<(thing[2]/2)**2)
-          {
-            setx=Math.floor(Math.abs(size+pos[0]+i)%size);
-            sety=Math.floor(Math.abs(size+pos[1]+j)%size);
-            world.map[setx][sety]=tile;
-          }
-        }    
-      }
-    }
-  }
-  gen(1, 10, 90, 1, size);
-  gen(3, 40, 70, 2, size);
-  gen(2, 40, 100, 4, size);
-  let w=0;
+  // function gen(tile, min, max, rarity)
+  // {
+  //   let water=[];
+  //   for (var i = 1; i < size/rarity; i++) {
+  //     water[i]=[random(size), random(size), random(max-min)+min];
+  //   }
+  //   let thing, pos, setx, sety;
+  //   for (var i = 0; i < water.length-1; i++) {
+  //     thing=water[i];
+  //     if(thing===undefined)
+  //     {
+  //     	continue;
+  //     }
+  //     pos=[thing[0], thing[1]];
+  //     for (var i = -thing[2]/2; i < thing[2]/2; i++) {
+  //       for (var j = -thing[2]/2; j < thing[2]/2; j++) {
+  //         if((i)**2+(j)**2<(thing[2]/2)**2)
+  //         {
+  //           setx=Math.floor(Math.abs(size+pos[0]+i)%size);
+  //           sety=Math.floor(Math.abs(size+pos[1]+j)%size);
+  //           world.map[setx][sety]=tile;
+  //         }
+  //       }    
+  //     }
+  //   }
+  // }
+  // gen(1, 10, 90, 1, size);
+  // gen(3, 40, 70, 2, size);
+  // gen(2, 40, 100, 4, size);
+  // let w=0;
   for(var i=0;i<size;i++)
   {
   	for(var j=0;j<size;j++)
   	{
-  	  if(world.map[i][j]==1)
-  	  {
-  	  	w++;
-  	  	world.players[myname].x=i*128;
-  	  	world.players[myname].y=j*128;
-  	  }
   		if(world.map[i][j]==0)
       {
         if(Math.random()*100>90)
@@ -1285,7 +1455,7 @@ function start(arg)
     y=normalized[3];
     if(world.map[x][y]!==1)
     {
-      world.mobs[world.mobs.length]=new Mob(8, 10, 10, 6, 0, [[30, Math.round(Math.random()*2)]], random(size)*128, random(size)*128);
+      world.mobs[world.mobs.length]=new Mob(8, 10, 10, 6, 0, [[30, Math.round(Math.random())+1]], random(size)*128, random(size)*128);
     }
   }
   document.onkeydown = keyPress;
