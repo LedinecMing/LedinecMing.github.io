@@ -521,15 +521,15 @@ class Tile
 }
 function genFile()
 {
-  data='';
-  for (var i = 0; i < world.map.length; i++) 
-  {
-    for (var j = 0; j < world.map[i].length; j++) 
-    {
-      data+=world.map[i][j];
-    }
-  }
-  const blob = new Blob([JSON.stringify({map:data})], {type : 'application/json'});
+ 
+
+
+
+   
+
+
+
+  const blob = new Blob([JSON.stringify({map:world.map})], {type : 'application/json'});
   return blob;
 }
 function downloadFile(file)
