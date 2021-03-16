@@ -1,7 +1,7 @@
 let item_specifics={nothing:0, instrument:1, build:2, food:3, weapon:4};
 let build_specifics={storage:1, kust:2};
 let keys={87:false, 83:false, 65:false, 68:false, 69:false, 70:false};
-// cgiffard/DiamondSquare give him a star!
+// gtihub.com/cgiffard/DiamondSquare give him a star! ^-^
 (function(glob) {
   
   function DiamondSquare(data,width,height,roughness) {
@@ -519,6 +519,31 @@ class Tile
     }
   }
 }
+function genFile()
+{
+  data='';
+  for (var i = 0; i < world.map.length; i++) 
+  {
+    for (var j = 0; j < world.map[i].length; j++) 
+    {
+      data+=world.map[i][j];
+    }
+  }
+  const blob = new Blob([JSON.stringify({map:data})], {type : 'application/json'});
+  return blob;
+}
+function downloadFile(file)
+{
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(file);
+  a.download = "world.json";
+  a.click();
+}
+function saveWorld()
+{
+  file=genFile();
+  downloadFile(file);
+}
 function distance(a, b)
 {
   // Дистанция между двумя точками
@@ -541,6 +566,8 @@ let use = new Image();
 use.src="../Images/use.png"
 let pause= new Image();
 pause.src='../Images/pause.png';
+let download=new Image();
+download.src='../Images/download.png';
 // Холст и его настройки
 canvas = document.getElementById("field");
 ctx = canvas.getContext("2d");
@@ -706,6 +733,11 @@ function mousedown(e)
           return;
         }
         render--;
+    }
+    else if(e.clientX<('Установить мир:'+render).length*32-160 && e.clientX>('Установить мир:'+render).length*32-160-33)
+    {
+      alert('Может залагать...');
+      downloadFile(genFile());
     }
   }
   j=0;
@@ -1175,16 +1207,18 @@ function cycle()
     ctx.fillText("Коэфициент дальности прогрузки: "+render, 64, 64);
     ctx.fillText('+', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64-16);
     ctx.fillText('-', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64+16);
+    ctx.fillText('Установить мир', 64, 64+32);
+    ctx.drawImage(download, ('Установить мир:'+render).length*32-160-32, 64);
   }
   else
   {
-  ctx.drawImage(use, canvas.width-128, canvas.height-128);
-  ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
-  ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
-  ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
-  ctx.font="32px Arial";
-  ctx.fillStyle='black';
-  ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16);
+    ctx.drawImage(use, canvas.width-128, canvas.height-128);
+    ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
+    ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
+    ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
+    ctx.font="32px Arial";
+    ctx.fillStyle='black';
+    ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16);
   }
   ctx.drawImage(pause, canvas.width-128, 0);
 } 
