@@ -227,6 +227,7 @@ class Item
     if(specific[0]==item_specifics.instrument)
     {
     		this.pow=specific[1];
+        this.durability = specific[2];
     }
     if(specific[0]==item_specifics.build)
     {
@@ -239,6 +240,7 @@ class Item
     if(specific[0]==item_specifics.weapon)
     {
       this.weapon=specific[1];
+      this.durability = specific[2];
     }
   }
 }
@@ -380,7 +382,7 @@ class Player
     this.hunger=new_hunger;
     this.inventory=new_inventory;
   }
-  add_item(item_num, nums)
+  add_item(item_num, nums, durability = 0)
   {
     let added=false;
     for( var i=0; i<this.inventory.length;i++)
@@ -389,6 +391,10 @@ class Player
       {
         this.inventory[i][0]=item_num;
         this.inventory[i][1]+=nums;
+        this.inventory[i][2] = durability;
+        if((items[item_num].durability || items[item_num].weapon) && durability == 0){
+          this.inventory[i][2] = items[item_num].durability;
+        }
         added=true;
         return true;
       }
@@ -399,6 +405,10 @@ class Player
       {
         this.inventory[i][0]=item_num;
         this.inventory[i][1]+=nums;
+        this.inventory[i][2] = durability;
+        if((items[item_num].durability || items[item_num].weapon) && durability == 0){
+          this.inventory[i][2] = items[item_num].durability;
+        }
         return true;
       }
     }
@@ -411,7 +421,7 @@ class Player
       {
         if(this.inventory[i][1]-nums==0)
         {
-          this.inventory[i]=[0, 0];
+          this.inventory[i]=[0, 0, 0];
           return true;
         }
         else
@@ -580,20 +590,20 @@ let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), n
 // Предметы
 // num, item_name, specific, type
 let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
-            new Item(2,  'Wooden axe', [1, 2], 0), new Item(3, "Wooden pickaxe", [1, 1], 1), 
+            new Item(2,  'Wooden axe', [1, 2, 20], 0), new Item(3, "Wooden pickaxe", [1, 1, 10], 1), 
             new Item(4,  "Stone", [0], 0), new Item(5, 'Table', [2, 4], 0),
-            new Item(6,  'Stone axe', [1, 3], 0), new Item(7, 'Stone pickaxe',[1, 2], 1), 
-            new Item(8,  'Chest', [2, 6], 0), new Item(9, 'Iron axe', [1, 4], 0), 
-            new Item(10, 'Iron pickaxe', [1, 3], 1), new Item(11,'Golden axe', [1, 5], 0), 
-            new Item(12, 'Golden pickaxe', [1, 4], 1), new Item(13,'Coal', [0], 0), 
+            new Item(6,  'Stone axe', [1, 3, 30], 0), new Item(7, 'Stone pickaxe',[1, 2, 20], 1), 
+            new Item(8,  'Chest', [2, 6], 0), new Item(9, 'Iron axe', [1, 4, 40], 0), 
+            new Item(10, 'Iron pickaxe', [1, 3, 40], 1), new Item(11,'Golden axe', [1, 5, 10], 0), 
+            new Item(12, 'Golden pickaxe', [1, 4, 10], 1), new Item(13,'Coal', [0], 0), 
             new Item(14, 'Furnace', [2, 9], 0), new Item(15,'Iron ore', [0], 0), 
             new Item(16, 'Iron ingot', [0], 0), new Item(17,'Anvil', [2, 10], 0), 
-            new Item(18, 'Shears', [1, 1], 7), new Item(19,'Flowduck', [2, 1], 0), 
+            new Item(18, 'Shears', [1, 1, 20], 7), new Item(19,'Flowduck', [2, 1], 0), 
             new Item(20, 'Red berry', [3, 1], 0), new Item(21,'Berry bush', [2, 12], 0), 
-            new Item(22, 'Stone shovel', [1, 1], 4), new Item(23,'Iron shovel', [1, 2], 4), 
+            new Item(22, 'Stone shovel', [1, 1, 20], 4), new Item(23,'Iron shovel', [1, 2, 40], 4), 
             new Item(24, 'Kubok', [2, 13], 0), new Item(25,'Mushroom', [3, 2], 0), 
             new Item(26, 'Fried Mushroom', [3, 5], 0), new Item(27,'Campfire', [2, 16], 0), 
-            new Item(28, 'Stone sword', [4, 1], 0), new Item(29,'Iron sword', [4, 2], 0), 
+            new Item(28, 'Stone sword', [4, 1, 20], 0), new Item(29,'Iron sword', [4, 2, 40], 0), 
             new Item(30, 'Raw meat', [3, 3], 0), new Item(31,'Coocked meat', [3, 20], 0),
             new Item(32, 'Bread', [3, 10], 0), new Item(33, 'Wheat', [0], 0),
             new Item(34, 'Seed', [2, 17], 0)]; 
@@ -678,10 +688,17 @@ function mousedown(e)
         if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
         {       
           let drop=builds[world.builds[tx][ty][0]].drops;
+          if(player.inventory[player.selected][2]-- == 0){
+            player.inventory[player.selected][0] = 0;
+            player.inventory[player.selected][1] = 0;
+            player.inventory[player.selected][2] = 0;
+          }else{
+            player.inventory[player.selected][2]--;
+          }
           for(var i=0;i<drop.length;i++)
           {
-         	 player.add_item(drop[i][1], drop[i][0]);
-           world.builds[tx][ty]=[0, 0, 0];  
+         	  player.add_item(drop[i][1], drop[i][0]);
+            world.builds[tx][ty]=[0, 0, 0];  
           } 
         }
         else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
@@ -920,6 +937,13 @@ function execKey(keyNum)
           {
             for (var j = 0; j < world.mobs[i].drop.length; j++) 
             {
+              if(player.inventory[player.selected][2]-- == 0){
+                player.inventory[player.selected][0] = 0;
+                player.inventory[player.selected][1] = 0;
+                player.inventory[player.selected][2] = 0;
+              }else{
+                player.inventory[player.selected][2]--;
+              }
               player.add_item(world.mobs[i].drop[j][0],world.mobs[i].drop[j][1]);
             }
             world.mobs[i]=new Mob(world.mobs[i].speed, world.mobs[i].maxhp, world.mobs[i].maxhp, world.mobs[i].anims, world.mobs[i].num, world.mobs[i].drop, random(world.map.length)*128, random(world.map.length)*128);
@@ -945,6 +969,13 @@ function execKey(keyNum)
         if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
         {       
           let drop=builds[world.builds[tx][ty][0]].drops;
+          if(player.inventory[player.selected][2]-- == 0){
+            player.inventory[player.selected][0] = 0;
+            player.inventory[player.selected][1] = 0;
+            player.inventory[player.selected][2] = 0;
+          }else{
+            player.inventory[player.selected][2]--;
+          }
           for(var i=0;i<drop.length;i++)
           {
             player.add_item(drop[i][1], drop[i][0]);
@@ -989,16 +1020,16 @@ function execKey(keyNum)
     {
       if(world.builds[tx][ty][3][player.selected][0]!==0)
       {
-        if(player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1]))
+        if(player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1] , world.builds[tx][ty][3][player.selected][2]))
         {
-          world.builds[tx][ty][3][player.selected]=[0, 0];
+          world.builds[tx][ty][3][player.selected]=[0, 0, 0];
         } 
       }
       else
       {
         if(player.inventory[player.selected][0]!==0)
         {
-          world.builds[tx][ty][3][player.selected]=[player.inventory[player.selected][0], player.inventory[player.selected][1]];
+          world.builds[tx][ty][3][player.selected]=[player.inventory[player.selected][0], player.inventory[player.selected][1] , player.inventory[player.selected][2]];
           player.remove_item(player.inventory[player.selected][0], player.inventory[player.selected][1]);
         }
       }
@@ -1146,6 +1177,7 @@ function cycle()
   }
   let len=32*player.inventory.length;
   len=canvas.width/2-len/2;
+  let inventor;
   for (var i=0; i<player.inventory.length; i++)
   {
     ctx.strokeRect(i*32+len, canvas.height-32, 32, 32);
@@ -1157,8 +1189,15 @@ function cycle()
     }
     if(world.players[myname].inventory[i][0]!=0)
     {
-      ctx.drawImage(items[world.players[myname].inventory[i][0]].image, i*32+len, canvas.height-32);
+      inventor = items[world.players[myname].inventory[i][0]];
+      ctx.drawImage(inventor.image, i*32+len, canvas.height-32);
       ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+len, canvas.height-32);
+      if(inventor.durability || inventor.weapon){
+        ctx.fillRect(i*32+4+len, canvas.height-7, 23, 4)
+        ctx.fillStyle = "lime"
+        ctx.fillRect(i*32+5+len, canvas.height-8, Math.floor(22 * (world.players[myname].inventory[i][2] / 22) / ((inventor.durability / 22))), 3)
+        ctx.fillStyle = 'black'
+      }
     }
   }
   ctx.textAlign='center';
@@ -1303,7 +1342,7 @@ function start(arg)
   paused=false;
   ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
   world.names=[myname];
-  let inventory=[[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0, 0]];
+  let inventory=[[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]];
   let speed=16;
   if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'})
   {
