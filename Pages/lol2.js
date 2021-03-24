@@ -226,12 +226,12 @@ class Item
     }
     if(specific[0]==item_specifics.instrument)
     {
-    		this.pow=specific[1];
-        this.durability = specific[2];
+        this.pow=specific[1];
+        this.break = specific[2];
     }
     if(specific[0]==item_specifics.build)
     {
-    		this.building=specific[1];
+        this.building=specific[1];
     }
     if(specific[0]==item_specifics.food)
     {
@@ -240,7 +240,7 @@ class Item
     if(specific[0]==item_specifics.weapon)
     {
       this.weapon=specific[1];
-      this.durability = specific[2];
+      this.break = specific[2];
     }
   }
 }
@@ -277,16 +277,16 @@ class Build
       }
       this.storage=false;
       if(specifics[0]==build_specifics.storage)
-      { 	
-       	this.storage=specifics[1];
+      {   
+        this.storage=specifics[1];
       }
       else if(specifics[0]==build_specifics.kust)
       {
-      	this.growtime=specifics[2];
-      	this.grow=specifics[1];
-      	this.grown=specifics[3];
-      	this.last=specifics[4];
-      	this.growDrop=specifics[5];
+        this.growtime=specifics[2];
+        this.grow=specifics[1];
+        this.grown=specifics[3];
+        this.last=specifics[4];
+        this.growDrop=specifics[5];
       }
     }
 }
@@ -312,56 +312,56 @@ class Mob
       this.anims[i].src='../Images/mob'+num+''+i+'.png';
     }
   }
-  cycle()
+  cycle(mob)
   {
     if(Math.random()*100>90)
     {
       if(Math.random()*100>90)
       {
-        if(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+        if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
         {
-          this.audio.volume=(canvas.width-(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width*0.5;
+          this.audio.volume=(canvas.width-(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width*0.5;
           this.audio.play();
           this.audio.volume=1;
         }
       }
     }
-    if(this.go<1)
+    if(mob.go<1)
     {
       if(Math.random()*100>95) 
       {
-        this.angle = random(360);
-        this.go=random(30);
+        mob.angle = random(360);
+        mob.go=random(30);
       }
     }
     else 
     {
-      this.go-=1;
-      let pos=[this.x, this.y];
-      let p = new Point(this.speed, this.speed);
-      p.rotate(this.angle);
+      mob.go-=1;
+      let pos=[mob.x, mob.y];
+      let p = new Point(mobs[mob.num].speed, mobs[mob.num].speed);
+      p.rotate(mob.angle);
       if(p.pos[0]>0)
       {
-        this.rotate=0;
+        mob.rotate=0;
       }
       else
       {
-        this.rotate=this.anims.length/2;
+        mob.rotate=this.anims.length/2;
       }
-      let normalized=normal(Math.floor(this.x/128), Math.floor(this.y/128));
+      let normalized=normal(Math.floor(mob.x/128), Math.floor(mob.y/128));
       let coof=tiles[world.map[normalized[2]][normalized[3]]].speed;
-      let normal2=normal(Math.floor((this.x+p.pos[0]*coof)/128), Math.floor((this.y+p.pos[1]*coof))/128);
-      this.x+=p.pos[0]*coof;  //+pos[0];
-      this.y+=p.pos[1]*coof; //+pos[1];
-      this.anim++;
-      this.x=(world.map.length*128+this.x)%(world.map.length*128);
-      this.y=(world.map.length*128+this.y)%(world.map.length*128);
-      let tile=world.map[Math.floor(this.x/128)][Math.floor(this.y/128)];
+      let normal2=normal(Math.floor((mob.x+p.pos[0]*coof)/128), Math.floor((mob.y+p.pos[1]*coof))/128);
+      mob.x+=p.pos[0]*coof;  //+pos[0];
+      mob.y+=p.pos[1]*coof; //+pos[1];
+      mob.anim++;
+      mob.x=(world.map.length*128+mob.x)%(world.map.length*128);
+      mob.y=(world.map.length*128+mob.y)%(world.map.length*128);
+      let tile=world.map[Math.floor(mob.x/128)][Math.floor(mob.y/128)];
       if(tiles[tile].audio[0])
       {
-        if(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+        if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
         {
-          tiles[tile].audio[1].volume=(canvas.width-(Math.abs(distance([this.x, this.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width;
+          tiles[tile].audio[1].volume=(canvas.width-(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width;
           tiles[tile].audio[1].play();
           tiles[tile].audio[1].volume=1;
         }
@@ -382,7 +382,7 @@ class Player
     this.hunger=new_hunger;
     this.inventory=new_inventory;
   }
-  add_item(item_num, nums, durability = 0)
+  add_item(item_num, nums, break_)
   {
     let added=false;
     for( var i=0; i<this.inventory.length;i++)
@@ -391,9 +391,10 @@ class Player
       {
         this.inventory[i][0]=item_num;
         this.inventory[i][1]+=nums;
-        this.inventory[i][2] = durability;
-        if((items[item_num].durability || items[item_num].weapon) && durability == 0){
-          this.inventory[i][2] = items[item_num].durability;
+        this.inventory[i][2] = break_;
+        if((items[item_num].break) && break_ == 0)
+        {
+          this.inventory[i][2] = items[item_num].break;
         }
         added=true;
         return true;
@@ -405,9 +406,10 @@ class Player
       {
         this.inventory[i][0]=item_num;
         this.inventory[i][1]+=nums;
-        this.inventory[i][2] = durability;
-        if((items[item_num].durability || items[item_num].weapon) && durability == 0){
-          this.inventory[i][2] = items[item_num].durability;
+        this.inventory[i][2] = break_;
+        if(items[item_num.break] && break_ == 0)
+        {
+          this.inventory[i][2] = items[item_num].break;
         }
         return true;
       }
@@ -446,8 +448,8 @@ class Player
 }
 class World
 {
-	constructor(new_map, new_players, new_players_names, new_builds, new_mobs)
-	{
+  constructor(new_map, new_players, new_players_names, new_builds, new_mobs)
+  {
     this.map=new_map;
     this.players=new_players;
     this.names=new_players_names;
@@ -502,7 +504,7 @@ class Craft
     {
       return false;
     }
-    player.add_item(this.result[0], this.result[1]);
+    player.add_item(this.result[0], this.result[1], items[this.result[0]].break);
   }
 }
 class Tile
@@ -531,14 +533,6 @@ class Tile
 }
 function genFile()
 {
- 
-
-
-
-   
-
-
-
   const blob = new Blob([JSON.stringify({map:world.map})], {type : 'application/json'});
   return blob;
 }
@@ -572,8 +566,6 @@ function normal(x, y)
   return [x, y, Math.floor(Math.abs(world.map.length+x)%world.map.length), Math.floor(Math.abs(world.map.length+y)%world.map.length)];}
 let locate="main";
 // Текстуры кнопок
-let use = new Image();
-use.src="../Images/use.png"
 let pause= new Image();
 pause.src='../Images/pause.png';
 let download=new Image();
@@ -590,12 +582,12 @@ let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), n
 // Предметы
 // num, item_name, specific, type
 let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
-            new Item(2,  'Wooden axe', [1, 2, 20], 0), new Item(3, "Wooden pickaxe", [1, 1, 10], 1), 
-            new Item(4,  "Stone", [0], 0), new Item(5, 'Table', [2, 4], 0),
-            new Item(6,  'Stone axe', [1, 3, 30], 0), new Item(7, 'Stone pickaxe',[1, 2, 20], 1), 
-            new Item(8,  'Chest', [2, 6], 0), new Item(9, 'Iron axe', [1, 4, 40], 0), 
-            new Item(10, 'Iron pickaxe', [1, 3, 40], 1), new Item(11,'Golden axe', [1, 5, 10], 0), 
-            new Item(12, 'Golden pickaxe', [1, 4, 10], 1), new Item(13,'Coal', [0], 0), 
+            new Item(2,  'Wooden axe', [1, 2, 32], 0), new Item(3, "Wooden pickaxe", [1, 1, 32], 1), 
+            new Item(4,  "Stone", [0], 0), new Item(5, 'Workbench', [2, 4], 0),
+            new Item(6,  'Stone axe', [1, 3, 96], 0), new Item(7, 'Stone pickaxe',[1, 2, 96], 1), 
+            new Item(8,  'Chest', [2, 6], 0), new Item(9, 'Iron axe', [1, 4, 256], 0), 
+            new Item(10, 'Iron pickaxe', [1, 3, 256], 1), new Item(11,'Golden axe', [1, 5, 256], 0), 
+            new Item(12, 'Golden pickaxe', [1, 4, 256], 1), new Item(13,'Coal', [0], 0), 
             new Item(14, 'Furnace', [2, 9], 0), new Item(15,'Iron ore', [0], 0), 
             new Item(16, 'Iron ingot', [0], 0), new Item(17,'Anvil', [2, 10], 0), 
             new Item(18, 'Shears', [1, 1, 20], 7), new Item(19,'Flowduck', [2, 1], 0), 
@@ -603,7 +595,7 @@ let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(22, 'Stone shovel', [1, 1, 20], 4), new Item(23,'Iron shovel', [1, 2, 40], 4), 
             new Item(24, 'Kubok', [2, 13], 0), new Item(25,'Mushroom', [3, 2], 0), 
             new Item(26, 'Fried Mushroom', [3, 5], 0), new Item(27,'Campfire', [2, 16], 0), 
-            new Item(28, 'Stone sword', [4, 1, 20], 0), new Item(29,'Iron sword', [4, 2, 40], 0), 
+            new Item(28, 'Stone sword', [4, 1, 96], 0), new Item(29,'Iron sword', [4, 2, 256], 0), 
             new Item(30, 'Raw meat', [3, 3], 0), new Item(31,'Coocked meat', [3, 20], 0),
             new Item(32, 'Bread', [3, 10], 0), new Item(33, 'Wheat', [0], 0),
             new Item(34, 'Seed', [2, 17], 0)]; 
@@ -637,6 +629,8 @@ let builds=[0,
              new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16]),
              new Build(0, 10, 17, 1, 0, 0, [[1, 34]], false, 0, [2, 18, 1200, false, 17]), new Build(0, 10, 18, 1, 0, 0, [[1, 34]], false, 0, [2, 19, 1200, false, 18]),
              new Build(0, 10, 19, 1, 0, 0, [[1, 34], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
+// Мобы
+let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0)];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
@@ -671,59 +665,59 @@ function mousedown(e)
   let tx=normalized[2];
   let ty=normalized[3];
   // Обработка кнопки use
-  if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
-  {
-    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-    let tx=normalized[2];
-    let player=world.players[myname];
-    let ty=normalized[3];
-    if(!items[player.inventory[player.selected][0]].building)
-    {
-      if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
-      {
-        if(builds[world.builds[tx][ty][0]].audio[0])
-        {
-          builds[world.builds[tx][ty][0]].audio[1].play();
-        }
-        if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
-        {       
-          let drop=builds[world.builds[tx][ty][0]].drops;
-          if(player.inventory[player.selected][2]-- == 0){
-            player.inventory[player.selected][0] = 0;
-            player.inventory[player.selected][1] = 0;
-            player.inventory[player.selected][2] = 0;
-          }else{
-            player.inventory[player.selected][2]--;
-          }
-          for(var i=0;i<drop.length;i++)
-          {
-         	  player.add_item(drop[i][1], drop[i][0]);
-            world.builds[tx][ty]=[0, 0, 0];  
-          } 
-        }
-        else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
-          world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
-        }            
-      }
-    }
-    else
-    {
-      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-      let tx=normalized[2];
-      let player=world.players[myname];
-      let ty=normalized[3];
-      if(world.builds[tx][ty][0]==0)
-      {
-        let storage=[];
-        for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
-        {
-          storage[i]=[0,0];
-        }
-        world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
-        player.remove_item(player.inventory[player.selected][0], 1); 
-      }
-    }
-  }
+  // if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
+  // {
+  //   let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+  //   let tx=normalized[2];
+  //   let player=world.players[myname];
+  //   let ty=normalized[3];
+  //   if(!items[player.inventory[player.selected][0]].building)
+  //   {
+  //     if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
+  //     {
+  //       if(builds[world.builds[tx][ty][0]].audio[0])
+  //       {
+  //         builds[world.builds[tx][ty][0]].audio[1].play();
+  //       }
+  //       if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
+  //       {       
+  //         let drop=builds[world.builds[tx][ty][0]].drops;
+  //         if(player.inventory[player.selected][2]-- == 0){
+  //           player.inventory[player.selected][0] = 0;
+  //           player.inventory[player.selected][1] = 0;
+  //           player.inventory[player.selected][2] = 0;
+  //         }else{
+  //           player.inventory[player.selected][2]--;
+  //         }
+  //         for(var i=0;i<drop.length;i++)
+  //         {
+  //           player.add_item(drop[i][1], drop[i][0]);
+  //           world.builds[tx][ty]=[0, 0, 0];  
+  //         } 
+  //       }
+  //       else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
+  //         world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
+  //       }            
+  //     }
+  //   }
+  //   else
+  //   {
+  //     let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+  //     let tx=normalized[2];
+  //     let player=world.players[myname];
+  //     let ty=normalized[3];
+  //     if(world.builds[tx][ty][0]==0)
+  //     {
+  //       let storage=[];
+  //       for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
+  //       {
+  //         storage[i]=[0,0];
+  //       }
+  //       world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
+  //       player.remove_item(player.inventory[player.selected][0], 1); 
+  //     }
+  //   }
+  // }
   if(e.clientX>canvas.width-129 && e.clientY<128)
   {
     if(locate=='pause')
@@ -941,7 +935,9 @@ function execKey(keyNum)
                 player.inventory[player.selected][0] = 0;
                 player.inventory[player.selected][1] = 0;
                 player.inventory[player.selected][2] = 0;
-              }else{
+              }
+              else
+              {
                 player.inventory[player.selected][2]--;
               }
               player.add_item(world.mobs[i].drop[j][0],world.mobs[i].drop[j][1]);
@@ -969,12 +965,24 @@ function execKey(keyNum)
         if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
         {       
           let drop=builds[world.builds[tx][ty][0]].drops;
-          if(player.inventory[player.selected][2]-- == 0){
-            player.inventory[player.selected][0] = 0;
-            player.inventory[player.selected][1] = 0;
-            player.inventory[player.selected][2] = 0;
-          }else{
-            player.inventory[player.selected][2]--;
+          if(items[player.inventory[player.selected][0]].break)
+          {
+            if(player.inventory[player.selected][2]<1)
+            {
+              if(player.inventory[player.selected][1]<2)
+              {
+                player.inventory[player.selected]=[0, 0, 0];
+              }
+              else
+              {
+                player.inventory[player.selected][1]-=1;
+                player.inventory[player.selected][2]=items[player.inventory[player.selected][0]].break;
+              }
+            }
+            else
+            {
+              player.inventory[player.selected][2]-=1;
+            }
           }
           for(var i=0;i<drop.length;i++)
           {
@@ -1152,8 +1160,8 @@ function cycle()
     {
       if(world.mobs[i].y-world.players[myname].y+canvas.height/2>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+128 )
       {
-        ctx.drawImage(world.mobs[i].anims[Math.floor(world.mobs[i].anim%world.mobs[i].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
-        ctx.fillStyle='rgb('+Math.round(255-world.mobs[i].maxhp/world.mobs[i].hp*255)+', '+Math.round(world.mobs[i].maxhp/world.mobs[i].hp*255)+', 0)';
+        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
+        ctx.fillStyle='rgb('+Math.round(255-mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', '+Math.round(mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', 0)';
         ctx.fillRect(world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2-10, 128, 10)
       }  
     }
@@ -1177,7 +1185,7 @@ function cycle()
   }
   let len=32*player.inventory.length;
   len=canvas.width/2-len/2;
-  let inventor;
+  let item;
   for (var i=0; i<player.inventory.length; i++)
   {
     ctx.strokeRect(i*32+len, canvas.height-32, 32, 32);
@@ -1189,14 +1197,15 @@ function cycle()
     }
     if(world.players[myname].inventory[i][0]!=0)
     {
-      inventor = items[world.players[myname].inventory[i][0]];
-      ctx.drawImage(inventor.image, i*32+len, canvas.height-32);
+      item = items[world.players[myname].inventory[i][0]];
+      ctx.drawImage(item.image, i*32+len, canvas.height-32);
       ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+len, canvas.height-32);
-      if(inventor.durability || inventor.weapon){
-        ctx.fillRect(i*32+4+len, canvas.height-7, 23, 4)
-        ctx.fillStyle = "lime"
-        ctx.fillRect(i*32+5+len, canvas.height-8, Math.floor(22 * (world.players[myname].inventory[i][2] / 22) / ((inventor.durability / 22))), 3)
-        ctx.fillStyle = 'black'
+      if(world.players[myname].inventory[i][2])
+      {
+        ctx.fillRect(i*32+4+len, canvas.height-7, 23, 4);
+        ctx.fillStyle = 'rgb('+(255*(1-world.players[myname].inventory[i][2]/item.break))+','+(255*(world.players[myname].inventory[i][2]/item.break))+', 0)';
+        ctx.fillRect(i*32+5+len, canvas.height-8, Math.floor(22 * (world.players[myname].inventory[i][2]/item.break)), 3);
+        ctx.fillStyle = 'black';
       }
     }
   }
@@ -1251,7 +1260,7 @@ function cycle()
   }
   else
   {
-    ctx.drawImage(use, canvas.width-128, canvas.height-128);
+    //ctx.drawImage(use, canvas.width-128, canvas.height-128);
     ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
     ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
     ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
@@ -1289,15 +1298,15 @@ function animations()
         let drawObject=builds[build[0]];
         if(!drawObject.growtime)
         {
-       			world.builds[tx][ty][2]=(build[2]+1)%drawObject.images.length; 
+            world.builds[tx][ty][2]=(build[2]+1)%drawObject.images.length; 
         }
         else if(!builds[build[0]].grown)
         {
-      	  	world.builds[tx][ty][2]+=1;
-        		if(world.builds[tx][ty][2]>builds[build[0]].growtime)
-        		{
-        			world.builds[tx][ty]=[builds[build[0]].grow, builds[builds[build[0]].grow].break, 0];
-        		}
+            world.builds[tx][ty][2]+=1;
+            if(world.builds[tx][ty][2]>builds[build[0]].growtime)
+            {
+              world.builds[tx][ty]=[builds[build[0]].grow, builds[builds[build[0]].grow].break, 0];
+            }
         }
       }
     }
@@ -1308,7 +1317,7 @@ function animations()
     {
       if(world.mobs[i].y-world.players[myname].y+canvas.height/2*render>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height*render+129 )
       {
-        world.mobs[i].cycle();        
+        mobs[world.mobs[i].num].cycle(world.mobs[i]);        
       }
     }
   }  
@@ -1368,7 +1377,7 @@ function start(arg)
   // iteration.
   for (var i = 0; i < value; i++) {
     ds.iterate();
-    ds.interpolate();
+    ds.interpolate();   
   }
   
   // Then the data you want is in:
@@ -1396,7 +1405,6 @@ function start(arg)
       }
     }
   }
-
   for (var i = 0; i < size; i++)
   {
     world.builds[i]=[100, 0, 0];
@@ -1416,7 +1424,7 @@ function start(arg)
   //     thing=water[i];
   //     if(thing===undefined)
   //     {
-  //     	continue;
+  //      continue;
   //     }
   //     pos=[thing[0], thing[1]];
   //     for (var i = -thing[2]/2; i < thing[2]/2; i++) {
@@ -1437,45 +1445,45 @@ function start(arg)
   // let w=0;
   for(var i=0;i<size;i++)
   {
-  	for(var j=0;j<size;j++)
-  	{
-  		if(world.map[i][j]==0)
+    for(var j=0;j<size;j++)
+    {
+      if(world.map[i][j]==0)
       {
         if(Math.random()*100>90)
         {
           world.builds[i][j]=[17, 10, 0];
         }
-  			if(Math.random()*100>60)
-  			{
-  				world.builds[i][j]=[3, builds[3].break, 0];
-  			}
-  			if(Math.random()*100>90)
-  			{
-  				world.map[i][j]=2;
-  				if(Math.random()*100>50)
-  				{
-  					world.builds[i][j]=[1, builds[1].break, 0];
-  				}
-  			}
+        if(Math.random()*100>60)
+        {
+          world.builds[i][j]=[3, builds[3].break, 0];
+        }
+        if(Math.random()*100>90)
+        {
+          world.map[i][j]=2;
+          if(Math.random()*100>50)
+          {
+            world.builds[i][j]=[1, builds[1].break, 0];
+          }
+        }
         else if(Math.random()*100>93)
         {
           world.builds[i][j]=[14, builds[14].break, 0];
         }
-  			else if(Math.random()*100>95)
-  			{
-  				 if(Math.random()*100>50)
-  				 {
-  				 	 world.builds[i][j]=[2, builds[2].break, 0];
-  				 }
-  				 else if(Math.random()*100>60)
-  				 {
-  				 	 world.builds[i][j]=[7, builds[7].break, 0];
-  				 }
-  				 else
-  				 {
-  				 	world.builds[i][j]=[8, builds[8].break, 0];
-  				 }
-  			}
+        else if(Math.random()*100>95)
+        {
+           if(Math.random()*100>50)
+           {
+             world.builds[i][j]=[2, builds[2].break, 0];
+           }
+           else if(Math.random()*100>60)
+           {
+             world.builds[i][j]=[7, builds[7].break, 0];
+           }
+           else
+           {
+            world.builds[i][j]=[8, builds[8].break, 0];
+           }
+        }
         if(Math.random()*100==1)
         {
           if(Math.random()*100>60)
@@ -1483,22 +1491,22 @@ function start(arg)
             world.builds[i][j]=[11, builds[11].break, 0];
           }
         }
-  		}
-  		if(world.map[i][j]==3)
-  		{
-  			if(Math.random()*100>50)
-  		  {
-  			  world.builds[i][j]=[2, builds[2].break, 0];
-  			}
-  			else if(Math.random()*100>60)
-  			{
-  				world.builds[i][j]=[7, builds[7].break, 0];
-  			}
-  			else
-  			{
-  				world.builds[i][j]=[8, builds[8].break, 0];
-  			}
-  		}
+      }
+      if(world.map[i][j]==3)
+      {
+        if(Math.random()*100>50)
+        {
+          world.builds[i][j]=[2, builds[2].break, 0];
+        }
+        else if(Math.random()*100>60)
+        {
+          world.builds[i][j]=[7, builds[7].break, 0];
+        }
+        else
+        {
+          world.builds[i][j]=[8, builds[8].break, 0];
+        }
+      }
       else if(world.map[i][j]==2)
       {
         if(Math.random()*100>90)
@@ -1517,7 +1525,7 @@ function start(arg)
           }
         }
       }
-  	}
+    }
   }
   for (var i = 0; i < size*2; i++) {
     let x, y;
@@ -1528,7 +1536,14 @@ function start(arg)
     y=normalized[3];
     if(world.map[x][y]!==1)
     {
-      world.mobs[world.mobs.length]=new Mob(8, 10, 10, 6, 0, [[30, Math.round(Math.random())+1]], random(size)*128, random(size)*128);
+      world.mobs[world.mobs.length]={};
+      world.mobs[world.mobs.length-1].x=x*128;
+      world.mobs[world.mobs.length-1].y=y*128;
+      world.mobs[world.mobs.length-1].hp=mobs[0].hp;
+      world.mobs[world.mobs.length-1].go=0;
+      world.mobs[world.mobs.length-1].rotate=0;
+      world.mobs[world.mobs.length-1].anim=0;
+      world.mobs[world.mobs.length-1].num=0;
     }
   }
   document.onkeydown = keyPress;
