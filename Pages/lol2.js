@@ -292,15 +292,13 @@ class Build
 }
 class Mob
 {
-  constructor(speed, hp, maxhp, anims, num, drop, x, y)
+  constructor(speed, hp, maxhp, anims, num, drop)
   {
     this.speed=speed;
     this.hp=hp;
     this.maxhp=maxhp;
     this.num=num;
     this.drop=drop;
-    this.x=x;
-    this.y=y;
     this.rotate=0;
     this.go=0;
     this.anim=0;
@@ -369,11 +367,89 @@ class Mob
     }
   }
 }
+class Aggressive_mob
+{
+  constructor(speed, hp, maxhp, anims, num, drop, attack)
+  {
+    this.speed=speed;
+    this.hp=hp;
+    this.maxhp=maxhp;
+    this.num=num;
+    this.drop=drop;
+    this.rotate=0;
+    this.go=0;
+    this.anim=0;
+    this.anims=[];
+    this.audio=new Audio('../Music/mob'+num+'0.ogg');
+    for (var i = 0; i < anims; i++) 
+    {
+      this.anims[i]=new Image();
+      this.anims[i].src='../Images/mob'+num+''+i+'.png';
+    }
+  }
+  cycle(mob)
+  {
+    if(Math.random()*100>90)
+    {
+      if(Math.random()*100>90)
+      {
+        if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+        {
+          this.audio.volume=(canvas.width-(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width*0.5;
+          this.audio.play();
+          this.audio.volume=1;
+        }
+      }
+    }
+    if(mob.go<1)
+    {
+      if(Math.random()*100>95) 
+      {
+        mob.angle = random(360);
+        mob.go=random(30);
+      }
+    }
+    else 
+    {
+      mob.go-=1;
+      let pos=[mob.x, mob.y];
+      let p = new Point(mobs[mob.num].speed, mobs[mob.num].speed);
+      p.rotate(mob.angle);
+      if(p.pos[0]>0)
+      {
+        mob.rotate=0;
+      }
+      else
+      {
+        mob.rotate=this.anims.length/2;
+      }
+      let normalized=normal(Math.floor(mob.x/128), Math.floor(mob.y/128));
+      let coof=tiles[world.map[normalized[2]][normalized[3]]].speed;
+      let normal2=normal(Math.floor((mob.x+p.pos[0]*coof)/128), Math.floor((mob.y+p.pos[1]*coof))/128);
+      mob.x+=p.pos[0]*coof;  //+pos[0];
+      mob.y+=p.pos[1]*coof; //+pos[1];
+      mob.anim++;
+      mob.x=(world.map.length*128+mob.x)%(world.map.length*128);
+      mob.y=(world.map.length*128+mob.y)%(world.map.length*128);
+      let tile=world.map[Math.floor(mob.x/128)][Math.floor(mob.y/128)];
+      if(tiles[tile].audio[0])
+      {
+        if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+        {
+          tiles[tile].audio[1].volume=(canvas.width-(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width;
+          tiles[tile].audio[1].play();
+          tiles[tile].audio[1].volume=1;
+        }
+      }
+    }
+  }
+} 
 class Player
 {
-  constructor(ange, aim, nx, ny, new_inventory, new_speed, new_hunger)
+  constructor(ange, aim, nx, ny, new_inventory, new_speed, new_hunger, hat, hp)
   {
     this.angle=ange;
+    this.hp=hp;
     this.anim=aim;
     this.selected=0;
     this.x=nx
@@ -381,6 +457,7 @@ class Player
     this.speed=new_speed;
     this.hunger=new_hunger;
     this.inventory=new_inventory;
+    this.hat=hat;
   }
   add_item(item_num, nums, break_)
   {
@@ -563,7 +640,8 @@ function normal(x, y)
   // Нормализация координат
   tx=x;
   ty=y;
-  return [x, y, Math.floor(Math.abs(world.map.length+x)%world.map.length), Math.floor(Math.abs(world.map.length+y)%world.map.length)];}
+  return [x, y, Math.floor(Math.abs(world.map.length+x)%world.map.length), Math.floor(Math.abs(world.map.length+y)%world.map.length)];
+}
 let locate="main";
 // Текстуры кнопок
 let pause= new Image();
@@ -598,7 +676,7 @@ let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(28, 'Stone sword', [4, 1, 96], 0), new Item(29,'Iron sword', [4, 2, 256], 0), 
             new Item(30, 'Raw meat', [3, 3], 0), new Item(31,'Coocked meat', [3, 20], 0),
             new Item(32, 'Bread', [3, 10], 0), new Item(33, 'Wheat', [0], 0),
-            new Item(34, 'Seed', [2, 17], 0)]; 
+            new Item(34, 'Seed', [2, 17], 0),  new Item(35, 'Wool', [0], 0)]; 
 //speed, hp, anims, num, drop, x, y
 let world=new World([], [], [], [], []);  
 // Шляпы
@@ -630,7 +708,7 @@ let builds=[0,
              new Build(0, 10, 17, 1, 0, 0, [[1, 34]], false, 0, [2, 18, 1200, false, 17]), new Build(0, 10, 18, 1, 0, 0, [[1, 34]], false, 0, [2, 19, 1200, false, 18]),
              new Build(0, 10, 19, 1, 0, 0, [[1, 34], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
 // Мобы
-let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0)];
+let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0), new Mob(14, 8, 8, 6, 1, [[35, 1], [30, 1]]), new Aggressive_mob(15, 50, 50, 4, 2, [[1,2]], 0, 0)];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
@@ -737,7 +815,7 @@ function mousedown(e)
     {
       render++;
     }
-    else if(e.clientX<("Коофициентдальностипрогрузки:"+render).length*32-320+32 && e.clientX>("Коофициентдальностипрогрузки:"+render).length*32-32*10 && e.clientY>64 && e.clientY<64+16)
+    else if(e.clientX<("Коэфициентдальностипрогрузки:"+render).length*32-320+32 && e.clientX>("Коэфициентдальностипрогрузки:"+render).length*32-32*10 && e.clientY>64 && e.clientY<64+16)
     {
         if(render-1<1)
         {
@@ -1154,62 +1232,67 @@ function cycle()
       }
     }
   } 
+  // 
   for (var i = 0; i < world.mobs.length; i++) 
   {
-    if(world.mobs[i].x-world.players[myname].x+canvas.width/2>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width+128 )
+    if((world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128)>-129 && (world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128)<canvas.width+128 )
     {
-      if(world.mobs[i].y-world.players[myname].y+canvas.height/2>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height+128 )
+      if((world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128)>-129 && (world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128)<canvas.height+128 )
       {
-        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2);
+        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], (world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128));
         ctx.fillStyle='rgb('+Math.round(255-mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', '+Math.round(mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', 0)';
-        ctx.fillRect(world.mobs[i].x-world.players[myname].x+canvas.width/2, world.mobs[i].y-world.players[myname].y+canvas.height/2-10, 128, 10)
+        ctx.fillRect((world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128), 128, 10)
       }  
     }
   }
 
-  ctx.fillStyle='black';  
+  for (var i = 0; i < world.names.length; i++) 
+  {
+    ctx.fillStyle='black';  
+    player=world.players[world.names[i]];
+    ctx.font='16px Arial';
+    ctx.textAlign='center';
+    ctx.fillText(world.names[i] ,(player.x-world.players[myname].x+canvas.width/2)%(world.map.length*128)+64,  (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128));
+    ctx.drawImage(anims[player.anim%2+player.angle], (player.x-world.players[myname].x+canvas.width/2)%(world.map.length*128),  (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128));
+    let d=0;
+    if(player.angle==2)
+    {
+      d=1;
+    }
+    ctx.drawImage(hats[player.hat][d],(player.x-world.players[myname].x+canvas.width/2)%(world.map.length*128),  (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128)-5*(player.anim%2));
+    if(player.inventory[player.selected][0]!==0)
+    {
+      ctx.drawImage(items[player.inventory[player.selected][0]].image, (player.x-world.players[myname].x+canvas.width/2)+20+( 20*player.angle), (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128)+64);
+    }
+  }
+
   player=world.players[myname];
-  ctx.font='16px Arial';
-  ctx.textAlign='center';
-  ctx.fillText(myname ,canvas.width/2+64 ,canvas.height/2-10);
-  ctx.drawImage(anims[player.anim%2+player.angle], canvas.width/2, canvas.height/2);
-  let d=0;
-  if(player.angle==2)
-  {
-    d=1;
-  }
-  ctx.drawImage(hats[hat][d], canvas.width/2, canvas.height/2-5*(world.players[myname].anim%2));
-  if(player.inventory[player.selected][0]!==0)
-  {
-    ctx.drawImage(items[player.inventory[player.selected][0]].image, canvas.width/2+16+(20*player.angle), canvas.height/2+64);
-  }
   let len=32*player.inventory.length;
   len=canvas.width/2-len/2;
+  ctx.fillStyle='red';
+  ctx.fillRect(len, canvas.height-48, player.hp, 15);
   let item;
+  ctx.fillStyle='black';
+  ctx.fillRect(player.selected*32+5+len, canvas.height-27, 22, 22);
+  ctx.font = "32px Arial";
+  ctx.textAlign='center';
   for (var i=0; i<player.inventory.length; i++)
   {
     ctx.strokeRect(i*32+len, canvas.height-32, 32, 32);
-    ctx.font = "32px Arial";
-    ctx.textAlign='center';
-    if( i==player.selected )
+    if(player.inventory[i][0]!=0)
     {
-      ctx.fillRect(i*32+5+len, canvas.height-27, 22, 22);
-    }
-    if(world.players[myname].inventory[i][0]!=0)
-    {
-      item = items[world.players[myname].inventory[i][0]];
+      item = items[player.inventory[i][0]];
       ctx.drawImage(item.image, i*32+len, canvas.height-32);
-      ctx.fillText(''+world.players[myname].inventory[i][1]+'', i*32+16+len, canvas.height-32);
-      if(world.players[myname].inventory[i][2])
+      ctx.fillText(''+player.inventory[i][1]+'', i*32+16+len, canvas.height-32);
+      if(player.inventory[i][2])
       {
         ctx.fillRect(i*32+4+len, canvas.height-7, 23, 4);
-        ctx.fillStyle = 'rgb('+(255*(1-world.players[myname].inventory[i][2]/item.break))+','+(255*(world.players[myname].inventory[i][2]/item.break))+', 0)';
-        ctx.fillRect(i*32+5+len, canvas.height-8, Math.floor(22 * (world.players[myname].inventory[i][2]/item.break)), 3);
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = 'rgb('+(255*(1-player.inventory[i][2]/item.break))+','+(255*(player.inventory[i][2]/item.break))+', 0)';
+        ctx.fillRect(i*32+5+len, canvas.height-8, Math.floor(22 * (player.inventory[i][2]/item.break)), 3);
       }
     }
   }
-  ctx.textAlign='center';
+  ctx.fillStyle='black';
   if(world.builds[tx][ty][0]!==0)
   {
     ctx.fillText(world.builds[tx][ty][1]+'/'+builds[world.builds[tx][ty][0]].break, canvas.width/2+64, canvas.height/2+128);
@@ -1253,8 +1336,8 @@ function cycle()
     ctx.fillRect(32, 32, canvas.width-48, canvas.height-48);
     ctx.fillStyle='black';
     ctx.fillText("Коэфициент дальности прогрузки: "+render, 64, 64);
-    ctx.fillText('+', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64-16);
-    ctx.fillText('-', ("Коофициентдальностипрогрузки:"+render).length*32-320, 64+16);
+    ctx.fillText('+', 608+toString(render).length, 64-16);
+    ctx.fillText('-', 608+toString(render).length, 64+16);
     ctx.fillText('Установить мир', 64, 64+32);
     ctx.drawImage(download, ('Установить мир:'+render).length*32-160-32, 64);
   }
@@ -1264,6 +1347,7 @@ function cycle()
     ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
     ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
     ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
+    console.log()
     ctx.font="32px Arial";
     ctx.fillStyle='black';
     ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16);
@@ -1328,10 +1412,13 @@ function fhunger()
   {
     return;
   }
-  world.players[myname].hunger-=1;
   if(world.players[myname].hunger<0)
   {
-    start(1);
+    world.players[myname].hp-=5;
+  }
+  else
+  {
+    world.players[myname].hunger-=1;
   }
 }
 function start(arg)
@@ -1350,20 +1437,18 @@ function start(arg)
   }
   paused=false;
   ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
-  world.names=[myname];
+  world.names=[myname, 'банка'];
   let inventory=[[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]];
   let speed=16;
   if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'})
   {
     inventory[0]=[24, 1];
   }
-  world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 99);
+  world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 99, hat, 100);
+  world.players['банка']=new Player(0, 0, 0, 0, inventory, speed, 99, 4, 100);
   world.map=[];
   world.builds=[];
-  var myInitMap = [0,7,-3,6,
-  1,7,2,5,
-  0,1,3,-1,
-  8,5,3,0];
+  var myInitMap = [];
   for (var i = 0; i < 16; i++) 
   {
     myInitMap[i]=Math.round(Math.random()*10)-4;
@@ -1527,24 +1612,44 @@ function start(arg)
       }
     }
   }
-  for (var i = 0; i < size*2; i++) {
-    let x, y;
+  function new_cords()
+  {
     x=random(size);
     y=random(size);
+  }
+  function gen_mob(num, nelzya)
+  {
+    new_cords()
     normalized=normal(x, y);
     x=normalized[2];
     y=normalized[3];
-    if(world.map[x][y]!==1)
+    if(!(world.map[x][y] in nelzya))
     {
       world.mobs[world.mobs.length]={};
       world.mobs[world.mobs.length-1].x=x*128;
       world.mobs[world.mobs.length-1].y=y*128;
-      world.mobs[world.mobs.length-1].hp=mobs[0].hp;
+      world.mobs[world.mobs.length-1].hp=mobs[num].hp;
       world.mobs[world.mobs.length-1].go=0;
       world.mobs[world.mobs.length-1].rotate=0;
       world.mobs[world.mobs.length-1].anim=0;
-      world.mobs[world.mobs.length-1].num=0;
+      world.mobs[world.mobs.length-1].num=num;
     }
+    else
+    {
+      gen_mob(num, nelzya);
+    }
+  }
+  for (var i = 0; i < size/2; i++) 
+  {
+    gen_mob(0, [1]);
+  }
+  for (var i=0; i<size/4; i++)
+  {
+    gen_mob(1, [1]);
+  }
+  for (var i=0; i<size/32; i++)
+  {
+    gen_mob(2, [0, 1, 2]);
   }
   document.onkeydown = keyPress;
   document.onkeyup = keyUnpress;
