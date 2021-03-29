@@ -1437,7 +1437,7 @@ function start(arg)
   }
   paused=false;
   ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
-  world.names=[myname, 'банка'];
+  world.names=[myname];
   let inventory=[[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]];
   let speed=16;
   if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'})
@@ -1445,7 +1445,6 @@ function start(arg)
     inventory[0]=[24, 1];
   }
   world.players[myname]=new Player(0, 0, 0, 0, inventory, speed, 99, hat, 100);
-  world.players['банка']=new Player(0, 0, 0, 0, inventory, speed, 99, 4, 100);
   world.map=[];
   world.builds=[];
   var myInitMap = [];
