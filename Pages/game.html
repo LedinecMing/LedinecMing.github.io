@@ -11,13 +11,13 @@
   <div id="content">
       <div id='start'>
         <div style="">
-          	<img id="img-hat" style="top:0%;background-image:url('../Images/white0.png');" class="centered">
+          	<img id="img-hat" src='../Images/hat50.png' style="top:0%;background-image:url('../Images/white0.png');" class="centered">
           	<span class="centered" id="size-text" style="top:10%;">?</span>
           <button onclick="start();">Play</button>
           <input type="range" min='4' max='12' name="Size" id='size_pow' style="top:85%;" class="input centered" onchange="document.getElementById('size-text').innerHTML=2**document.getElementById('size_pow').value">
           <label class="centered" style="top:82%;" class="label">SIZE</label>
           <label class="centered" style="top:67%;">Hat</label>
-          <input type="range" mib='0' max='10' name="Hat" id='hat' class="centered" style="top:70%;" onchange="document.getElementById('img-hat').src='../Images/hat'+document.getElementById('hat').value+'0'+'.png'">
+          <input type="range" mib='0' max='11' name="Hat" id='hat' class="centered" style="top:70%;" onchange="document.getElementById('img-hat').src='../Images/hat'+document.getElementById('hat').value+'0'+'.png'">
           <input type="text" name="Name" placeholder="Nickname" class="centered" id="name"> 
           <input type="text" name="Code" placeholder="Code" id='code' class="centered" style="top: 30%;"> 
         </div>
