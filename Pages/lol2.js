@@ -1289,6 +1289,7 @@ function cycle()
         ctx.fillRect(i*32+4+len, canvas.height-7, 23, 4);
         ctx.fillStyle = 'rgb('+(255*(1-player.inventory[i][2]/item.break))+','+(255*(player.inventory[i][2]/item.break))+', 0)';
         ctx.fillRect(i*32+5+len, canvas.height-8, Math.floor(22 * (player.inventory[i][2]/item.break)), 3);
+        ctx.fillStyle='black';
       }
     }
   }
