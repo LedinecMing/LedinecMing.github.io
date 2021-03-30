@@ -1095,6 +1095,7 @@ function execKey(keyNum)
   }
   else if(keyNum==69 && locate=='chest')
   {
+    let player=world.players[myname];
     let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=normalized[2];
     let player=player;
