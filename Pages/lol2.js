@@ -1004,16 +1004,16 @@ function execKey(keyNum)
         {
           if(world.mobs[i].hp-items[player.inventory[player.selected][0]].weapon<0)
           {
-            for (var j = 0; j < world.mobs[i].drop.length; j++) 
+            for (var j = 0; j < mobs[world.mobs[i].num.drop].length; j++) 
             {
-              if(player.inventory[player.selected][2]-- == 0){
-                player.inventory[player.selected][0] = 0;
-                player.inventory[player.selected][1] = 0;
-                player.inventory[player.selected][2] = 0;
+              if(player.inventory[player.selected][1]<2)
+              {
+                player.inventory[player.selected]=[0, 0, 0];
               }
               else
               {
-                player.inventory[player.selected][2]--;
+                player.inventory[player.selected][1]-=1;
+                player.inventory[player.selected][2]=items[player.inventory[player.selected][0]].break;
               }
               player.add_item(world.mobs[i].drop[j][0],world.mobs[i].drop[j][1]);
             }
