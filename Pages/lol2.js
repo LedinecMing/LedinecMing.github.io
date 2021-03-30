@@ -1503,8 +1503,8 @@ function start(arg)
       world.builds[i][j]=[0,0];
     }
   }
-  
-  world.players[myname]=new Player(0, 0, 0, , inventory, speed, 99, hat, 100);
+
+  world.players[myname]=new Player(0, 0, world.map.length/2, world.map.length/2, inventory, speed, 99, hat, 100);
   // function gen(tile, min, max, rarity)
   // {
   //   let water=[];
