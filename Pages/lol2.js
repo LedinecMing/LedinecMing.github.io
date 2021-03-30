@@ -1005,7 +1005,7 @@ function execKey(keyNum)
         {
           if(world.mobs[i].hp-items[player.inventory[player.selected][0]].weapon<0)
           {
-            for (var j = 0; j < mobs[world.mobs[i].num.drop].length; j++) 
+            for (var j = 0; j < mobs[world.mobs[i].num].drop.length; j++) 
             {
               if(player.inventory[player.selected][1]<2)
               {
@@ -1013,10 +1013,11 @@ function execKey(keyNum)
               }
               else
               {
+
                 player.inventory[player.selected][1]-=1;
                 player.inventory[player.selected][2]=items[player.inventory[player.selected][0]].break;
               }
-              player.add_item(world.mobs[i].drop[j][0],world.mobs[i].drop[j][1]);
+              player.add_item(mobs[world.mobs[i].num].drop[j][0],mobs[world.mobs[i].num].drop[j][1]);
             }
             world.mobs[i]=new Mob(world.mobs[i].speed, world.mobs[i].maxhp, world.mobs[i].maxhp, world.mobs[i].anims, world.mobs[i].num, world.mobs[i].drop, random(world.map.length)*128, random(world.map.length)*128);
             if(!world.mobs[i].go)
