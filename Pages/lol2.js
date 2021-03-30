@@ -653,7 +653,7 @@ canvas.height = window.innerHeight;
 // Анимации игрока
 let anims =[new Image(), new Image(), new Image(), new Image()];
 // Плитки
-let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3), new Tile(1.4, 0, 0, [], 0, 4, true)];
+let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3), new Tile(1.4, 0, 0, [], 4, true)];
 // Предметы
 // num, item_name, specific, type
 let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
@@ -1239,7 +1239,7 @@ function cycle()
       if((world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128)>-129 && (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128)<canvas.height+128 )
       {
         ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], (world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128));
-        ctx.fillStyle='rgb('+Math.round(255-mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', '+Math.round(mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', 0)';
+        ctx.fillStyle='rgb('+Math.round(255-world.mobs[i].hp/mobs[world.mobs[i].num].maxhp*255)+', '+Math.round(world.mobs[i].hp/mobs[world.mobs[i].num].maxhp*255)+', 0)';
         ctx.fillRect((world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128), 128, 10)
       }  
     }
@@ -1458,7 +1458,7 @@ function start(arg)
   var myInitMap = [];
   for (var i = 0; i < 16; i++) 
   {
-    myInitMap[i]=Math.round(Math.random()*10)-4;
+    myInitMap[i]=Math.round(Math.random()*10)-6;
   }
   // Create a new DiamondSquare algorithm from the initial map, with a random
   // roughness factor
@@ -1483,7 +1483,7 @@ function start(arg)
       {
         world.map[i][j]=1;
       }
-      if(ds.dataStore[i*size+j]==1)
+      if(ds.dataStore[i*size+j]>0 && ds.dataStore[i*size+j]<2)
       {
         world.map[i][j]=4;
       }
