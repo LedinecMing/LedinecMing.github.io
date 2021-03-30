@@ -290,11 +290,12 @@ class Build
       }
     }
 }
-class Mob
+class Aggressive_mob
 {
-  constructor(speed, hp, maxhp, anims, num, drop)
+  constructor(speed, hp, maxhp, anims, num, drop, att)
   {
     this.speed=speed;
+    this.attack=att;
     this.hp=hp;
     this.maxhp=maxhp;
     this.num=num;
@@ -303,7 +304,7 @@ class Mob
     this.go=0;
     this.anim=0;
     this.anims=[];
-    this.audio=new Audio('../Music/mob'+num+'0.ogg');
+    //this.audio=new Audio('../Music/mob'+num+'0.ogg');
     for (var i = 0; i < anims; i++) 
     {
       this.anims[i]=new Image();
@@ -312,32 +313,27 @@ class Mob
   }
   cycle(mob)
   {
-    if(Math.random()*100>90)
+    // if(Math.random()*100>90)
+    // {
+    //   if(Math.random()*100>90)
+    //   {
+    //     if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
+    //     {
+    //       this.audio.volume=(canvas.width-(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width*0.5;
+    //       this.audio.play();
+    //       this.audio.volume=1;
+    //     }
+    //   }
+    // }
+    if(1)
     {
-      if(Math.random()*100>90)
-      {
-        if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
-        {
-          this.audio.volume=(canvas.width-(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))))/canvas.width*0.5;
-          this.audio.play();
-          this.audio.volume=1;
-        }
-      }
-    }
-    if(mob.go<1)
-    {
-      if(Math.random()*100>95) 
-      {
-        mob.angle = random(360);
-        mob.go=random(30);
-      }
-    }
-    else 
-    {
-      mob.go-=1;
       let pos=[mob.x, mob.y];
       let p = new Point(mobs[mob.num].speed, mobs[mob.num].speed);
-      p.rotate(mob.angle);
+      p.rotate(Math.atan2(mob.y - world.players[myname].y, mob.x - world.players[myname].x) / Math.PI * 180+90);
+      if(Math.floor(mob.x/128)==Math.floor(world.players[myname].x/128) && Math.floor(mob.y/128)==Math.floor(world.players[myname].y/128) )
+      {
+        world.players[myname].hp-=mobs[mob.num].attack;
+      }
       if(p.pos[0]>0)
       {
         mob.rotate=0;
@@ -364,12 +360,13 @@ class Mob
           tiles[tile].audio[1].volume=1;
         }
       }
+
     }
   }
 }
-class Aggressive_mob
+class Mob
 {
-  constructor(speed, hp, maxhp, anims, num, drop, attack)
+  constructor(speed, hp, maxhp, anims, num, drop)
   {
     this.speed=speed;
     this.hp=hp;
@@ -708,7 +705,7 @@ let builds=[0,
              new Build(0, 10, 17, 1, 0, 0, [[1, 34]], false, 0, [2, 18, 1200, false, 17]), new Build(0, 10, 18, 1, 0, 0, [[1, 34]], false, 0, [2, 19, 1200, false, 18]),
              new Build(0, 10, 19, 1, 0, 0, [[1, 34], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
 // Мобы
-let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0), new Mob(14, 8, 8, 6, 1, [[35, 1], [30, 1]]), new Aggressive_mob(15, 50, 50, 4, 2, [[1,2]], 0, 0)];
+let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0), new Mob(14, 8, 8, 6, 1, [[35, 1], [30, 1]]), new Aggressive_mob(15, 50, 50, 4, 2, [[1,2]], 1)];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
@@ -919,7 +916,7 @@ function execKey(keyNum)
   let tx=normalized[2];
   let player=world.players[myname];
   let ty=normalized[3];
-  speed=world.players[myname].speed*tiles[world.map[normalized[2]][normalized[3]]].speed;
+  speed=player.speed*tiles[world.map[normalized[2]][normalized[3]]].speed;
   if(locate=='chest')
   {
     if(!builds[world.builds[tx][ty][0]].storage)
@@ -929,8 +926,8 @@ function execKey(keyNum)
   }
   if(keyNum==87)
   {
-    world.players[myname].y-=speed;
-    world.players[myname].anim+=1;
+    player.y-=speed;
+    player.anim+=1;
     let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=ts[2];
     let ty=ts[3];
@@ -943,8 +940,8 @@ function execKey(keyNum)
   }
   else if(keyNum==83)
   {
-    world.players[myname].y+=speed;
-    world.players[myname].anim+=1;          
+    player.y+=speed;
+    player.anim+=1;          
     let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=ts[2];
     let ty=ts[3];
@@ -957,9 +954,9 @@ function execKey(keyNum)
   }
   else if(keyNum==65)
   {
-    world.players[myname].x-=speed;
-    world.players[myname].anim+=1;
-    world.players[myname].angle=0;          
+    player.x-=speed;
+    player.anim+=1;
+    player.angle=0;          
     let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=ts[2];
     let ty=ts[3];
@@ -972,9 +969,9 @@ function execKey(keyNum)
   }
   else if(keyNum==68)
   {
-    world.players[myname].x+=speed;
-    world.players[myname].anim+=1;
-    world.players[myname].angle=2;          
+    player.x+=speed;
+    player.anim+=1;
+    player.angle=2;          
     let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=ts[2];
     let ty=ts[3];
@@ -992,8 +989,8 @@ function execKey(keyNum)
     {
       if(player.hunger+items[player.inventory[player.selected][0]].food<100)
       {
-        world.players[myname].hunger+=items[player.inventory[player.selected][0]].food;
-        world.players[myname].remove_item(player.inventory[player.selected][0], 1);
+        player.hunger+=items[player.inventory[player.selected][0]].food;
+        player.remove_item(player.inventory[player.selected][0], 1);
         return true;
       }
     }
@@ -1002,7 +999,7 @@ function execKey(keyNum)
       for (var i = 0; i < world.mobs.length; i++) 
       {
         let mob_coords=normal(Math.round(world.mobs[i].x/128), Math.round(world.mobs[i].y/128));
-        let player_coords=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+        let player_coords=normal(Math.round(player.x/128), Math.round(player.y/128));
         if(mob_coords[0]==player_coords[0] && mob_coords[1]==player_coords[1])
         {
           if(world.mobs[i].hp-items[player.inventory[player.selected][0]].weapon<0)
@@ -1033,7 +1030,7 @@ function execKey(keyNum)
         }
       }
     }
-    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+    let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=normalized[2];
     let ty=normalized[3];
     if(!items[player.inventory[player.selected][0]].building)
@@ -1080,9 +1077,9 @@ function execKey(keyNum)
     }
     else
     {
-      let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-      let tx=normalized[2];
       let player=world.players[myname];
+      let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
+      let tx=normalized[2];
       let ty=normalized[3];
       if(world.builds[tx][ty][0]==0 && !(world.map[tx][ty] in walls))
       {
@@ -1098,9 +1095,9 @@ function execKey(keyNum)
   }
   else if(keyNum==69 && locate=='chest')
   {
-    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
+    let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=normalized[2];
-    let player=world.players[myname];
+    let player=player;
     let ty=normalized[3];
     if(world.builds[tx][ty][0]!==0 && world.builds[tx][ty][3].length)
     {
@@ -1124,8 +1121,8 @@ function execKey(keyNum)
   
   else if(keyNum==70 && locate=='main')
   { 
-    let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
-    let player=world.players[myname];         
+    let player=world.players[myname];
+    let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));    
     let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=ts[2];
     let ty=ts[3];
@@ -1140,7 +1137,7 @@ function execKey(keyNum)
     {
       for(var i=0;i<build.growDrop.length;i++)
       {
-        world.players[myname].add_item(build.growDrop[i][1],build.growDrop[i][0]);
+        player.add_item(build.growDrop[i][1],build.growDrop[i][0]);
         world.builds[tx][ty]=[build.last, builds[build.last].break,0];
       }
     }
@@ -1186,16 +1183,16 @@ function cycle()
     canvas.height=window.innerHeight-10;
     canvas.width=window.innerWidth-10;
   }
+  player=world.players[myname];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
-  let player=world.players[myname];         
+  let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
   let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
   let tx=ts[2];
   let ty=ts[3];
   let x=ts[0];
   let y=ts[1];
-  world.players[myname].x=(world.map.length*128+world.players[myname].x)%(world.map.length*128);
-  world.players[myname].y=(world.map.length*128+world.players[myname].y)%(world.map.length*128);
+  player.x=(world.map.length*128+player.x)%(world.map.length*128);
+  player.y=(world.map.length*128+player.y)%(world.map.length*128);
   for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
   {
     for (var j = Math.round(player.y/128-canvas.height/128+1); j <= Math.round(player.y/128+canvas.height/128+1); j++) 
@@ -1205,7 +1202,7 @@ function cycle()
       let ty=ts[3];
       let x=ts[0];
       let y=ts[1];
-      ctx.drawImage(tiles[world.map[tx][ty]].image, x*128+canvas.width/2-player.x, y*128+canvas.height/2-world.players[myname].y);
+      ctx.drawImage(tiles[world.map[tx][ty]].image, x*128+canvas.width/2-player.x, y*128+canvas.height/2-player.y);
     }
   }   
   for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
@@ -1220,14 +1217,14 @@ function cycle()
       if(world.builds[tx][ty][0]>0)
       {
         let drawObject=builds[world.builds[tx][ty][0]];
-        ctx.drawImage(drawObject.images[world.builds[tx][ty][2]%drawObject.images.length], x*128+canvas.width/2-world.players[myname].x, y*128+canvas.height/2-world.players[myname].y-drawObject.y); 
+        ctx.drawImage(drawObject.images[world.builds[tx][ty][2]%drawObject.images.length], x*128+canvas.width/2-player.x, y*128+canvas.height/2-player.y-drawObject.y); 
         if(world.builds[tx][ty][0]==13)
         {
           ctx.textAlign='center';
           ctx.font = "16px monospace";
           ctx.fillStyle='yellow';
           const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Faradey Stream'};
-          ctx.fillText(cool_people[code], x*128+canvas.width/2-world.players[myname].x+64, y*128+canvas.height/2-world.players[myname].y);
+          ctx.fillText(cool_people[code], x*128+canvas.width/2-player.x+64, y*128+canvas.height/2-player.y);
         }
       }
     }
@@ -1235,38 +1232,38 @@ function cycle()
   // 
   for (var i = 0; i < world.mobs.length; i++) 
   {
-    if((world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128)>-129 && (world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128)<canvas.width+128 )
+    if((world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128)>-129 && (world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128)<canvas.width+128 )
     {
-      if((world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128)>-129 && (world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128)<canvas.height+128 )
+      if((world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128)>-129 && (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128)<canvas.height+128 )
       {
-        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], (world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128));
+        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], (world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128));
         ctx.fillStyle='rgb('+Math.round(255-mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', '+Math.round(mobs[world.mobs[i].num].maxhp/world.mobs[i].hp*255)+', 0)';
-        ctx.fillRect((world.mobs[i].x+canvas.width/2-world.players[myname].x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-world.players[myname].y)%(world.map.length*128), 128, 10)
+        ctx.fillRect((world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128), 128, 10)
       }  
     }
   }
-
+  ctx.fillStyle='black'; 
+  ctx.font='16px Arial';
+  ctx.textAlign='center';
   for (var i = 0; i < world.names.length; i++) 
   {
-    ctx.fillStyle='black';  
+     
     player=world.players[world.names[i]];
-    ctx.font='16px Arial';
-    ctx.textAlign='center';
-    ctx.fillText(world.names[i] ,(player.x-world.players[myname].x+canvas.width/2)%(world.map.length*128)+64,  (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128));
-    ctx.drawImage(anims[player.anim%2+player.angle], (player.x-world.players[myname].x+canvas.width/2)%(world.map.length*128),  (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128));
+    ctx.fillText(world.names[i] ,(player.x-player.x+canvas.width/2)%(world.map.length*128)+64,  (player.y-player.y+canvas.height/2)%(world.map.length*128));
+    ctx.drawImage(anims[player.anim%2+player.angle], (player.x-player.x+canvas.width/2)%(world.map.length*128),  (player.y-player.y+canvas.height/2)%(world.map.length*128));
     let d=0;
     if(player.angle==2)
     {
       d=1;
     }
-    ctx.drawImage(hats[player.hat][d],(player.x-world.players[myname].x+canvas.width/2)%(world.map.length*128),  (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128)-5*(player.anim%2));
+    ctx.drawImage(hats[player.hat][d],(player.x-player.x+canvas.width/2)%(world.map.length*128),  (player.y-player.y+canvas.height/2)%(world.map.length*128)-5*(player.anim%2));
     if(player.inventory[player.selected][0]!==0)
     {
-      ctx.drawImage(items[player.inventory[player.selected][0]].image, (player.x-world.players[myname].x+canvas.width/2)+20+( 20*player.angle), (player.y-world.players[myname].y+canvas.height/2)%(world.map.length*128)+64);
+      ctx.drawImage(items[player.inventory[player.selected][0]].image, (player.x-player.x+canvas.width/2)+20+( 20*player.angle), (player.y-player.y+canvas.height/2)%(world.map.length*128)+64);
     }
   }
 
-  player=world.players[myname];
+  player=player;
   let len=32*player.inventory.length;
   len=canvas.width/2-len/2;
   ctx.fillStyle='red';
@@ -1311,13 +1308,13 @@ function cycle()
       }
     }
   }  
+  ctx.font = "8px Arial";
+  ctx.textAlign='center';
   if(locate=='chest' && builds[world.builds[tx][ty][0]].storage)
   {
     for (var i=0; i<builds[world.builds[tx][ty][0]].storage; i++)
     {
       ctx.strokeRect(i*32+len, canvas.height/2, 32, 32);
-      ctx.font = "8px Arial";
-      ctx.textAlign='center';
       if( i==player.selected )
       {
         ctx.fillRect(i*32+5+len, canvas.height/2, 22, 22);
@@ -1337,18 +1334,17 @@ function cycle()
     ctx.fillRect(32, 32, canvas.width-48, canvas.height-48);
     ctx.fillStyle='black';
     ctx.fillText("Коэфициент дальности прогрузки: "+render, 64, 64);
-    ctx.fillText('+', 608+toString(render).length, 64-16);
-    ctx.fillText('-', 608+toString(render).length, 64+16);
+    ctx.fillText('+', 608+toString(render).length+16, 64-16);
+    ctx.fillText('-', 608+toString(render).length+16, 64+16);
     ctx.fillText('Установить мир', 64, 64+32);
     ctx.drawImage(download, ('Установить мир:'+render).length*32-160-32, 64);
   }
   else
   {
     //ctx.drawImage(use, canvas.width-128, canvas.height-128);
-    ctx.fillStyle='rgb('+(255-world.players[myname].hunger/99*255)+','+(Math.round(world.players[myname].hunger/99*255))+',0)';
-    ctx.fillRect(len-64, canvas.height-Math.round(64*(world.players[myname].hunger/99)), 64, 64);
-    ctx.drawImage(hunger[Math.floor(world.players[myname].hunger/20)], len-64, canvas.height-64);
-    console.log()
+    ctx.fillStyle='rgb('+(255-player.hunger/99*255)+','+(Math.round(player.hunger/99*255))+',0)';
+    ctx.fillRect(len-64, canvas.height-Math.round(64*(player.hunger/99)), 64, 64);
+    ctx.drawImage(hunger[Math.floor(player.hunger/20)], len-64, canvas.height-64);
     ctx.font="32px Arial";
     ctx.fillStyle='black';
     ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16);
@@ -1361,8 +1357,12 @@ function animations()
   {
     return;
   }
-  let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));       
   let player=world.players[myname];         
+  if(player.hp<1)
+  {
+    start(1);
+  }
+  let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));  
   let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
   let tx=ts[2];
   let ty=ts[3];
@@ -1398,9 +1398,9 @@ function animations()
   }
   for (var i = 0; i < world.mobs.length; i++) 
   {
-    if(world.mobs[i].x-world.players[myname].x+canvas.width/2*render>-129 && world.mobs[i].x-world.players[myname].x+canvas.width/2<canvas.width*render+129 )
+    if(world.mobs[i].x-player.x+canvas.width/2*render>-129 && world.mobs[i].x-player.x+canvas.width/2<canvas.width*render+129 )
     {
-      if(world.mobs[i].y-world.players[myname].y+canvas.height/2*render>-129 && world.mobs[i].y-world.players[myname].y+canvas.height/2<canvas.height*render+129 )
+      if(world.mobs[i].y-player.y+canvas.height/2*render>-129 && world.mobs[i].y-player.y+canvas.height/2<canvas.height*render+129 )
       {
         mobs[world.mobs[i].num].cycle(world.mobs[i]);        
       }
@@ -1413,13 +1413,19 @@ function fhunger()
   {
     return;
   }
-  if(world.players[myname].hunger<0)
+  player=world.players[myname];
+  if(player.hunger<0)
   {
-    world.players[myname].hp-=5;
+    player.hp-=5;
   }
-  else
+  else if(player.hunger>90 && !(player.hp+5>100))
   {
-    world.players[myname].hunger-=1;
+      player.hp+=5;
+      player.hunger-=5;
+  }
+  else  
+  {
+    player.hunger-=1;
   }
 }
 function start(arg)
