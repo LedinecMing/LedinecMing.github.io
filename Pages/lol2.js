@@ -709,6 +709,7 @@ let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0), new Mob(14, 8, 8, 6, 1, [[3
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
+
   anims[i].src='../Images/white'+i+'.png';
 }  
 // Установка шляп
@@ -1098,7 +1099,6 @@ function execKey(keyNum)
     let player=world.players[myname];
     let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
     let tx=normalized[2];
-    let player=player;
     let ty=normalized[3];
     if(world.builds[tx][ty][0]!==0 && world.builds[tx][ty][3].length)
     {
