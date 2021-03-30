@@ -653,7 +653,7 @@ canvas.height = window.innerHeight;
 // Анимации игрока
 let anims =[new Image(), new Image(), new Image(), new Image()];
 // Плитки
-let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3)];
+let tiles =[new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3), new Tile(1.4, 0, 0, [], 0, 4, true)];
 // Предметы
 // num, item_name, specific, type
 let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0), 
@@ -1483,7 +1483,11 @@ function start(arg)
       {
         world.map[i][j]=1;
       }
-      if(ds.dataStore[i*size+j]>0 && ds.dataStore[i*size+j]<6  && ds.dataStore[i*size+j]!=3)
+      if(ds.dataStore[i*size+j]==1)
+      {
+        world.map[i][j]=4;
+      }
+      if(ds.dataStore[i*size+j]>1 && ds.dataStore[i*size+j]<6  && ds.dataStore[i*size+j]!=3)
       {
         world.map[i][j]=0;
       }
