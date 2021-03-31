@@ -1416,7 +1416,7 @@ function fhunger()
     return;
   }
   player=world.players[myname];
-  if(player.hunger<0)
+  if(player.hunger<1)
   {
     player.hp-=5;
   }
@@ -1458,7 +1458,7 @@ function start(arg)
   var myInitMap = [];
   for (var i = 0; i < 16; i++) 
   {
-    myInitMap[i]=Math.round(Math.random()*10)-6;
+    myInitMap[i]=Math.round(Math.random()*10)-4;
   }
   // Create a new DiamondSquare algorithm from the initial map, with a random
   // roughness factor
@@ -1510,7 +1510,7 @@ function start(arg)
     }
   }
 
-  world.players[myname]=new Player(0, 0, world.map.length/2, world.map.length/2, inventory, speed, 99, hat, 100);
+  world.players[myname]=new Player(0, 0, size/2, size/2, inventory, speed, 99, hat, 100);
   // function gen(tile, min, max, rarity)
   // {
   //   let water=[];
@@ -1674,3 +1674,4 @@ function start(arg)
   canvas.height=window.innerHeight;
   canvas.width=window.innerWidth;
 }
+
