@@ -1009,22 +1009,24 @@ function execKey(keyNum)
             {
               if(player.inventory[player.selected][1]<2)
               {
-                player.inventory[player.selected]=[0, 0, 0];
+                if(player.inventory[player.selected][2]--<1)
+                {
+                  player.inventory[player.selected]=[0, 0, 0]; 
+                }
               }
               else
               {
-
-                player.inventory[player.selected][1]-=1;
-                player.inventory[player.selected][2]=items[player.inventory[player.selected][0]].break;
+                if(player.inventory[player.selected][2]--<1)
+                {
+                  player.inventory[player.selected][1]-=1;
+                  player.inventory[player.selected][2]=items[player.inventory[player.selected][0]].break;
+                }
               }
               player.add_item(mobs[world.mobs[i].num].drop[j][0],mobs[world.mobs[i].num].drop[j][1]);
             }
-            world.mobs[i]=new Mob(world.mobs[i].speed, world.mobs[i].maxhp, world.mobs[i].maxhp, world.mobs[i].anims, world.mobs[i].num, world.mobs[i].drop, random(world.map.length)*128, random(world.map.length)*128);
-            if(!world.mobs[i].go)
-            {
-              world.mobs[i].go=random(50);
-              world.angle=random(360);
-            }
+            world.mobs[i].x=Math.round(Math.random()*world.map.length);
+            world.mobs[i].y=Math.round(Math.random()*world.map.length);
+            world.mobs[i].hp=mobs[world.mobs[i].num].hp;
             return;
           }
           world.mobs[i].hp-=items[player.inventory[player.selected][0]].weapon;
@@ -1632,24 +1634,27 @@ function start(arg)
   }
   function gen_mob(num, nelzya)
   {
-    new_cords()
-    normalized=normal(x, y);
-    x=normalized[2];
-    y=normalized[3];
-    if(!(world.map[x][y] in nelzya))
+    if(true)
     {
-      world.mobs[world.mobs.length]={};
-      world.mobs[world.mobs.length-1].x=x*128;
-      world.mobs[world.mobs.length-1].y=y*128;
-      world.mobs[world.mobs.length-1].hp=mobs[num].hp;
-      world.mobs[world.mobs.length-1].go=0;
-      world.mobs[world.mobs.length-1].rotate=0;
-      world.mobs[world.mobs.length-1].anim=0;
-      world.mobs[world.mobs.length-1].num=num;
-    }
-    else
-    {
-      gen_mob(num, nelzya);
+      new_cords()
+      normalized=normal(x, y);
+      x=normalized[2];
+      y=normalized[3];
+      if(!(world.map[x][y] in nelzya))
+      {
+        world.mobs[world.mobs.length]={};
+        world.mobs[world.mobs.length-1].x=x*128;
+        world.mobs[world.mobs.length-1].y=y*128;
+        world.mobs[world.mobs.length-1].hp=mobs[num].hp;
+        world.mobs[world.mobs.length-1].go=0;
+        world.mobs[world.mobs.length-1].rotate=0;
+        world.mobs[world.mobs.length-1].anim=0;
+        world.mobs[world.mobs.length-1].num=num;
+      }
+      else
+      {
+        gen_mob(num, nelzya);
+      }
     }
   }
   for (var i = 0; i < size/2; i++) 
