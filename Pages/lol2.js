@@ -1,5 +1,5 @@
-let item_specifics={nothing:0, instrument:1, build:2, food:3, weapon:4};
-let build_specifics={storage:1, kust:2};
+ let item_specifics={nothing:0, instrument:1, build:2, food:3, weapon:4};
+let build_specifics={storage:1, kust:2, wall:3};
 let keys={87:false, 83:false, 65:false, 68:false, 69:false, 70:false};
 // gtihub.com/cgiffard/DiamondSquare give him a star! ^-^
 (function(glob) {
@@ -222,23 +222,30 @@ class Item
     this.image.src='../Images/items'+num+'.png'
     if(specific[0]==item_specifics.nothing)
     {
-    
+      // Если спецификация предмета = 0, ничего не добавляется. 
+      // В основном для материалов.
     }
     if(specific[0]==item_specifics.instrument)
     {
-        this.pow=specific[1];
-        this.break = specific[2];
+      // Спецификация инструмента, добавляется прочность, а также сила ломания.
+      this.pow = specific[1];
+      this.break = specific[2];
     }
     if(specific[0]==item_specifics.build)
     {
-        this.building=specific[1];
+      // Спецификация постройки, можно поставить на плитку без построек.
+      // Аргумент - это номер постройки, которая будет установлена
+      this.building=specific[1];
     }
     if(specific[0]==item_specifics.food)
     {
-        this.food=specific[1];
+      // Спецификация еды, можно съесть на кнопку E(eng)
+      // Аргумент - это кол-во сытости, которое востанавливает данная еда
+      this.food=specific[1];
     }
     if(specific[0]==item_specifics.weapon)
     {
+      // Спецификация оружия, как у инструмента есть прочность, а также сила удара.
       this.weapon=specific[1];
       this.break = specific[2];
     }
@@ -278,15 +285,28 @@ class Build
       this.storage=false;
       if(specifics[0]==build_specifics.storage)
       {   
+        // Спецификация хранилища
+        // Аргумент - это кол-во ячеек хранилища
         this.storage=specifics[1];
       }
       else if(specifics[0]==build_specifics.kust)
       {
-        this.growtime=specifics[2];
+        // Спецификация "куста"( имеет стадии роста и возможность собирать на кнопку F )
+        // Аргумент 1 по индексу - это во что "вырастает" данный "куст", номер постройки
         this.grow=specifics[1];
+        // Время, за которое будет произведён переход на другую стадию роста, время определяется в animations(), раз в 100 милисекунд
+        this.growtime=specifics[2];
+        // Является ли выросшей
         this.grown=specifics[3];
+        // Первая стадия, номер постройки
         this.last=specifics[4];
+        // Какие предметы можно собрать
         this.growDrop=specifics[5];
+      }
+      else if(specifics[0]==build_specifics.wall)
+      {
+        // Стена, стена.
+        this.wall=true;
       }
     }
 }
@@ -325,7 +345,7 @@ class Aggressive_mob
     //     }
     //   }
     // }
-    if(1)
+    if(Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y]))<canvas.width)
     {
       let pos=[mob.x, mob.y];
       let p = new Point(mobs[mob.num].speed, mobs[mob.num].speed);
@@ -348,8 +368,8 @@ class Aggressive_mob
       mob.x+=p.pos[0]*coof;  //+pos[0];
       mob.y+=p.pos[1]*coof; //+pos[1];
       mob.anim++;
-      mob.x=(world.map.length*128+mob.x)%(world.map.length*128);
-      mob.y=(world.map.length*128+mob.y)%(world.map.length*128);
+      mob.x=(mS_128+mob.x)%(mS_128);
+      mob.y=(mS_128+mob.y)%(mS_128);
       let tile=world.map[Math.floor(mob.x/128)][Math.floor(mob.y/128)];
       if(tiles[tile].audio[0])
       {
@@ -426,8 +446,8 @@ class Mob
       mob.x+=p.pos[0]*coof;  //+pos[0];
       mob.y+=p.pos[1]*coof; //+pos[1];
       mob.anim++;
-      mob.x=(world.map.length*128+mob.x)%(world.map.length*128);
-      mob.y=(world.map.length*128+mob.y)%(world.map.length*128);
+      mob.x=(mS_128+mob.x)%(mS_128);
+      mob.y=(mS_128+mob.y)%(mS_128);
       let tile=world.map[Math.floor(mob.x/128)][Math.floor(mob.y/128)];
       if(tiles[tile].audio[0])
       {
@@ -522,13 +542,14 @@ class Player
 }
 class World
 {
-  constructor(new_map, new_players, new_players_names, new_builds, new_mobs)
+  constructor(new_map, new_players, new_players_names, new_builds, new_mobs, new_time)
   {
     this.map=new_map;
     this.players=new_players;
     this.names=new_players_names;
     this.builds=new_builds;
     this.mobs=new_mobs;
+    this.time=new_time;
   }
 }
 class Craft
@@ -607,7 +628,7 @@ class Tile
 }
 function genFile()
 {
-  const blob = new Blob([JSON.stringify({map:world.map})], {type : 'application/json'});
+  const blob = new Blob([JSON.stringify({world:world})], {type : 'application/json'});
   return blob;
 }
 function downloadFile(file)
@@ -627,6 +648,10 @@ function distance(a, b)
   // Дистанция между двумя точками
   return Math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2);
 }
+function torDist(a, b, s)
+{
+  return min()
+}
 function modulo(a, b)
 {
   // Негативный остаток от деления
@@ -638,6 +663,26 @@ function normal(x, y)
   tx=x;
   ty=y;
   return [x, y, Math.floor(Math.abs(world.map.length+x)%world.map.length), Math.floor(Math.abs(world.map.length+y)%world.map.length)];
+}
+function intLen(n)
+{
+  if(n<10 && n>0)
+  {
+    return 1;
+  }
+  c=1;
+  while(true)
+  {
+    if(n/10>9)
+    {
+      n=Math.floor(n/10);
+      c++;
+    }
+    else
+    {
+      return c+1;
+    }
+  }
 }
 let locate="main";
 // Текстуры кнопок
@@ -673,9 +718,10 @@ let items =[new Item(0,  'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
             new Item(28, 'Stone sword', [4, 1, 96], 0), new Item(29,'Iron sword', [4, 2, 256], 0), 
             new Item(30, 'Raw meat', [3, 3], 0), new Item(31,'Coocked meat', [3, 20], 0),
             new Item(32, 'Bread', [3, 10], 0), new Item(33, 'Wheat', [0], 0),
-            new Item(34, 'Seed', [2, 17], 0),  new Item(35, 'Wool', [0], 0)]; 
+            new Item(34, 'Seed', [2, 17], 0),  new Item(35, 'Wool', [0], 0),
+            new Item(36, 'Map', [0], 0), new Item(37, 'Paper', [0], 0)]; 
 //speed, hp, anims, num, drop, x, y
-let world=new World([], [], [], [], []);  
+let world=new World([], [], [], [], [], 0);  
 // Шляпы
 let hats =[];
 // Список номеров Tile объектов на которых нельзя строить
@@ -692,7 +738,8 @@ let crafts=[new Craft([[1, 10]], 0, [2, 1]), new Craft([[1, 10]], 0, [3, 1]), ne
             new Craft([[1, 4]], 16, [13, 1]), new Craft([[1, 2], [25, 1]], 16, [26, 1]),
             new Craft([[30, 1], [1, 2]], 16, [31, 1]), new Craft([[1, 10], [4, 5]], 4, [28, 1]),
             new Craft([[1, 15], [4, 10], [28, 1], [16, 5]], 10, [29, 1]), new Craft([[33, 3]], 9, [32, 1]),
-            new Craft([[33, 1]], 0, [34, 1]), new Craft([[33, 3]], 10, [32, 1]), new Craft([[33, 3], [1, 2]], 16, [32, 1])];
+            new Craft([[33, 1]], 0, [34, 1]), new Craft([[33, 3]], 10, [32, 1]), new Craft([[33, 3], [1, 2]], 16, [32, 1]),
+            new Craft([[1, 5]], 16, [37, 1]), new Craft([[37, 3]], 4, [36, 1])];
 // instrument, build_break, num, anims, x, y, drops, have_audio, min_pow, specifics
 let builds=[0, 
              new Build(7, 10, 1, 3, 0, 0, [[1, 19]], false, 0, [0]), new Build(1, 30, 2, 1, 0, 0, [[1, 4]], true, 0, [0]), new Build(0, 20, 3,1 , 0, 128, [[1, 1]], true, 0, [0]),
@@ -703,13 +750,13 @@ let builds=[0,
              new Build(1, 50, 13, 1, 0, 0, [[1, 24]], false, 0, [0]), new Build(0, 20, 14, 1, 0, 0, [[1, 25]], false, 0, [0]),
              new Build(0, 30, 15, 1, 0, 0, [[2, 13]], false, 0, [0]), new Build(0, 30, 16, 2, 0, 0, [[1, 13], [2, 1]], false, 0, [2, 15, 2400, false, 16]),
              new Build(0, 10, 17, 1, 0, 0, [[1, 34]], false, 0, [2, 18, 1200, false, 17]), new Build(0, 10, 18, 1, 0, 0, [[1, 34]], false, 0, [2, 19, 1200, false, 18]),
-             new Build(0, 10, 19, 1, 0, 0, [[1, 34], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]])];
+             new Build(0, 10, 19, 1, 0, 0, [[1, 34], [1, 33]], false, 0, [2, 19, 0, true, 17, [[1, 33]]]),
+             new Build(0, 10, 20, 1, 0, 0, [[3, 1]], false, 0, [])];
 // Мобы
 let mobs=[new Mob(8, 10, 10, 6, 0, [[30, 1]], 0, 0), new Mob(14, 8, 8, 6, 1, [[35, 1], [30, 1]]), new Aggressive_mob(15, 50, 50, 4, 2, [[4, 3]], 1)];
 // Установка анимаций игрока
 for (var i = 0; i < 4; i++) 
 {
-
   anims[i].src='../Images/white'+i+'.png';
 }  
 // Установка шляп
@@ -740,60 +787,6 @@ function mousedown(e)
   let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
   let tx=normalized[2];
   let ty=normalized[3];
-  // Обработка кнопки use
-  // if(e.clientX<canvas.width+1 && e.clientX>canvas.width-129 && e.clientY>canvas.height-128)
-  // {
-  //   let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-  //   let tx=normalized[2];
-  //   let player=world.players[myname];
-  //   let ty=normalized[3];
-  //   if(!items[player.inventory[player.selected][0]].building)
-  //   {
-  //     if(world.builds[tx][ty][0]>0 && builds[world.builds[tx][ty][0]].min_pow<items[player.inventory[player.selected][0]].pow)
-  //     {
-  //       if(builds[world.builds[tx][ty][0]].audio[0])
-  //       {
-  //         builds[world.builds[tx][ty][0]].audio[1].play();
-  //       }
-  //       if(world.builds[tx][ty][1]-items[player.inventory[player.selected][0]].pow<1 && world.builds[tx][ty][0]>0)
-  //       {       
-  //         let drop=builds[world.builds[tx][ty][0]].drops;
-  //         if(player.inventory[player.selected][2]-- == 0){
-  //           player.inventory[player.selected][0] = 0;
-  //           player.inventory[player.selected][1] = 0;
-  //           player.inventory[player.selected][2] = 0;
-  //         }else{
-  //           player.inventory[player.selected][2]--;
-  //         }
-  //         for(var i=0;i<drop.length;i++)
-  //         {
-  //           player.add_item(drop[i][1], drop[i][0]);
-  //           world.builds[tx][ty]=[0, 0, 0];  
-  //         } 
-  //       }
-  //       else if(builds[world.builds[tx][ty][0]].instrument==items[player.inventory[player.selected][0]].type && items[player.inventory[player.selected][0]].pow>builds[world.builds[tx][ty][0]].min_pow) {
-  //         world.builds[tx][ty][1]-=items[player.inventory[player.selected][0]].pow;
-  //       }            
-  //     }
-  //   }
-  //   else
-  //   {
-  //     let normalized=normal(Math.round(world.players[myname].x/128), Math.round(world.players[myname].y/128));
-  //     let tx=normalized[2];
-  //     let player=world.players[myname];
-  //     let ty=normalized[3];
-  //     if(world.builds[tx][ty][0]==0)
-  //     {
-  //       let storage=[];
-  //       for (var i = 0; i < builds[items[player.inventory[player.selected][0]].building].storage; i++)
-  //       {
-  //         storage[i]=[0,0];
-  //       }
-  //       world.builds[tx][ty]=[items[player.inventory[player.selected][0]].building, builds[items[player.inventory[player.selected][0]].building].break, 0, storage];
-  //       player.remove_item(player.inventory[player.selected][0], 1); 
-  //     }
-  //   }
-  // }
   if(e.clientX>canvas.width-129 && e.clientY<128)
   {
     if(locate=='pause')
@@ -809,11 +802,12 @@ function mousedown(e)
   }
   if(paused)
   {
-    if(e.clientX<("Коэфициентдальностипрогрузки:"+render).length*32-320+32 && e.clientX>("Коэфициентдальностипрогрузки:"+render).length*32-32*10 && e.clientY>64-32 && e.clientY<64-16)
+    render_length=intLen(render)*16;
+    if(e.clientX<608+render_length+16 && e.clientX>608+render_length-1 && e.clientY>48 && e.clientY<56)
     {
       render++;
     }
-    else if(e.clientX<("Коэфициентдальностипрогрузки:"+render).length*32-320+32 && e.clientX>("Коэфициентдальностипрогрузки:"+render).length*32-32*10 && e.clientY>64 && e.clientY<64+16)
+    else if(e.clientX<608+render_length+16 && e.clientX>608+render_length-1 && e.clientY>64 && e.clientY<72``)
     {
         if(render-1<1)
         {
@@ -994,13 +988,19 @@ function execKey(keyNum)
         player.remove_item(player.inventory[player.selected][0], 1);
         return true;
       }
+      else if(player.hunger<99)
+      {
+        player.hunger=99;
+        player.remove_item(player.inventory[player.selected][0], 1);
+        return true; 
+      }
     }
     else if(items[player.inventory[player.selected][0]].weapon)
     {
+      let player_coords=normal(Math.round(player.x/128), Math.round(player.y/128));
       for (var i = 0; i < world.mobs.length; i++) 
       {
-        let mob_coords=normal(Math.round(world.mobs[i].x/128), Math.round(world.mobs[i].y/128));
-        let player_coords=normal(Math.round(player.x/128), Math.round(player.y/128));
+        let mob_coords=normal(Math.round(world.mobs[i].x/128), Math.round(world.mobs[i].y/128));  
         if(mob_coords[0]==player_coords[0] && mob_coords[1]==player_coords[1])
         {
           if(world.mobs[i].hp-items[player.inventory[player.selected][0]].weapon<0)
@@ -1188,30 +1188,35 @@ function cycle()
     canvas.width=window.innerWidth-10;
   }
   player=world.players[myname];
+  dW_2=canvas.width/2;
+  dH_2=canvas.height/2;
+  dX_128=player.x/128;
+  dY_128=player.y/128;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));
-  let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+  let normalized=normal(Math.round(dX_128), Math.round(player.y/128));
+  let ts=normal(Math.round(dX_128), Math.round(player.y/128));
   let tx=ts[2];
   let ty=ts[3];
   let x=ts[0];
   let y=ts[1];
-  player.x=(world.map.length*128+player.x)%(world.map.length*128);
-  player.y=(world.map.length*128+player.y)%(world.map.length*128);
-  for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
+  mS_128=world.map.length*128;
+  player.x=(mS_128+player.x)%(mS_128);
+  player.y=(mS_128+player.y)%(mS_128);
+  for (var i = Math.round(dX_128-canvas.width/128-1); i <= Math.round(dX_128+canvas.width/128-1); i++)
   {
-    for (var j = Math.round(player.y/128-canvas.height/128+1); j <= Math.round(player.y/128+canvas.height/128+1); j++) 
+    for (var j = Math.round(dY_128-canvas.height/128+1); j <= Math.round(dY_128+canvas.height/128+1); j++) 
     {
       let ts=normal(i, j);
       let tx=ts[2];
       let ty=ts[3];
       let x=ts[0];
       let y=ts[1];
-      ctx.drawImage(tiles[world.map[tx][ty]].image, x*128+canvas.width/2-player.x, y*128+canvas.height/2-player.y);
+      ctx.drawImage(tiles[world.map[tx][ty]].image, x*128+dW_2-player.x, y*128+dH_2-player.y);
     }
   }   
-  for (var i = Math.round(player.x/128-canvas.width/128-1); i <= Math.round(player.x/128+canvas.width/128-1); i++)
+  for (var i = Math.round(dX_128-canvas.width/128-1); i <= Math.round(dX_128+canvas.width/128-1); i++)
   {
-    for (var j = Math.round(player.y/128-canvas.height/128-1); j <= Math.round(player.y/128+canvas.height/128+1); j++) 
+    for (var j = Math.round(dY_128-canvas.height/128-1); j <= Math.round(dY_128+canvas.height/128+1); j++) 
     {
       let ts=normal(i, j);
       let tx=ts[2];
@@ -1221,28 +1226,27 @@ function cycle()
       if(world.builds[tx][ty][0]>0)
       {
         let drawObject=builds[world.builds[tx][ty][0]];
-        ctx.drawImage(drawObject.images[world.builds[tx][ty][2]%drawObject.images.length], x*128+canvas.width/2-player.x, y*128+canvas.height/2-player.y-drawObject.y); 
+        ctx.drawImage(drawObject.images[world.builds[tx][ty][2]%drawObject.images.length], x*128+dW_2-player.x, y*128+dH_2-player.y-drawObject.y); 
         if(world.builds[tx][ty][0]==13)
         {
           ctx.textAlign='center';
           ctx.font = "16px monospace";
           ctx.fillStyle='yellow';
           const cool_people={874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Faradey Stream'};
-          ctx.fillText(cool_people[code], x*128+canvas.width/2-player.x+64, y*128+canvas.height/2-player.y);
+          ctx.fillText(cool_people[code], x*128+dW_2-player.x+64, y*128+dH_2-player.y);
         }
       }
     }
-  } 
-  // 
+  }
   for (var i = 0; i < world.mobs.length; i++) 
   {
-    if((world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128)>-129 && (world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128)<canvas.width+128 )
+    if((world.mobs[i].x+dW_2-player.x)%(mS_128)>-129 && (world.mobs[i].x+dW_2-player.x)%(mS_128)<canvas.width+128 )
     {
-      if((world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128)>-129 && (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128)<canvas.height+128 )
+      if((world.mobs[i].y+dH_2-player.y)%(mS_128)>-129 && (world.mobs[i].y+dH_2-player.y)%(mS_128)<canvas.height+128 )
       {
-        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], (world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128));
+        ctx.drawImage(mobs[world.mobs[i].num].anims[Math.floor(world.mobs[i].anim%mobs[world.mobs[i].num].anims.length/2+world.mobs[i].rotate)], (world.mobs[i].x+dW_2-player.x)%(mS_128), (world.mobs[i].y+dH_2-player.y)%(mS_128));
         ctx.fillStyle='rgb('+Math.round(255-world.mobs[i].hp/mobs[world.mobs[i].num].maxhp*255)+', '+Math.round(world.mobs[i].hp/mobs[world.mobs[i].num].maxhp*255)+', 0)';
-        ctx.fillRect((world.mobs[i].x+canvas.width/2-player.x)%(world.map.length*128), (world.mobs[i].y+canvas.height/2-player.y)%(world.map.length*128), 128, 10)
+        ctx.fillRect((world.mobs[i].x+dW_2-player.x)%(mS_128), (world.mobs[i].y+dH_2-player.y)%(mS_128), 128, 10)
       }  
     }
   }
@@ -1253,23 +1257,23 @@ function cycle()
   {
      
     player=world.players[world.names[i]];
-    ctx.fillText(world.names[i] ,(player.x-player.x+canvas.width/2)%(world.map.length*128)+64,  (player.y-player.y+canvas.height/2)%(world.map.length*128));
-    ctx.drawImage(anims[player.anim%2+player.angle], (player.x-player.x+canvas.width/2)%(world.map.length*128),  (player.y-player.y+canvas.height/2)%(world.map.length*128));
+    ctx.fillText(world.names[i] ,(player.x-player.x+dW_2)%(mS_128)+64,  (player.y-player.y+dH_2)%(mS_128));
+    ctx.drawImage(anims[player.anim%2+player.angle], (player.x-player.x+dW_2)%(mS_128),  (player.y-player.y+dH_2)%(mS_128));
     let d=0;
     if(player.angle==2)
     {
       d=1;
     }
-    ctx.drawImage(hats[player.hat][d],(player.x-player.x+canvas.width/2)%(world.map.length*128),  (player.y-player.y+canvas.height/2)%(world.map.length*128)-5*(player.anim%2));
+    ctx.drawImage(hats[player.hat][d],(player.x-player.x+dW_2)%(mS_128),  (player.y-player.y+dH_2)%(mS_128)-5*(player.anim%2));
     if(player.inventory[player.selected][0]!==0)
     {
-      ctx.drawImage(items[player.inventory[player.selected][0]].image, (player.x-player.x+canvas.width/2)+20+( 20*player.angle), (player.y-player.y+canvas.height/2)%(world.map.length*128)+64);
+      ctx.drawImage(items[player.inventory[player.selected][0]].image, (player.x-player.x+dW_2)+20+( 20*player.angle), (player.y-player.y+dH_2)%(mS_128)+64);
     }
   }
 
   player=player;
   let len=32*player.inventory.length;
-  len=canvas.width/2-len/2;
+  len=dW_2-len/2;
   ctx.fillStyle='red';
   ctx.fillRect(len, canvas.height-48, player.hp, 15);
   let item;
@@ -1294,10 +1298,9 @@ function cycle()
       }
     }
   }
-  ctx.fillStyle='black';
   if(world.builds[tx][ty][0]!==0)
   {
-    ctx.fillText(world.builds[tx][ty][1]+'/'+builds[world.builds[tx][ty][0]].break, canvas.width/2+64, canvas.height/2+128);
+    ctx.fillText(world.builds[tx][ty][1]+'/'+builds[world.builds[tx][ty][0]].break, dW_2+64, dH_2+128);
   }
   if(locate=='main')
   {
@@ -1312,23 +1315,51 @@ function cycle()
       }
     }
   }  
-  ctx.font = "8px Arial";
-  ctx.textAlign='center';
+  
   if(locate=='chest' && builds[world.builds[tx][ty][0]].storage)
   {
+    ctx.font = "8px Arial";
+    ctx.textAlign='center';
     for (var i=0; i<builds[world.builds[tx][ty][0]].storage; i++)
     {
-      ctx.strokeRect(i*32+len, canvas.height/2, 32, 32);
+      ctx.strokeRect(i*32+len, dH_2, 32, 32);
       if( i==player.selected )
       {
-        ctx.fillRect(i*32+5+len, canvas.height/2, 22, 22);
+        ctx.fillRect(i*32+5+len, dH_2, 22, 22);
       }
       if(world.builds[tx][ty][3][i][0]!==0)
       {
-        ctx.drawImage(items[world.builds[tx][ty][3][i][0]].image, i*32+len, canvas.height/2);
-        ctx.fillText(''+world.builds[tx][ty][3][i][1]+'', i*32+16+len, canvas.height/2);
+        ctx.drawImage(items[world.builds[tx][ty][3][i][0]].image, i*32+len, dH_2);
+        ctx.fillText(''+world.builds[tx][ty][3][i][1]+'', i*32+16+len, dH_2);
       }
     }
+  }
+  if(player.inventory[player.selected][0]==36)
+  {
+    s_16=size/16;
+    p_X=Math.round(dX_128-1);
+    p_Y=Math.round(player.y/128-1);
+    d64_s16=64/s_16;
+    for (var i = Math.round(dX_128-s_16-1); i <= Math.round(dX_128+s_16-1); i++)
+    {
+      for (var j = Math.round(player.y/128-s_16+1); j <= Math.round(player.y/128+s_16+1); j++) 
+      {
+        let ts=normal(i, j);
+        let x=ts[0];
+        let y=ts[1];
+        let tx=ts[2];
+        let ty=ts[3];
+        ctx.fillStyle=map_colours[world.map[tx][ty]];
+        ctx.fillRect((x-p_X)*d64_s16+dW_2+64, (y-p_Y)*(d64_s16)+dH_2+64, d64_s16, d64_s16);
+      }
+    }   
+    //ctx.fillStyle='red';
+    //ctx.fillRect(dW_2+64, dH_2+64, (64/(s_16)), (64/(s_16)));
+    ctx.save();
+    ctx.scale(1/s_16, 1/s_16);
+    ctx.drawImage(anims[player.anim%2+player.angle], (dW_2+64)*s_16, (dH_2+64)*s_16);
+    ctx.drawImage(hats[player.hat][player.angle/2], (dW_2+64)*s_16, (dH_2+64)*s_16);
+    ctx.restore();
   }
   if(paused)
   {
@@ -1337,23 +1368,27 @@ function cycle()
     ctx.fillStyle='rgb(128, 118, 121)';
     ctx.fillRect(32, 32, canvas.width-48, canvas.height-48);
     ctx.fillStyle='black';
+    render_length=intLen(render)*16;
     ctx.fillText("Коэфициент дальности прогрузки: "+render, 64, 64);
-    ctx.fillText('+', 608+toString(render).length+16, 64-16);
-    ctx.fillText('-', 608+toString(render).length+16, 64+16);
-    ctx.fillText('Установить мир', 64, 64+32);
-    ctx.drawImage(download, ('Установить мир:'+render).length*32-160-32, 64);
+    ctx.fillText('+', 608+render_length, 48);
+    ctx.fillText('-', 608+render_length, 80);
+    ctx.fillText('Установить мир', 64, 96);
+    ctx.drawImage(download, ('Установить мир:'+render).length*32-192, 64);
   }
   else
   {
-    //ctx.drawImage(use, canvas.width-128, canvas.height-128);
     ctx.fillStyle='rgb('+(255-player.hunger/99*255)+','+(Math.round(player.hunger/99*255))+',0)';
     ctx.fillRect(len-64, canvas.height-Math.round(64*(player.hunger/99)), 64, 64);
     ctx.drawImage(hunger[Math.floor(player.hunger/20)], len-64, canvas.height-64);
     ctx.font="32px Arial";
     ctx.fillStyle='black';
+    ctx.textAlign='center';
     ctx.fillText(tx+'/'+ty, canvas.width-64, 128+16);
+    ctx.textAlign='left';
+    ctx.fillText(Math.ceil(1/((new Date()-date)/1000))+' fps', 0, 80);
   }
   ctx.drawImage(pause, canvas.width-128, 0);
+  date=new Date();
 } 
 function animations()
 {
@@ -1361,18 +1396,21 @@ function animations()
   {
     return;
   }
+  world.time+=1
+  dW_2=canvas.width/2;
+  dH_2=dH_2;
   let player=world.players[myname];         
   if(player.hp<1)
   {
     start(1);
   }
-  let normalized=normal(Math.round(player.x/128), Math.round(player.y/128));  
-  let ts=normal(Math.round(player.x/128), Math.round(player.y/128));
+  let normalized=normal(Math.round(dX_128), Math.round(player.y/128));  
+  let ts=normal(Math.round(dX_128), Math.round(player.y/128));
   let tx=ts[2];
   let ty=ts[3];
   let x=ts[0];
   let y=ts[1];
-  for (var i = Math.round(player.x/128-canvas.width/128*render-1); i <= Math.round(player.x/128+canvas.width/128*render-1); i++)
+  for (var i = Math.round(dX_128-canvas.width/128*render-1); i <= Math.round(dX_128+canvas.width/128*render-1); i++)
   {
     for (var j = Math.round(player.y/128-canvas.height/128*render-1); j <= Math.round(player.y/128+canvas.height/128*render+1); j++) 
     {
@@ -1402,9 +1440,9 @@ function animations()
   }
   for (var i = 0; i < world.mobs.length; i++) 
   {
-    if(world.mobs[i].x-player.x+canvas.width/2*render>-129 && world.mobs[i].x-player.x+canvas.width/2<canvas.width*render+129 )
+    if(world.mobs[i].x-player.x+dW_2*render>-129 && world.mobs[i].x-player.x+dW_2<canvas.width*render+129 )
     {
-      if(world.mobs[i].y-player.y+canvas.height/2*render>-129 && world.mobs[i].y-player.y+canvas.height/2<canvas.height*render+129 )
+      if(world.mobs[i].y-player.y+dH_2*render>-129 && world.mobs[i].y-player.y+dH_2<canvas.height*render+129 )
       {
         mobs[world.mobs[i].num].cycle(world.mobs[i]);        
       }
@@ -1447,16 +1485,18 @@ function start(arg)
     document.getElementById('start').remove();
   }
   paused=false;
-  ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.height/2-64);
+  setTimeout(ctx.fillText('СОЗДАНИЕ МИРА', canvas.width/2, canvas.width/2), 1);
   world.names=[myname];
   let inventory=[[0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]];
   let speed=16;
+  map_colours = ['green', 'blue', 'green', 'gray', 'yellow'];
   if(code in {874305450:'Kovirum', 1427080407:'Edited cocktail', 479681963:'Drfiy', 667273765:'ЧайныйЧай', 794427940:'Frosty', 1926171922:'Ivan Pevko'})
   {
     inventory[0]=[24, 1];
   }
   world.map=[];
   world.builds=[];
+  date=new Date();
   var myInitMap = [];
   for (var i = 0; i < 16; i++) 
   {
@@ -1511,8 +1551,7 @@ function start(arg)
       world.builds[i][j]=[0,0];
     }
   }
-
-  world.players[myname]=new Player(0, 0, size/2, size/2, inventory, speed, 99, hat, 100);
+  world.players[myname]=new Player(0, 0, world.map.length/2*128, world.map.length/2*128, inventory, speed, 99, hat, 100);
   // function gen(tile, min, max, rarity)
   // {
   //   let water=[];
@@ -1678,5 +1717,5 @@ function start(arg)
   setInterval(keyCycle, 100);
   canvas.height=window.innerHeight;
   canvas.width=window.innerWidth;
+  start_time=new Date();
 }
-
