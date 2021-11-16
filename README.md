@@ -9,3 +9,5 @@ All crafts and info about builds are in Pages/docs.html .
 All game thing goes in lol2.js.  
 The basic classes are Player, World, Item, Build, Craft.  
 Items and Builds have argument "specific" which tells what type this is  
+
+### WARNING! SHIT!
