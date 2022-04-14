@@ -227,7 +227,7 @@ class Item {
         this.image = new Image();
         this.image.src = '../Images/items' + num + '.png'
         if (specific[0] == item_specifics.nothing) {
-            // Если спецификация предмета = 0, ничего не добавляется. 
+            // Если спецификация предмета = 0, ничего не добавляется.
             // В основном для материалов.
         }
         if (specific[0] == item_specifics.instrument) {
@@ -262,7 +262,7 @@ class Build {
         // Добавляемые координаты при отрисовке
         this.x = x;
         this.y = y;
-        // Кол-во анимаций 
+        // Кол-во анимаций
         this.anims = anims;
         // Минимальная сила добывающего инструмента
         this.min_pow = min_pow;
@@ -384,8 +384,8 @@ class Mob {
         }
     }
     cycle(mob) {
-        if (Math.random() * 100 > 90) {
-            if (Math.random() * 100 > 90) {
+        if (Math.random() * 100 > 95) {
+            if (Math.random() * 100 > 95) {
                 if (Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y])) < canvas.width) {
                     this.audio.volume = (canvas.width - (Math.abs(distance([mob.x, mob.y], [world.players[myname].x, world.players[myname].y])))) / canvas.width * 0.5;
                     this.audio.play();
@@ -469,7 +469,7 @@ class Player {
     }
     remove_item(item_num, nums) {
         for (var i = 0; i < this.inventory.length; i++) {
-            if (this.inventory[i][0] == item_num && this.inventory[i][1] + 1 > nums) {
+            if (this.inventory[i][0] == item_num && this.inventory[i][1] >= nums) {
                 if (this.inventory[i][1] - nums == 0) {
                     this.inventory[i] = [0, 0, 0];
                     return true;
@@ -483,7 +483,7 @@ class Player {
     }
     can_remove(item_num, nums) {
         for (var i = 0; i < this.inventory.length; i++) {
-            if (this.inventory[i][0] == item_num && this.inventory[i][1] + 1 > nums) {
+            if (this.inventory[i][0] == item_num && this.inventory[i][1] >= nums) {
                 return true;
             }
         }
@@ -552,7 +552,7 @@ class Tile {
         this.image = new Image();
         this.image.src = '../Images/tiles' + this.num + '.png';
         this.audio = [false];
-        // Если have_audio - true, то this.audio[1] устанавливаем как Audio объект, проигрывается при прохождении через плитку    
+        // Если have_audio - true, то this.audio[1] устанавливаем как Audio объект, проигрывается при прохождении через плитку
         if (have_audio === true) {
             this.audio = [true, new Audio('../Music/tile' + tile_num + '.ogg')]
         }
@@ -615,19 +615,28 @@ function intLen(n) {
         }
     }
 }
+
 let locate = "main";
+
 // Текстуры кнопок
 let pause = new Image();
 pause.src = '../Images/pause.png';
 let download = new Image();
 download.src = '../Images/download.png';
+
 // Холст и его настройки
 canvas = document.getElementById("field");
 ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
 // Анимации игрока
 let anims = [new Image(), new Image(), new Image(), new Image()];
+// Установка анимаций игрока
+for (var i = 0; i < 4; i++) {
+    anims[i].src = '../Images/white' + i + '.png';
+}
+
 // Плитки
 let tiles = [new Tile(1, 4, [], 10, 0, true), new Tile(0.4, 6, [], 1, 1, true), new Tile(1.1, 4, [], 12, 2), new Tile(0.9, 4, [], 1, 3), new Tile(1.4, 0, 0, [], 4, true)];
 // Предметы
@@ -652,10 +661,21 @@ let items = [new Item(0, 'Nothing', [0], 0), new Item(1, 'Wood', [0], 0),
     new Item(34, 'Seed', [2, 17], 0), new Item(35, 'Wool', [0], 0),
     new Item(36, 'Map', [0], 0), new Item(37, 'Paper', [0], 0)
 ];
+
 //speed, hp, anims, num, drop, x, y
 let world = new World([], [], [], [], [], 0);
+
 // Шляпы
 let hats = [];
+// Установка шляп
+for (var i = 0; i < 12; i++) {
+    hats[i] = [];
+    for (var j = 0; j < 2; j++) {
+        hats[i][j] = new Image();
+        hats[i][j].src = '../Images/hat' + i + '' + j + '.png';
+    }
+}
+
 // Список номеров Tile объектов на которых нельзя строить
 let walls = {
     1: true
@@ -824,18 +844,8 @@ let mobs = [new Mob(8, 10, 10, 6, 0, [
 ]), new Aggressive_mob(15, 50, 50, 4, 2, [
     [4, 3]
 ], 1)];
-// Установка анимаций игрока
-for (var i = 0; i < 4; i++) {
-    anims[i].src = '../Images/white' + i + '.png';
-}
-// Установка шляп
-for (var i = 0; i < 12; i++) {
-    hats[i] = [];
-    for (var j = 0; j < 2; j++) {
-        hats[i][j] = new Image();
-        hats[i][j].src = '../Images/hat' + i + '' + j + '.png';
-    }
-}
+
+
 let hunger = [];
 for (var i = 0; i < 5; i++) {
     hunger[i] = new Image();
@@ -948,58 +958,28 @@ function execKey(keyNum) {
     let tx = normalized[2];
     let player = world.players[myname];
     let ty = normalized[3];
-    speed = player.speed * tiles[world.map[normalized[2]][normalized[3]]].speed;
+
     if (locate == 'chest') {
         if (!builds[world.builds[tx][ty][0]].storage) {
             locate = 'main';
-        }
-    }
-    if (keyNum == 87) {
-        player.y -= speed;
-        player.anim += 1;
-        let ts = normal(Math.round(player.x / 128), Math.round(player.y / 128));
-        let tx = ts[2];
-        let ty = ts[3];
-        let x = ts[0];
-        let y = ts[1];
-        if (tiles[world.map[tx][ty]].audio[0]) {
-            tiles[world.map[tx][ty]].audio[1].play();
-        }
-    } else if (keyNum == 83) {
-        player.y += speed;
-        player.anim += 1;
-        let ts = normal(Math.round(player.x / 128), Math.round(player.y / 128));
-        let tx = ts[2];
-        let ty = ts[3];
-        let x = ts[0];
-        let y = ts[1];
-        if (tiles[world.map[tx][ty]].audio[0]) {
-            tiles[world.map[tx][ty]].audio[1].play();
-        }
-    } else if (keyNum == 65) {
-        player.x -= speed;
-        player.anim += 1;
-        player.angle = 0;
-        let ts = normal(Math.round(player.x / 128), Math.round(player.y / 128));
-        let tx = ts[2];
-        let ty = ts[3];
-        let x = ts[0];
-        let y = ts[1];
-        if (tiles[world.map[tx][ty]].audio[0]) {
-            tiles[world.map[tx][ty]].audio[1].play();
-        }
-    } else if (keyNum == 68) {
-        player.x += speed;
-        player.anim += 1;
-        player.angle = 2;
-        let ts = normal(Math.round(player.x / 128), Math.round(player.y / 128));
-        let tx = ts[2];
-        let ty = ts[3];
-        let x = ts[0];
-        let y = ts[1];
-        if (tiles[world.map[tx][ty]].audio[0]) {
-            tiles[world.map[tx][ty]].audio[1].play();
-        }
+        } else if (keyNum == 69 && locate == 'chest') {
+           let player = world.players[myname];
+           let normalized = normal(Math.round(player.x / 128), Math.round(player.y / 128));
+           let tx = normalized[2];
+           let ty = normalized[3];
+           if (world.builds[tx][ty][0] !== 0 && world.builds[tx][ty][3].length) {
+               if (world.builds[tx][ty][3][player.selected][0] !== 0) {
+                   if (player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1], world.builds[tx][ty][3][player.selected][2])) {
+                       world.builds[tx][ty][3][player.selected] = [0, 0, 0];
+                   }
+               } else {
+                   if (player.inventory[player.selected][0] !== 0) {
+                       world.builds[tx][ty][3][player.selected] = [player.inventory[player.selected][0], player.inventory[player.selected][1], player.inventory[player.selected][2]];
+                       player.remove_item(player.inventory[player.selected][0], player.inventory[player.selected][1]);
+                     }
+                 }
+             }
+         }
     } else if (keyNum == 69 && locate == 'main') {
         let player = world.players[myname];
         if (items[player.inventory[player.selected][0]].food) {
@@ -1085,23 +1065,6 @@ function execKey(keyNum) {
                 player.remove_item(player.inventory[player.selected][0], 1);
             }
         }
-    } else if (keyNum == 69 && locate == 'chest') {
-        let player = world.players[myname];
-        let normalized = normal(Math.round(player.x / 128), Math.round(player.y / 128));
-        let tx = normalized[2];
-        let ty = normalized[3];
-        if (world.builds[tx][ty][0] !== 0 && world.builds[tx][ty][3].length) {
-            if (world.builds[tx][ty][3][player.selected][0] !== 0) {
-                if (player.add_item(world.builds[tx][ty][3][player.selected][0], world.builds[tx][ty][3][player.selected][1], world.builds[tx][ty][3][player.selected][2])) {
-                    world.builds[tx][ty][3][player.selected] = [0, 0, 0];
-                }
-            } else {
-                if (player.inventory[player.selected][0] !== 0) {
-                    world.builds[tx][ty][3][player.selected] = [player.inventory[player.selected][0], player.inventory[player.selected][1], player.inventory[player.selected][2]];
-                    player.remove_item(player.inventory[player.selected][0], player.inventory[player.selected][1]);
-                }
-            }
-        }
     } else if (keyNum == 70 && locate == 'main') {
         let player = world.players[myname];
         let normalized = normal(Math.round(player.x / 128), Math.round(player.y / 128));
@@ -1122,6 +1085,32 @@ function execKey(keyNum) {
     }
 }
 
+function execMoveKey(keyNum)
+{
+  let normalized = normal(Math.round(world.players[myname].x / 128), Math.round(world.players[myname].y / 128));
+  speed = player.speed * tiles[world.map[normalized[2]][normalized[3]]].speed;
+  if (keyNum == 87) {
+      player.y -= speed;
+  } else if (keyNum == 83) {
+      player.y += speed;
+
+  } else if (keyNum == 65) {
+      player.x -= speed;
+      player.angle = 0;
+  } else if (keyNum == 68) {
+      player.x += speed;
+      player.angle = 2;
+  }
+  let ts = normal(Math.round(player.x / 128), Math.round(player.y / 128));
+  let tx = ts[2];
+  let ty = ts[3];
+  let x = ts[0];
+  let y = ts[1];
+  if (tiles[world.map[tx][ty]].audio[0]) {
+      tiles[world.map[tx][ty]].audio[1].play();
+  }
+}
+
 function keyUnpress(e) {
     let keyNum;
     if (window.event) {
@@ -1134,12 +1123,21 @@ function keyUnpress(e) {
 }
 
 function keyCycle() {
-    let keylist = [87, 83, 65, 68, 69, 70];
-    for (var i = 0; i < keylist.length; i++) {
-        if (keys[keylist[i]]) {
-            execKey(keylist[i]);
-        }
-    }
+    let keyList = [87, 83, 65, 68, 69, 70];
+    let activeKeys = keyList.filter( key => keys[key]);
+    activeKeys = activeKeys.filter( key => !(key in {87: "W", 83: "A", 65: "S", 68: "D"}) );
+    activeKeys.forEach( (current, index, array) => execKey(current));
+}
+move_counter = 0
+function keyMoveCycle() {
+  let keyList = [87, 83, 65, 68];
+  let activeMoveKeys = keyList.filter( key => keys[key]);
+  activeMoveKeys.forEach( (current, index, array) => execMoveKey(current));
+  if (activeMoveKeys.length)
+  {
+    if (move_counter % 10 == 0) { player.anim += 1; }
+    move_counter++;
+  }
 }
 
 function getHash(str) {
@@ -1162,9 +1160,12 @@ function cycle() {
     dH_2 = canvas.height / 2;
     dX_128 = player.x / 128;
     dY_128 = player.y / 128;
+    canvas_W128 = canvas.width /128;
+    canvas_H128 = canvas.height /128;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let normalized = normal(Math.round(dX_128), Math.round(player.y / 128));
-    let ts = normal(Math.round(dX_128), Math.round(player.y / 128));
+    let normalized = normal(Math.round(dX_128), Math.round(dY_128));
+    let ts = normal(Math.round(dX_128), Math.round(dY_128));
     let tx = ts[2];
     let ty = ts[3];
     let x = ts[0];
@@ -1172,8 +1173,8 @@ function cycle() {
     mS_128 = world.map.length * 128;
     player.x = (mS_128 + player.x) % (mS_128);
     player.y = (mS_128 + player.y) % (mS_128);
-    for (var i = Math.round(dX_128 - canvas.width / 128 - 1); i <= Math.round(dX_128 + canvas.width / 128 - 1); i++) {
-        for (var j = Math.round(dY_128 - canvas.height / 128 + 1); j <= Math.round(dY_128 + canvas.height / 128 + 1); j++) {
+    for (var i = Math.round(dX_128 - canvas_W128 - 1); i <= Math.round(dX_128 + canvas_W128 - 1); i++) {
+        for (var j = Math.round(dY_128 - canvas_H128 + 1); j <= Math.round(dY_128 + canvas_H128 + 1); j++) {
             let ts = normal(i, j);
             let tx = ts[2];
             let ty = ts[3];
@@ -1182,8 +1183,8 @@ function cycle() {
             ctx.drawImage(tiles[world.map[tx][ty]].image, x * 128 + dW_2 - player.x, y * 128 + dH_2 - player.y);
         }
     }
-    for (var i = Math.round(dX_128 - canvas.width / 128 - 1); i <= Math.round(dX_128 + canvas.width / 128 - 1); i++) {
-        for (var j = Math.round(dY_128 - canvas.height / 128 - 1); j <= Math.round(dY_128 + canvas.height / 128 + 1); j++) {
+    for (var i = Math.round(dX_128 - canvas_W128 - 1); i <= Math.round(dX_128 + canvas_W128 - 1); i++) {
+        for (var j = Math.round(dY_128 - canvas_H128 - 1); j <= Math.round(dY_128 + canvas_H128 + 1); j++) {
             let ts = normal(i, j);
             let tx = ts[2];
             let ty = ts[3];
@@ -1236,7 +1237,6 @@ function cycle() {
         }
     }
 
-    player = player;
     let len = 32 * player.inventory.length;
     len = dW_2 - len / 2;
     ctx.fillStyle = 'red';
@@ -1428,7 +1428,7 @@ function start(arg) {
         [0, 0, 0],
         [0, 0, 0]
     ];
-    let speed = 16;
+    let speed = 2;
     map_colours = ['green', 'blue', 'green', 'gray', 'yellow'];
     if (code in {
             874305450: 'Kovirum',
@@ -1509,7 +1509,7 @@ function start(arg) {
     //           sety=Math.floor(Math.abs(size+pos[1]+j)%size);
     //           world.map[setx][sety]=tile;
     //         }
-    //       }    
+    //       }
     //     }
     //   }
     // }
@@ -1612,6 +1612,7 @@ function start(arg) {
     setInterval(animations, 100);
     setInterval(fhunger, 5000);
     setInterval(keyCycle, 100);
+    setInterval(keyMoveCycle, 10);
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
     start_time = new Date();
