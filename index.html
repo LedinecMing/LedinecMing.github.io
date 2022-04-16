@@ -1,75 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-   ym(73439530, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true,
-        webvisor:true
-   });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/73439530" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
 	<title>LedinecMing's site</title>
-	<meta charset="utf-8" lang="ru">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-	<link rel="SHORTCUT ICON" href="Images/white0.png" type="image/png">
-</head>
+	<meta charset="utf-8" lang="ru"><link rel="SHORTCUT ICON" href="Images/white0.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
 <body>
-	<header>
-		<nav class="container-fluid">		
-			<div class="row no-gutters d-flex flex-row-reverse">
-				<div class="col-md-3 menus">
-					<div class="menu">
-						<a href="Pages/game.html" class="color-button first-item">Play</a>
-						<img src="Images/white0.png" alt='Главный персонаж' class="last-item">
-					</div>
-					<div class="menu">
-						<a href="Pages/cells.html" class="color-button">CELLS</a>
-						<img src="Images/лампа.png" alt='Лампа' class="last-item">
-					</div>
-					<div class="menu">
-						<a href="https://www.donationalerts.com/r/ledinec_ming" class="color-button">Donate:)</a>
-						<img src='Images/graph.png' alt='График' class="last-item">
-					</div>
-					<a href="Pages/docs.html" class="color-button">Help</a>
-					<div class="menu">
-						<a href="https://discord.gg/6J4tugxNPx" class="color-button">Discord</a>
-					</div>
-					<a href="authors.html" class="color-button">Authors</a>
-				</div>
-			</div>
-		</nav>
-	</header>
+	<nav>
+  	<div class="menu">
+  		<a href="Pages/game.html" class="color-button first-item">Play</a>
+  	</div>
+  	<div class="menu">
+  		<a href="Pages/cells.html" class="color-button">CELLS</a>
+  	</div>
+  	<div class="menu">
+  		<a href="https://www.donationalerts.com/r/ledinec_ming" class="color-button">Donate</a>
+  	</div>
+  	<a href="Pages/docs.html" class="color-button">Help</a>
+  	<div class="menu">
+  		<a href="https://discord.gg/6J4tugxNPx" class="color-button">Discord</a>
+  	</div>
+  	<a href="authors.html" class="color-button">Authors</a>
+	</nav>
 	<h1 class="centered h1">Tea Survival</h1>
 	<div class="ask">Что такое Tea Survival?</div>
-	<div class="answer">Tea Survival - ЗАБРОШЕННАЯ игра про выживание.</div>
+	<div class="answer">Tea Survival - игра про выживание.</div>
 	<div class="ask">Как я могу сыграть?</div>
-	<div class="answer">В браузере на компьютере, нажав кнопку play</div>
+	<div class="answer">В браузере на компьютере, нажав кнопку <div class="menu"><a href="Pages/game.html" class="color-button first-item">Play</a></div></div>
 	<div class="ask">Могу ли я сыграть на телефоне?</div>
-	<div class="answer">Для этого нужно установить арк эмулятор, он есть на нашем дискорд сервере.</div>
+	<div class="answer">Для этого нужно установить аpk эмулятор, он есть на нашем <a href="https://discord.gg/6J4tugxNPx" class="color-button">дискорд сервере</a>.</div>
 	<div class="ask">В игре есть мультиплеер?</div>
-	<div class="answer">Обновление будет если рак на горе свистнет</div>
+	<div class="answer">Добавление мультиплеера планируется в скором времени</div>
 </body>
 </html>
 <style type="text/css">
 	body {
-		background-color: black;
-		color: white;
+		background-color: rgb(30, 30, 41);
+		color: rgb(180, 180, 200);
+    margin: 10px;
+    font-family: "Roboto Mono", monospace;
 	}
+  nav {
+    height: 100px;
+  }
   .ask {
     margin-top: 50px;
-    border: 1px solid white;
     font-size: 200%;
-    text-align: center;
-    border-radius: 0 0 10px 10px;
+    display: inline-block
   }
   .answer {
     font-size: 120%;
@@ -79,30 +57,32 @@
 		color: black;
 		font-size: 20px;
 		border-radius: 5px;
-		background-color: white;
-		transition-property: color, background-color, font-size;
-		transition-duration: 1s;
+		background-color: rgb(180, 180, 200);
+		padding-left: 10px;
+		padding-right: 10px;
+		transition-property: color, background-color;
+		transition-duration: 0.8s;
 	}
 	.color-button:hover{
-		color: white;
-		background-color: black;
-		font-size: 32px;
+		color: rgb(200, 200, 220);
+		background-color: rgb(10, 10, 20);
 	}
-	.color-button:hover  ~.last-item{
+	/* .color-button:hover  ~.last-item{
 		visibility: visible;
-		background-color: white;
+		background-color: rgb();
 		margin-top: auto;
-	}
+	} */
  	.last-item {
  		visibility: hidden;
  		display: block;
- 		background-color: black;
+ 		background-color: rgb(10, 10, 20);
  		transition-property: background-color, visibility;
  		transition-duration: 3s;
  		margin-top: -256px;
  	}
  	.menu {
  		display: inline-block;
+    padding-right: 5px;
  	}
  	.menus {
  		display: inline;
@@ -123,7 +103,7 @@
     transform: translate(-50%, 0%);
  	}
  	.h1 {
- 		color: lightblue;
- 		font-size: 300%;
+ 		color: rgb(0,184,255);
+    font-family: Nunito, sans-serif;
  	}
 </style>
